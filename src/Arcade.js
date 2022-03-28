@@ -87,6 +87,7 @@ class Arcade extends EventDispatcher {
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
 
+        console.log('IPC RENDERER');
         console.log(Arcade.ipcRenderer);
 
         Arcade.ipcRenderer?.on('keydown', this._machineKeydownHandler);
