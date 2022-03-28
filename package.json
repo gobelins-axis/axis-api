@@ -2,7 +2,7 @@
   "name": "arcade-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/bundle.js",
   "scripts": {
     "dev": "rollup --config ./rollup.dev.config.js --watch",
     "build": "rollup --config ./rollup.build.config.js",
