@@ -30,8 +30,10 @@ class Arcade extends EventDispatcher {
     /**
      * Public
      */
-    start() {
-        this._setupEventListeners();
+    start(ipcRenderer) {
+        console.log('START');
+        console.log(ipcRenderer);
+        this._setupEventListeners(ipcRenderer);
     }
 
     destroy() {
@@ -83,15 +85,18 @@ class Arcade extends EventDispatcher {
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
     }
 
-    _setupEventListeners() {
+    _setupEventListeners(ipcRenderer) {
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
 
         console.log('IPC RENDERER');
         console.log(Arcade.ipcRenderer);
 
-        Arcade.ipcRenderer?.on('keydown', this._machineKeydownHandler);
-        Arcade.ipcRenderer?.on('keyup', this._machineKeyupHandler);
+        // Arcade.ipcRenderer?.on('keydown', this._machineKeydownHandler);
+        // Arcade.ipcRenderer?.on('keyup', this._machineKeyupHandler);
+
+        ipcRenderer?.on('keydown', this._machineKeydownHandler);
+        ipcRenderer?.on('keyup', this._machineKeyupHandler);
     }
     
     _removeEventListeners() {
