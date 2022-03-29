@@ -1,5 +1,4 @@
 import Arcade from '../src/index';
-// import Arcade from 'arcade-api';
 
 const box = document.querySelector('.js-box');
 const position = { x: 0, y: 0 };
@@ -31,7 +30,7 @@ function mousedownHandler(e) {
 }
 
 function mouseupHandler(e) {
-    
+
 }
 
 setup();
