@@ -10,6 +10,24 @@ npm i github:arcade-feu/arcade-api
 
 ## Usage
 
+```js
+import Arcade from "arcade-api";
+
+// Map a Machine Key to a Keyboard Key
+Arcade.registerKey("a", "ArrowLeft");
+Arcade.registerKey("b", "ArrowRight");
+
+Arcade.addEventListener("keydown", keydownHandler);
+
+const position = { x: 0, y: 0 };
+
+function keydownHandler(e) {
+    const speed = 50;
+    const direction = e.machineKey === "a" ? -1 : 1;
+    position.x += speed * direction;
+}
+```
+
 ## API
 
 ## Run demo
@@ -22,6 +40,12 @@ npm install
 npm run dev
 ```
 
-## Development
+### Build
 
 Pushing to master triggers a build via Github Action to create the bundle file.
+
+## Authors
+
+[@LPGeneret](https://twitter.com/LPGeneret)
+[@sergebocancea](https://twitter.com/sergebocancea)
+[@leochocolat](https://twitter.com/leochocolat)

@@ -19,17 +19,17 @@ function update() {
 }
 
 function setupEventListeners() {
-    Arcade.addEventListener('keydown', mousedownHandler);
-    Arcade.addEventListener('keyup', mouseupHandler);
+    Arcade.addEventListener('keydown', keydownHandler);
+    Arcade.addEventListener('keyup', keyupHandler);
 }
 
-function mousedownHandler(e) {
+function keydownHandler(e) {
     const speed = 50;
     const direction = e.machineKey === 'a' ? -1 : 1;
     position.x += speed * direction;
 }
 
-function mouseupHandler(e) {
+function keyupHandler(e) {
 
 }
 

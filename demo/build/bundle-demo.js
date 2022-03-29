@@ -383,17 +383,17 @@
   }
 
   function setupEventListeners() {
-    Arcade$1.addEventListener('keydown', mousedownHandler);
-    Arcade$1.addEventListener('keyup', mouseupHandler);
+    Arcade$1.addEventListener('keydown', keydownHandler);
+    Arcade$1.addEventListener('keyup', keyupHandler);
   }
 
-  function mousedownHandler(e) {
+  function keydownHandler(e) {
     var speed = 50;
     var direction = e.machineKey === 'a' ? -1 : 1;
     position.x += speed * direction;
   }
 
-  function mouseupHandler(e) {}
+  function keyupHandler(e) {}
 
   setup();
 
