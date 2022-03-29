@@ -67,6 +67,7 @@ class Arcade extends EventDispatcher {
     }
 
     _exposeMethods() {
+        console.log('EXPOSE METHOD');
         window.__arcade__ = {};
         window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
         window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
@@ -157,4 +158,4 @@ class Arcade extends EventDispatcher {
     }
 }
 
-export default Arcade;
+export default new Arcade();

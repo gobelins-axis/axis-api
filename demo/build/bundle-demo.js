@@ -170,7 +170,7 @@
 
   var keys = ['a', 'b'];
 
-  var Arcade$1 = /*#__PURE__*/function (_EventDispatcher) {
+  var Arcade = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Arcade, _EventDispatcher);
 
     var _super = _createSuper(Arcade);
@@ -255,6 +255,7 @@
     }, {
       key: "_exposeMethods",
       value: function _exposeMethods() {
+        console.log('EXPOSE METHOD');
         window.__arcade__ = {};
         window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
         window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
@@ -361,7 +362,7 @@
     return Arcade;
   }(EventDispatcher);
 
-  var Arcade = new Arcade$1();
+  var Arcade$1 = new Arcade();
 
   var box = document.querySelector('.js-box');
   var position = {
@@ -370,8 +371,8 @@
   };
 
   function setup() {
-    Arcade.registerKey('a', 'ArrowLeft');
-    Arcade.registerKey('b', 'ArrowRight');
+    Arcade$1.registerKey('a', 'ArrowLeft');
+    Arcade$1.registerKey('b', 'ArrowRight');
     setupEventListeners();
     update();
   }
@@ -382,8 +383,8 @@
   }
 
   function setupEventListeners() {
-    Arcade.addEventListener('keydown', mousedownHandler);
-    Arcade.addEventListener('keyup', mouseupHandler);
+    Arcade$1.addEventListener('keydown', mousedownHandler);
+    Arcade$1.addEventListener('keyup', mouseupHandler);
   }
 
   function mousedownHandler(e) {
