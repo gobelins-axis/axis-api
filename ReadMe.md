@@ -1,4 +1,4 @@
-# Arcade API
+# 📦️ Arcade API
 
 An API to help creators building their game for our arcade machine (not existing yet...).
 
