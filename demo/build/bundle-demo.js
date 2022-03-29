@@ -30,21 +30,6 @@
     return Constructor;
   }
 
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
@@ -197,25 +182,28 @@
 
       _this = _super.call(this); // Setup
 
+      _this._ipcRenderer = null;
       _this._keys = keys;
       _this._mappedKeys = _this._setupMappedKeys();
 
       _this._bindAll();
 
+      _this._exposeMethods();
+
+      _this._setupEventListeners();
+
+      _this._setupIpcRendererEventListeners();
+
       return _this;
     }
     /**
-     * Static
+     * Getters
      */
 
 
     _createClass(Arcade, [{
       key: "mappedKeys",
-      get:
-      /**
-       * Getters
-       */
-      function get() {
+      get: function get() {
         return this._mappedKeys;
       }
       /**
@@ -223,14 +211,13 @@
        */
 
     }, {
-      key: "start",
-      value: function start() {
-        this._setupEventListeners();
-      }
-    }, {
       key: "destroy",
       value: function destroy() {
         this._removeEventListeners();
+
+        this._removeIpcRendererEventListeners();
+
+        this._ipcRenderer = null;
       }
     }, {
       key: "registerKey",
@@ -266,13 +253,33 @@
         return mappedKeys;
       }
     }, {
+      key: "_exposeMethods",
+      value: function _exposeMethods() {
+        window.__arcade__ = {};
+        window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
+        window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
+      }
+    }, {
+      key: "_setIpcRenderer",
+      value: function _setIpcRenderer(ipcRenderer) {
+        if (this._ipcRenderer) return;
+        this._ipcRenderer = ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
+      }
+    }, {
+      key: "_resetIpcRenderer",
+      value: function _resetIpcRenderer() {
+        this._removeIpcRendererEventListeners();
+
+        this._ipcRenderer = null;
+      }
+    }, {
       key: "_bindAll",
       value: function _bindAll() {
-        // Public
-        this.registerKey = this.registerKey.bind(this);
-        this.destroy = this.destroy.bind(this);
-        this.addEventListener = this.addEventListener.bind(this);
-        this.removeEventListener = this.removeEventListener.bind(this); // Private
+        // Exposed methods
+        this._setIpcRenderer = this._setIpcRenderer.bind(this);
+        this._resetIpcRenderer = this._resetIpcRenderer.bind(this); // Events
 
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
@@ -282,12 +289,26 @@
     }, {
       key: "_setupEventListeners",
       value: function _setupEventListeners() {
-        var _Arcade$ipcRenderer, _Arcade$ipcRenderer2;
-
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
-        (_Arcade$ipcRenderer = Arcade.ipcRenderer) === null || _Arcade$ipcRenderer === void 0 ? void 0 : _Arcade$ipcRenderer.on('keydown', this._machineKeydownHandler);
-        (_Arcade$ipcRenderer2 = Arcade.ipcRenderer) === null || _Arcade$ipcRenderer2 === void 0 ? void 0 : _Arcade$ipcRenderer2.on('keyup', this._machineKeyupHandler);
+      }
+    }, {
+      key: "_setupIpcRendererEventListeners",
+      value: function _setupIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.on('keydown', this._machineKeydownHandler);
+
+        this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+      }
+    }, {
+      key: "_removeIpcRendererEventListeners",
+      value: function _removeIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
+
+        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
       }
     }, {
       key: "_removeEventListeners",
@@ -340,10 +361,39 @@
     return Arcade;
   }(EventDispatcher);
 
-  _defineProperty(Arcade$1, "ipcRenderer", null);
+  var Arcade = new Arcade$1();
 
-  var Arcade = window.__arcadeFeu || new Arcade$1();
+  var box = document.querySelector('.js-box');
+  var position = {
+    x: 0,
+    y: 0
+  };
 
-  console.log(Arcade);
+  function setup() {
+    Arcade.registerKey('a', 'ArrowLeft');
+    Arcade.registerKey('b', 'ArrowRight');
+    setupEventListeners();
+    update();
+  }
+
+  function update() {
+    box.style.transform = "translateX(".concat(position.x, "px)");
+    requestAnimationFrame(update);
+  }
+
+  function setupEventListeners() {
+    Arcade.addEventListener('keydown', mousedownHandler);
+    Arcade.addEventListener('keyup', mouseupHandler);
+  }
+
+  function mousedownHandler(e) {
+    var speed = 50;
+    var direction = e.machineKey === 'a' ? -1 : 1;
+    position.x += speed * direction;
+  }
+
+  function mouseupHandler(e) {}
+
+  setup();
 
 }));

@@ -9,16 +9,15 @@ class Arcade extends EventDispatcher {
         super();
 
         // Setup
+        this._ipcRenderer = null;
         this._keys = keys;
         this._mappedKeys = this._setupMappedKeys();
 
         this._bindAll();
+        this._exposeMethods();
+        this._setupEventListeners();
+        this._setupIpcRendererEventListeners();
     }
-
-    /**
-     * Static
-     */
-    static ipcRenderer = null;
 
     /**
      * Getters
@@ -30,14 +29,10 @@ class Arcade extends EventDispatcher {
     /**
      * Public
      */
-    start(ipcRenderer) {
-        console.log('START');
-        console.log(ipcRenderer);
-        this._setupEventListeners(ipcRenderer);
-    }
-
     destroy() {
         this._removeEventListeners();
+        this._removeIpcRendererEventListeners();
+        this._ipcRenderer = null;
     }
 
     registerKey(machineKey, keyboardKey) {
@@ -71,32 +66,53 @@ class Arcade extends EventDispatcher {
         return mappedKeys;
     }
 
-    _bindAll() {
-        // Public
-        this.registerKey = this.registerKey.bind(this);
-        this.destroy = this.destroy.bind(this);
-        this.addEventListener = this.addEventListener.bind(this);
-        this.removeEventListener = this.removeEventListener.bind(this);
+    _exposeMethods() {
+        window.__arcade__ = {};
+        window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
+        window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
+    }
 
-        // Private
+    _setIpcRenderer(ipcRenderer) {
+        if (this._ipcRenderer) return;
+
+        this._ipcRenderer = ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
+    }
+
+    _resetIpcRenderer() {
+        this._removeIpcRendererEventListeners();
+
+        this._ipcRenderer = null;
+    }
+
+    _bindAll() {
+        // Exposed methods
+        this._setIpcRenderer = this._setIpcRenderer.bind(this);
+        this._resetIpcRenderer = this._resetIpcRenderer.bind(this);
+
+        // Events
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
     }
 
-    _setupEventListeners(ipcRenderer) {
+    _setupEventListeners() {
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
+    }
 
-        console.log('IPC RENDERER');
-        console.log(Arcade.ipcRenderer);
+    _setupIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+        this._ipcRenderer.on('keydown', this._machineKeydownHandler);
+        this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+    }
 
-        // Arcade.ipcRenderer?.on('keydown', this._machineKeydownHandler);
-        // Arcade.ipcRenderer?.on('keyup', this._machineKeyupHandler);
-
-        ipcRenderer?.on('keydown', this._machineKeydownHandler);
-        ipcRenderer?.on('keyup', this._machineKeyupHandler);
+    _removeIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
+        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
     }
     
     _removeEventListeners() {
