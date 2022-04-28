@@ -17,6 +17,15 @@ class Arcade extends EventDispatcher {
         this._exposeMethods();
         this._setupEventListeners();
         this._setupIpcRendererEventListeners();
+
+        // window.browser.devtools.panels.create(
+        //     'My Panel', // title
+        //     'icons/star.png', // icon
+        //     'devtools/panel/panel.html' // content
+        // ).then((newPanel) => {
+        //     // newPanel.onShown.addListener(initialisePanel);
+        //     // newPanel.onHidden.addListener(unInitialisePanel);
+        // });
     }
 
     /**
@@ -159,8 +168,8 @@ class Arcade extends EventDispatcher {
         }
     }
 
-    _joystickMoveHandler(event) {
-        this.dispatchEvent('joystick:move', event);
+    _joystickMoveHandler(event, data) {
+        this.dispatchEvent('joystick:move', data);
     }
 }
 

@@ -192,7 +192,15 @@
 
       _this._setupEventListeners();
 
-      _this._setupIpcRendererEventListeners();
+      _this._setupIpcRendererEventListeners(); // window.browser.devtools.panels.create(
+      //     'My Panel', // title
+      //     'icons/star.png', // icon
+      //     'devtools/panel/panel.html' // content
+      // ).then((newPanel) => {
+      //     // newPanel.onShown.addListener(initialisePanel);
+      //     // newPanel.onHidden.addListener(unInitialisePanel);
+      // });
+
 
       return _this;
     }
@@ -279,12 +287,13 @@
       value: function _bindAll() {
         // Exposed methods
         this._setIpcRenderer = this._setIpcRenderer.bind(this);
-        this._resetIpcRenderer = this._resetIpcRenderer.bind(this); // Events
+        this._resetIpcRenderer = this._resetIpcRenderer.bind(this); // Event handlers
 
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
+        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
@@ -300,6 +309,8 @@
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
 
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+
+        this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
       }
     }, {
       key: "_removeIpcRendererEventListeners",
@@ -309,6 +320,8 @@
         this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
 
         this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
+
+        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
       }
     }, {
       key: "_removeEventListeners",
@@ -355,6 +368,11 @@
             this.dispatchEvent('keyup', this._mappedKeys[mappedKey]);
           }
         }
+      }
+    }, {
+      key: "_joystickMoveHandler",
+      value: function _joystickMoveHandler(event, data) {
+        this.dispatchEvent('joystick:move', data);
       }
     }]);
 

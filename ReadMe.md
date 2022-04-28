@@ -10,6 +10,8 @@ npm i github:arcade-feu/arcade-api
 
 ## Usage
 
+### Game usage
+
 ```js
 import Arcade from "arcade-api";
 
@@ -34,6 +36,36 @@ function joystickMoveHandler(e) {
     const speed = 50;
     position.x += speed * e.x;
 }
+```
+
+### Electron usage
+
+#### Trouble shooting
+
+In main Make sure context isolation is set to false :
+
+```js
+// main.js
+const win = new BrowserWindow({
+    width: 1200,
+    height: 900,
+    webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        contextIsolation: false,
+        enableRemoteModule: true,
+    },
+});
+```
+
+In preload.js on DOMContentLoaded event you can access the Game Arcade Instance in the window and set the ipc renderer like this :
+
+```js
+// preload.js
+const { ipcRenderer } = require("electron");
+
+window.addEventListener("DOMContentLoaded", () => {
+    window.__arcade__.set_ipc_renderer(ipcRenderer);
+});
 ```
 
 ## API
