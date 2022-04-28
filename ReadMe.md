@@ -19,12 +19,20 @@ Arcade.registerKey("b", "ArrowRight");
 
 Arcade.addEventListener("keydown", keydownHandler);
 
+// Use joystick
+Arcade.addEventListener("joystick:move", joystickMoveHandler);
+
 const position = { x: 0, y: 0 };
 
 function keydownHandler(e) {
     const speed = 50;
     const direction = e.machineKey === "a" ? -1 : 1;
     position.x += speed * direction;
+}
+
+function joystickMoveHandler(e) {
+    const speed = 50;
+    position.x += speed * e.x;
 }
 ```
 

@@ -44,7 +44,7 @@ class Arcade extends EventDispatcher {
         }
 
         this._mappedKeys[this._keys[keyIndex]].keyboardKey = keyboardKey;
-        
+
         return this._mappedKeys[this._keys[keyIndex]];
     }
 
@@ -67,7 +67,6 @@ class Arcade extends EventDispatcher {
     }
 
     _exposeMethods() {
-        console.log('EXPOSE METHOD');
         window.__arcade__ = {};
         window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
         window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
@@ -92,11 +91,12 @@ class Arcade extends EventDispatcher {
         this._setIpcRenderer = this._setIpcRenderer.bind(this);
         this._resetIpcRenderer = this._resetIpcRenderer.bind(this);
 
-        // Events
+        // Event handlers
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
+        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
     }
 
     _setupEventListeners() {
@@ -108,14 +108,16 @@ class Arcade extends EventDispatcher {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+        this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
     }
 
     _removeIpcRendererEventListeners() {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
         this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
+        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
     }
-    
+
     _removeEventListeners() {
         window.removeEventListener('keydown', this._keydownHandler);
         window.removeEventListener('keyup', this._keyupHandler);
@@ -126,7 +128,7 @@ class Arcade extends EventDispatcher {
             if (this._mappedKeys[mappedKey].keyboardKey === e.key) {
                 this._mappedKeys[mappedKey].isPressed = true;
                 this.dispatchEvent('keydown', this._mappedKeys[mappedKey]);
-            };
+            }
         }
     }
 
@@ -135,7 +137,7 @@ class Arcade extends EventDispatcher {
             if (this._mappedKeys[mappedKey].keyboardKey === e.key) {
                 this._mappedKeys[mappedKey].isPressed = false;
                 this.dispatchEvent('keyup', this._mappedKeys[mappedKey]);
-            };
+            }
         }
     }
 
@@ -144,7 +146,7 @@ class Arcade extends EventDispatcher {
             if (this._mappedKeys[mappedKey].machineKey === key) {
                 this._mappedKeys[mappedKey].isPressed = true;
                 this.dispatchEvent('keydown', this._mappedKeys[mappedKey]);
-            };
+            }
         }
     }
 
@@ -153,8 +155,12 @@ class Arcade extends EventDispatcher {
             if (this._mappedKeys[mappedKey].machineKey === key) {
                 this._mappedKeys[mappedKey].isPressed = false;
                 this.dispatchEvent('keyup', this._mappedKeys[mappedKey]);
-            };
+            }
         }
+    }
+
+    _joystickMoveHandler(event) {
+        this.dispatchEvent('joystick:move', event);
     }
 }
 

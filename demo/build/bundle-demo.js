@@ -255,7 +255,6 @@
     }, {
       key: "_exposeMethods",
       value: function _exposeMethods() {
-        console.log('EXPOSE METHOD');
         window.__arcade__ = {};
         window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
         window.__arcade__.reset_ipc_renderer = this._resetIpcRenderer;
