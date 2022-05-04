@@ -21,6 +21,9 @@ function update() {
 function setupEventListeners() {
     Arcade.addEventListener('keydown', keydownHandler);
     Arcade.addEventListener('keyup', keyupHandler);
+    Arcade.addEventListener('joystick:move', joystickMoveHandler);
+    Arcade.addEventListener('joystick:press', joystickPressHandler);
+    Arcade.addEventListener('joystick:release', joystickReleaseHandler);
 }
 
 function keydownHandler(e) {
@@ -30,6 +33,18 @@ function keydownHandler(e) {
 }
 
 function keyupHandler(e) {
+
+}
+
+function joystickMoveHandler(e) {
+
+}
+
+function joystickPressHandler(e) {
+
+}
+
+function joystickReleaseHandler(e) {
 
 }
 

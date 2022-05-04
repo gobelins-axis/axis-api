@@ -386,6 +386,7 @@
     x: 0,
     y: 0
   };
+  window.aaaa = 'aaaaaaaa';
 
   function setup() {
     Arcade$1.registerKey('a', 'ArrowLeft');
