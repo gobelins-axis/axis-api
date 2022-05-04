@@ -17,15 +17,6 @@ class Arcade extends EventDispatcher {
         this._exposeMethods();
         this._setupEventListeners();
         this._setupIpcRendererEventListeners();
-
-        // window.browser.devtools.panels.create(
-        //     'My Panel', // title
-        //     'icons/star.png', // icon
-        //     'devtools/panel/panel.html' // content
-        // ).then((newPanel) => {
-        //     // newPanel.onShown.addListener(initialisePanel);
-        //     // newPanel.onHidden.addListener(unInitialisePanel);
-        // });
     }
 
     /**
@@ -118,6 +109,8 @@ class Arcade extends EventDispatcher {
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
         this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
+        this._ipcRenderer.on('joystick:keydown', this._joystickKeydownHandler);
+        this._ipcRenderer.on('joystick:keyup', this._joystickKeyupHandler);
     }
 
     _removeIpcRendererEventListeners() {
@@ -125,6 +118,8 @@ class Arcade extends EventDispatcher {
         this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
         this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
         this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
+        this._ipcRenderer.removeListener('joystick:keydown', this._joystickKeydownHandler);
+        this._ipcRenderer.removeListener('joystick:keyup', this._joystickKeyupHandler);
     }
 
     _removeEventListeners() {
@@ -170,6 +165,14 @@ class Arcade extends EventDispatcher {
 
     _joystickMoveHandler(event, data) {
         this.dispatchEvent('joystick:move', data);
+    }
+
+    _joystickKeydownHandler(event, data) {
+        this.dispatchEvent('joystick:keydown', data);
+    }
+
+    _joystickKeyupHandler(event, data) {
+        this.dispatchEvent('joystick:keyup', data);
     }
 }
 
