@@ -19,22 +19,57 @@ import Arcade from "arcade-api";
 Arcade.registerKey("a", "ArrowLeft");
 Arcade.registerKey("b", "ArrowRight");
 
+// Use buttons
 Arcade.addEventListener("keydown", keydownHandler);
-
-// Use joystick
-Arcade.addEventListener("joystick:move", joystickMoveHandler);
+Arcade.addEventListener("keyup", keyupHandler);
 
 const position = { x: 0, y: 0 };
 
 function keydownHandler(e) {
     const speed = 50;
-    const direction = e.machineKey === "a" ? -1 : 1;
-    position.x += speed * direction;
+
+    if (e.machineKey === "a") {
+        const direction = -1;
+        position.x += speed * direction;
+    }
+
+    if (e.machineKey === "b") {
+        const direction = 1;
+        position.x += speed * direction;
+    }
+
+    // Or
+    // if (e.keyboardKey === "ArrowLeft") {
+    //     const direction = -1;
+    //     position.x += speed * direction;
+    // }
+
+    // if (e.keyboardKey === "ArrowRight") {
+    //     const direction = 1;
+    //     position.x += speed * direction;
+    // }
 }
+
+function keyupHandler(e) {
+    //
+}
+
+// Use joystick
+Arcade.addEventListener("joystick:move", joystickMoveHandler);
+Arcade.addEventListener("joystick:keydown", joystickKeydownHandler);
+Arcade.addEventListener("joystick:keyup", joystickKeyupHandler);
 
 function joystickMoveHandler(e) {
     const speed = 50;
     position.x += speed * e.x;
+}
+
+function joystickKeydownHandler(e) {
+    //
+}
+
+function joystickKeyupHandler(e) {
+    //
 }
 ```
 
