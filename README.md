@@ -12,12 +12,16 @@ npm i github:arcade-feu/arcade-api
 
 ### Game usage
 
+#### Handling controllers
+
 ```js
 import Arcade from "arcade-api";
 
 // Map a Machine Key to a Keyboard Key
 Arcade.registerKey("a", "ArrowLeft");
 Arcade.registerKey("b", "ArrowRight");
+Arcade.registerKey("c", "Space");
+Arcade.registerKey("d", "Space");
 
 // Use buttons
 Arcade.addEventListener("keydown", keydownHandler);
@@ -59,6 +63,11 @@ Arcade.addEventListener("joystick:move", joystickMoveHandler);
 Arcade.addEventListener("joystick:keydown", joystickKeydownHandler);
 Arcade.addEventListener("joystick:keyup", joystickKeyupHandler);
 
+// Configure the joystick deadzone (default to 0.1)
+Arcade.setJoystickDeadzone(0.05);
+// When the distance from the center is smaller then 0.05
+// the joystick event will output { x: 0, y: 0 }
+
 function joystickMoveHandler(e) {
     const speed = 50;
     position.x += speed * e.x;
@@ -70,6 +79,29 @@ function joystickKeydownHandler(e) {
 
 function joystickKeyupHandler(e) {
     //
+}
+```
+
+#### Handling exit
+
+At anytime, the player can leave the game with the machine home button,
+when this button is pressed the player will be asked to confirm or cancel,
+you can handle these situations with the following events:
+
+```js
+// Exit game events
+Arcade.addEventListener("exit:attempted", exitAttemptHandler);
+
+function exitAttemptedHandler() {
+    pause();
+}
+
+function exitCanceledHandler() {
+    unpause();
+}
+
+function exitCompletedHandler() {
+    console.log("👋 Bye bye");
 }
 ```
 
