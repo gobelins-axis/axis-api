@@ -1,5 +1,9 @@
 export default class joystickManager {
-    constructor() {
+    constructor(options = {}) {
+        // Props
+        this._joystick1 = options.joystick1;
+        this._joystick2 = options.joystick2;
+
         // Setup
         this._ipcRenderer = null;
 
@@ -47,7 +51,8 @@ export default class joystickManager {
     /**
      * Handlers
      */
-    _joystickMoveHandler() {
-        // Send event to the right joystick
+    _joystickMoveHandler(event, data) {
+        if (data.id === 1) this._joystick1.moveHandler(data.position);
+        if (data.id === 2) this._joystick2.moveHandler(data.position);
     }
 }

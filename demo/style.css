@@ -1,13 +1,22 @@
 .box {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    margin: auto;
 
     width: 100px;
     height: 100px;
+}
+
+.box--1 {
+    position: fixed;
+    left: 20%;
+    bottom: 0;
 
     background-color: red;
+}
+
+.box--2 {
+    position: fixed;
+    right: 20%;
+    bottom: 0;
+
+    background-color: blue;
 }

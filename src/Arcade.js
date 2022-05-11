@@ -92,6 +92,8 @@ class Arcade extends EventDispatcher {
         if (this._ipcRenderer) return;
 
         this._ipcRenderer = ipcRenderer;
+        this._buttonManager.ipcRenderer = this._ipcRenderer;
+        this._joystickManager.ipcRenderer = this._ipcRenderer;
 
         this._setupIpcRendererEventListeners();
     }
@@ -108,7 +110,8 @@ class Arcade extends EventDispatcher {
 
     _createJoystickManager() {
         const joystickManager = new JoystickManager({
-            joysticks: [this._joystick1, this._joystick2],
+            joystick1: this._joystick1,
+            joystick2: this._joystick2,
         });
         return joystickManager;
     }

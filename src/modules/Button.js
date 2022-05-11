@@ -32,11 +32,21 @@ export default class Button extends EventDispatcher {
      * Public
      */
     keydownHandler(e) {
-        this.dispatchEvent('keydown', e);
+        this.dispatchEvent('keydown', {
+            key: this._key,
+            id: this._id,
+            instance: this,
+            originalEvent: e,
+        });
     }
 
     keyupHandler(e) {
-        this.dispatchEvent('keyup', e);
+        this.dispatchEvent('keyup', {
+            key: this._key,
+            id: this._id,
+            instance: this,
+            originalEvent: e,
+        });
     }
 
     /**
