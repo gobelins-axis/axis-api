@@ -174,12 +174,28 @@
     return timeout;
   }
 
+  function throttle(callback, delay, lastTime) {
+    var now = new Date();
+
+    if (lastTime === undefined) {
+      callback();
+      return now;
+    } else {
+      if (now - lastTime >= delay) {
+        callback();
+        return now;
+      } else {
+        return lastTime;
+      }
+    }
+  }
+
   var joystick = {
     deadzone: 0.1,
     threshold: 0,
-    inputInactiveDelay: 0.5,
-    inputIntervalMax: 1,
-    inputIntervalMin: 0.2
+    inputInactiveDelay: 0.3,
+    inputIntervalMax: 0.5,
+    inputIntervalMin: 0.1
   };
 
   function map(value, inMin, inMax, outMin, outMax) {
@@ -237,7 +253,6 @@
       _this._inputInactiveDelay = joystick.inputInactiveDelay;
       _this._inputIntervalMin = joystick.inputIntervalMin;
       _this._inputIntervalMax = joystick.inputIntervalMax;
-      _this._inputInterval = _this._inputIntervalMax;
       _this._ipcRenderer = null;
       _this._position = {
         x: 0,
@@ -316,7 +331,11 @@
       key: "moveHandler",
       value: function moveHandler(e) {
         this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
-        this._position.y = normalizeJoystickSignal(e, this._deadzone).y; // Left
+        this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
+        this.dispatchEvent('joystick:move', {
+          id: this._id,
+          position: this._position
+        }); // Left
 
         if (this._position.x <= -1 + this._threshold) {
           this._moveLeftHandler();
@@ -336,11 +355,6 @@
         if (this._position.y <= -1 + this._threshold) {
           this._moveDownHandler();
         }
-
-        this.dispatchEvent('joystick:move', {
-          id: this._id,
-          position: this._position
-        });
       }
       /**
        * Private
@@ -350,64 +364,100 @@
       key: "_bindAll",
       value: function _bindAll() {
         this._moveLeftHandler = this._moveLeftHandler.bind(this);
+        this._moveLeftThrottledHandler = this._moveLeftThrottledHandler.bind(this);
         this._moveLeftEndHandler = this._moveLeftEndHandler.bind(this);
         this._moveRightHandler = this._moveRightHandler.bind(this);
+        this._moveRightThrottledHandler = this._moveRightThrottledHandler.bind(this);
         this._moveRightEndHandler = this._moveRightEndHandler.bind(this);
         this._moveUpHandler = this._moveUpHandler.bind(this);
+        this._moveUpThrottledHandler = this._moveUpThrottledHandler.bind(this);
         this._moveUpEndHandler = this._moveUpEndHandler.bind(this);
         this._moveDownHandler = this._moveDownHandler.bind(this);
+        this._moveDownThrottledHandler = this._moveDownThrottledHandler.bind(this);
         this._moveDownEndHandler = this._moveDownEndHandler.bind(this);
       }
     }, {
       key: "_moveLeftHandler",
       value: function _moveLeftHandler() {
-        this._debouceInputLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debouceInputLeft);
+        var inputInterval = this._inputLeftIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveLeft = throttle(this._moveLeftThrottledHandler, inputInterval * 1000, this._throttleMoveLeft);
+        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debounceMoveLeft);
+      }
+    }, {
+      key: "_moveLeftThrottledHandler",
+      value: function _moveLeftThrottledHandler() {
         this._inputLeftIndex++;
+        this.dispatchEvent('joystick:quickmove', {
+          direction: 'left',
+          position: this._position
+        });
       }
     }, {
       key: "_moveLeftEndHandler",
       value: function _moveLeftEndHandler() {
-        console.log('Left End');
         this._inputLeftIndex = 0;
       }
     }, {
       key: "_moveRightHandler",
       value: function _moveRightHandler() {
-        console.log('Right');
-        this._debouceInputRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debouceInputRight);
+        var inputInterval = this._inputRightIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveRight = throttle(this._moveRightThrottledHandler, inputInterval * 1000, this._throttleMoveRight);
+        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debounceMoveRight);
+      }
+    }, {
+      key: "_moveRightThrottledHandler",
+      value: function _moveRightThrottledHandler() {
         this._inputRightIndex++;
+        this.dispatchEvent('joystick:quickmove', {
+          direction: 'right',
+          position: this._position
+        });
       }
     }, {
       key: "_moveRightEndHandler",
       value: function _moveRightEndHandler() {
-        console.log('Right End');
         this._inputRightIndex = 0;
       }
     }, {
       key: "_moveUpHandler",
       value: function _moveUpHandler() {
-        console.log('Up');
-        this._debouceInputUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debouceInputUp);
+        var inputInterval = this._inputUpIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveUp = throttle(this._moveUpThrottledHandler, inputInterval * 1000, this._throttleMoveUp);
+        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debounceMoveUp);
+      }
+    }, {
+      key: "_moveUpThrottledHandler",
+      value: function _moveUpThrottledHandler() {
         this._inputUpIndex++;
+        this.dispatchEvent('joystick:quickmove', {
+          direction: 'up',
+          position: this._position
+        });
       }
     }, {
       key: "_moveUpEndHandler",
       value: function _moveUpEndHandler() {
-        console.log('Up End');
-        console.log(this._inputUpIndex);
         this._inputUpIndex = 0;
       }
     }, {
       key: "_moveDownHandler",
       value: function _moveDownHandler() {
-        console.log('Down');
-        this._debouceInputDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debouceInputDown);
+        var inputInterval = this._inputDownIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveDown = throttle(this._moveDownThrottledHandler, inputInterval * 1000, this._throttleMoveDown);
+        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debounceMoveDown);
+      }
+    }, {
+      key: "_moveDownThrottledHandler",
+      value: function _moveDownThrottledHandler() {
         this._inputDownIndex++;
+        this.dispatchEvent('joystick:quickmove', {
+          direction: 'down',
+          position: this._position
+        });
       }
     }, {
       key: "_moveDownEndHandler",
       value: function _moveDownEndHandler() {
-        console.log('Down End');
         this._inputDownIndex = 0;
       }
     }]);
@@ -483,11 +533,14 @@
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+        this._joystickQuickmoveHandler = this._joystickQuickmoveHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
       value: function _setupEventListeners() {
         this._joystick.addEventListener('joystick:move', this._joystickMoveHandler);
+
+        this._joystick.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
 
         for (var i = 0; i < this._buttons.length; i++) {
           this._buttons[i].addEventListener('keydown', this._keydownHandler);
@@ -499,6 +552,8 @@
       key: "_removeEventListeners",
       value: function _removeEventListeners() {
         this._joystick.removeEventListener('joystick:move', this._joystickMoveHandler);
+
+        this._joystick.removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
 
         for (var i = 0; i < this._buttons.length; i++) {
           this._buttons[i].removeEventListener('keydown', this._keydownHandler);
@@ -520,6 +575,11 @@
       key: "_joystickMoveHandler",
       value: function _joystickMoveHandler(e) {
         this.dispatchEvent('joystick:move', e);
+      }
+    }, {
+      key: "_joystickQuickmoveHandler",
+      value: function _joystickQuickmoveHandler(e) {
+        this.dispatchEvent('joystick:quickmove', e);
       }
     }]);
 
@@ -597,8 +657,7 @@
     }, {
       key: "_joystickMoveHandler",
       value: function _joystickMoveHandler(event, data) {
-        if (data.id === 1) this._joystick1.moveHandler(data.position);
-        if (data.id === 2) this._joystick2.moveHandler(data.position);
+        if (data.id === 1) this._joystick1.moveHandler(data.position); // if (data.id === 2) this._joystick2.moveHandler(data.position);
       }
     }]);
 
@@ -1138,10 +1197,10 @@
   }
 
   function update() {
-    position1.current.x = lerp(position1.current.x, position1.target.x, 0.3);
-    position1.current.y = lerp(position1.current.y, position1.target.y, 0.3);
-    position2.current.x = lerp(position2.current.x, position2.target.x, 0.3);
-    position2.current.y = lerp(position2.current.y, position2.target.y, 0.3);
+    position1.current.x = lerp(position1.current.x, position1.target.x, 1);
+    position1.current.y = lerp(position1.current.y, position1.target.y, 1);
+    position2.current.x = lerp(position2.current.x, position2.target.x, 1);
+    position2.current.y = lerp(position2.current.y, position2.target.y, 1);
     box1.style.transform = "translate(".concat(position1.current.x, "px, ").concat(position1.current.y, "px)");
     box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
     requestAnimationFrame(update);
@@ -1151,6 +1210,7 @@
     Arcade$1.player1.addEventListener('keydown', player1keydownHandler);
     Arcade$1.player1.addEventListener('keyup', player1keyupHandler);
     Arcade$1.player1.addEventListener('joystick:move', joystickMoveHandler);
+    Arcade$1.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
     Arcade$1.player2.addEventListener('keydown', player2keydownHandler);
     Arcade$1.player2.addEventListener('keyup', player2keyupHandler);
   }
@@ -1211,10 +1271,18 @@
   function player2keyupHandler(e) {//
   }
 
-  function joystickMoveHandler(e) {
+  function joystickMoveHandler(e) {// const speed = 30;
+    // position1.target.x += e.position.x * speed;
+    // position1.target.y += -e.position.y * speed;
+  }
+
+  function joystickQuickMoveHandler(e) {
+    console.log(e.direction);
     var speed = 30;
-    position1.target.x += e.position.x * speed;
-    position1.target.y += -e.position.y * speed;
+    if (e.direction === 'left') position1.target.x += speed * -1;
+    if (e.direction === 'right') position1.target.x += speed;
+    if (e.direction === 'up') position1.target.y += speed * -1;
+    if (e.direction === 'down') position1.target.y += speed;
   }
 
   function lerp(v0, v1, t) {

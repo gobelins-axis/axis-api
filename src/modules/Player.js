@@ -50,10 +50,12 @@ export default class Player extends EventDispatcher {
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+        this._joystickQuickmoveHandler = this._joystickQuickmoveHandler.bind(this);
     }
 
     _setupEventListeners() {
         this._joystick.addEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystick.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
 
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].addEventListener('keydown', this._keydownHandler);
@@ -63,6 +65,7 @@ export default class Player extends EventDispatcher {
 
     _removeEventListeners() {
         this._joystick.removeEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystick.removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
 
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].removeEventListener('keydown', this._keydownHandler);
@@ -80,5 +83,9 @@ export default class Player extends EventDispatcher {
 
     _joystickMoveHandler(e) {
         this.dispatchEvent('joystick:move', e);
+    }
+
+    _joystickQuickmoveHandler(e) {
+        this.dispatchEvent('joystick:quickmove', e);
     }
 }

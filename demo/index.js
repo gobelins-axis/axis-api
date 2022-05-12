@@ -29,11 +29,11 @@ function setup() {
 }
 
 function update() {
-    position1.current.x = lerp(position1.current.x, position1.target.x, 0.3);
-    position1.current.y = lerp(position1.current.y, position1.target.y, 0.3);
+    position1.current.x = lerp(position1.current.x, position1.target.x, 1);
+    position1.current.y = lerp(position1.current.y, position1.target.y, 1);
 
-    position2.current.x = lerp(position2.current.x, position2.target.x, 0.3);
-    position2.current.y = lerp(position2.current.y, position2.target.y, 0.3);
+    position2.current.x = lerp(position2.current.x, position2.target.x, 1);
+    position2.current.y = lerp(position2.current.y, position2.target.y, 1);
 
     box1.style.transform = `translate(${position1.current.x}px, ${position1.current.y}px)`;
     box2.style.transform = `translate(${position2.current.x}px, ${position2.current.y}px)`;
@@ -45,6 +45,7 @@ function setupEventListeners() {
     Arcade.player1.addEventListener('keydown', player1keydownHandler);
     Arcade.player1.addEventListener('keyup', player1keyupHandler);
     Arcade.player1.addEventListener('joystick:move', joystickMoveHandler);
+    Arcade.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
 
     Arcade.player2.addEventListener('keydown', player2keydownHandler);
     Arcade.player2.addEventListener('keyup', player2keyupHandler);
@@ -109,9 +110,18 @@ function player2keyupHandler(e) {
 }
 
 function joystickMoveHandler(e) {
+    // const speed = 30;
+    // position1.target.x += e.position.x * speed;
+    // position1.target.y += -e.position.y * speed;
+}
+
+function joystickQuickMoveHandler(e) {
+    console.log(e.direction);
     const speed = 30;
-    position1.target.x += e.position.x * speed;
-    position1.target.y += -e.position.y * speed;
+    if (e.direction === 'left') position1.target.x += speed * -1;
+    if (e.direction === 'right') position1.target.x += speed;
+    if (e.direction === 'up') position1.target.y += speed * -1;
+    if (e.direction === 'down') position1.target.y += speed;
 }
 
 function lerp(v0, v1, t) {

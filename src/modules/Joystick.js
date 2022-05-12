@@ -1,6 +1,7 @@
 // Utils
 import EventDispatcher from '../utils/EventDispatcher';
 import debounce from '../utils/debounce';
+import throttle from '../utils/throttle';
 
 // Config
 import config from '../configs/joystick';
@@ -21,7 +22,6 @@ export default class Joystick extends EventDispatcher {
         this._inputInactiveDelay = config.inputInactiveDelay;
         this._inputIntervalMin = config.inputIntervalMin;
         this._inputIntervalMax = config.inputIntervalMax;
-        this._inputInterval = this._inputIntervalMax;
 
         this._ipcRenderer = null;
         this._position = { x: 0, y: 0 };
@@ -93,6 +93,8 @@ export default class Joystick extends EventDispatcher {
         this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
         this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
 
+        this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
+
         // Left
         if (this._position.x <= -1 + this._threshold) {
             this._moveLeftHandler();
@@ -112,8 +114,6 @@ export default class Joystick extends EventDispatcher {
         if (this._position.y <= -1 + this._threshold) {
             this._moveDownHandler();
         }
-
-        this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
     }
 
     /**
@@ -121,56 +121,79 @@ export default class Joystick extends EventDispatcher {
      */
     _bindAll() {
         this._moveLeftHandler = this._moveLeftHandler.bind(this);
+        this._moveLeftThrottledHandler = this._moveLeftThrottledHandler.bind(this);
         this._moveLeftEndHandler = this._moveLeftEndHandler.bind(this);
+
         this._moveRightHandler = this._moveRightHandler.bind(this);
+        this._moveRightThrottledHandler = this._moveRightThrottledHandler.bind(this);
         this._moveRightEndHandler = this._moveRightEndHandler.bind(this);
+
         this._moveUpHandler = this._moveUpHandler.bind(this);
+        this._moveUpThrottledHandler = this._moveUpThrottledHandler.bind(this);
         this._moveUpEndHandler = this._moveUpEndHandler.bind(this);
+
         this._moveDownHandler = this._moveDownHandler.bind(this);
+        this._moveDownThrottledHandler = this._moveDownThrottledHandler.bind(this);
         this._moveDownEndHandler = this._moveDownEndHandler.bind(this);
     }
 
     _moveLeftHandler() {
-        this._debouceInputLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debouceInputLeft);
+        const inputInterval = this._inputLeftIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveLeft = throttle(this._moveLeftThrottledHandler, inputInterval * 1000, this._throttleMoveLeft);
+        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debounceMoveLeft);
+    }
+
+    _moveLeftThrottledHandler() {
         this._inputLeftIndex++;
+        this.dispatchEvent('joystick:quickmove', { direction: 'left', position: this._position });
     }
 
     _moveLeftEndHandler() {
-        console.log('Left End');
         this._inputLeftIndex = 0;
     }
 
     _moveRightHandler() {
-        console.log('Right');
-        this._debouceInputRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debouceInputRight);
+        const inputInterval = this._inputRightIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveRight = throttle(this._moveRightThrottledHandler, inputInterval * 1000, this._throttleMoveRight);
+        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debounceMoveRight);
+    }
+
+    _moveRightThrottledHandler() {
         this._inputRightIndex++;
+        this.dispatchEvent('joystick:quickmove', { direction: 'right', position: this._position });
     }
 
     _moveRightEndHandler() {
-        console.log('Right End');
         this._inputRightIndex = 0;
     }
 
     _moveUpHandler() {
-        console.log('Up');
-        this._debouceInputUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debouceInputUp);
+        const inputInterval = this._inputUpIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveUp = throttle(this._moveUpThrottledHandler, inputInterval * 1000, this._throttleMoveUp);
+        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debounceMoveUp);
+    }
+
+    _moveUpThrottledHandler() {
         this._inputUpIndex++;
+        this.dispatchEvent('joystick:quickmove', { direction: 'up', position: this._position });
     }
 
     _moveUpEndHandler() {
-        console.log('Up End');
-        console.log(this._inputUpIndex);
         this._inputUpIndex = 0;
     }
 
     _moveDownHandler() {
-        console.log('Down');
-        this._debouceInputDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debouceInputDown);
+        const inputInterval = this._inputDownIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
+        this._throttleMoveDown = throttle(this._moveDownThrottledHandler, inputInterval * 1000, this._throttleMoveDown);
+        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debounceMoveDown);
+    }
+
+    _moveDownThrottledHandler() {
         this._inputDownIndex++;
+        this.dispatchEvent('joystick:quickmove', { direction: 'down', position: this._position });
     }
 
     _moveDownEndHandler() {
-        console.log('Down End');
         this._inputDownIndex = 0;
     }
 }
