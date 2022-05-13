@@ -1,10 +1,11 @@
+// Modules
+import Joystick from '../modules/Joystick';
+
 export default class joystickManager {
     constructor(options = {}) {
-        // Props
-        this._joystick1 = options.joystick1;
-        this._joystick2 = options.joystick2;
-
         // Setup
+        this._joystick1 = this._createJoystick1();
+        this._joystick2 = this._createJoystick2();
         this._ipcRenderer = null;
 
         this._bindAll();
@@ -23,6 +24,14 @@ export default class joystickManager {
         this._setupIpcRendererEventListeners();
     }
 
+    get joystick1() {
+        return this._joystick1;
+    }
+
+    get joystick2() {
+        return this._joystick2;
+    }
+
     /**
      * Public
      */
@@ -33,6 +42,16 @@ export default class joystickManager {
     /**
      * Private
      */
+    _createJoystick1() {
+        const joystick1 = new Joystick({ id: 1 });
+        return joystick1;
+    }
+
+    _createJoystick2() {
+        const joystick2 = new Joystick({ id: 2 });
+        return joystick2;
+    }
+
     _bindAll() {
         // Event handlers
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);

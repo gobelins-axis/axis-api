@@ -1,17 +1,10 @@
 // Utils
 import EventDispatcher from './utils/EventDispatcher';
 
-// Modules
-import Joystick from './modules/Joystick';
-import Player from './modules/Player';
-
 // Managers
 import JoystickManager from './managers/JoystickManager';
-
-// Configs
-import config from './configs';
-import Button from './modules/Button';
 import ButtonManager from './managers/ButtonManager';
+import PlayerManager from './managers/PlayerManager';
 
 class Arcade extends EventDispatcher {
     constructor() {
@@ -20,15 +13,9 @@ class Arcade extends EventDispatcher {
         // Setup
         this._ipcRenderer = null;
 
-        this._joystick1 = this._createJoystick1();
-        this._joystick2 = this._createJoystick2();
         this._joystickManager = this._createJoystickManager();
-
-        this._buttons = this._createButtons();
         this._buttonManager = this._createButtonManager();
-
-        this._player1 = this._createPlayer1();
-        this._player2 = this._createPlayer2();
+        this._playerManager = this._createPlayerManager();
 
         this._bindAll();
         this._exposeMethods();
@@ -47,19 +34,19 @@ class Arcade extends EventDispatcher {
     }
 
     get joystick1() {
-        return this._joystick1;
+        return this._joystickManager.joystick1;
     }
 
     get joystick2() {
-        return this._joystick2;
+        return this._joystickManager.joystick2;
     }
 
     get player1() {
-        return this._player1;
+        return this._playerManager.player1;
     }
 
     get player2() {
-        return this._player2;
+        return this._playerManager.player2;
     }
 
     /**
@@ -98,61 +85,22 @@ class Arcade extends EventDispatcher {
         this._setupIpcRendererEventListeners();
     }
 
-    _createJoystick1() {
-        const joystick1 = new Joystick({ id: 1 });
-        return joystick1;
-    }
-
-    _createJoystick2() {
-        const joystick2 = new Joystick({ id: 2 });
-        return joystick2;
-    }
-
     _createJoystickManager() {
-        const joystickManager = new JoystickManager({
-            joystick1: this._joystick1,
-            joystick2: this._joystick2,
-        });
+        const joystickManager = new JoystickManager();
         return joystickManager;
     }
 
-    _createButtons() {
-        const buttons = [];
-
-        for (let i = 0; i < config.buttons.length; i++) {
-            const button = new Button({
-                id: config.buttons[i].id,
-                key: config.buttons[i].key,
-            });
-            buttons.push(button);
-        }
-
-        return buttons;
-    }
-
     _createButtonManager() {
-        const buttonManager = new ButtonManager({
-            buttons: this._buttons,
-        });
+        const buttonManager = new ButtonManager();
         return buttonManager;
     }
 
-    _createPlayer1() {
-        const player1 = new Player({
-            id: 1,
-            joystick: this._joystick1,
-            buttons: this._buttonManager.getButtonsById(1),
+    _createPlayerManager() {
+        const playerManager = new PlayerManager({
+            joystickManager: this._joystickManager,
+            buttonManager: this._buttonManager,
         });
-        return player1;
-    }
-
-    _createPlayer2() {
-        const player2 = new Player({
-            id: 2,
-            joystick: this._joystick2,
-            buttons: this._buttonManager.getButtonsById(2),
-        });
-        return player2;
+        return playerManager;
     }
 
     _bindAll() {

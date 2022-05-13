@@ -1,12 +1,16 @@
+// Modules
+import Button from '../modules/Button';
+
+// Configs
+import config from '../configs';
+
 // Utils
 import getArray from '../utils/getArray';
 
 export default class ButtonManager {
     constructor(options = {}) {
-        // Props
-        this._buttons = options.buttons;
-
         // Setup
+        this._buttons = this._createButtons();
         this._ipcRenderer = null;
 
         this._bindAll();
@@ -65,6 +69,20 @@ export default class ButtonManager {
     /**
      * Private
      */
+    _createButtons() {
+        const buttons = [];
+
+        for (let i = 0; i < config.buttons.length; i++) {
+            const button = new Button({
+                id: config.buttons[i].id,
+                key: config.buttons[i].key,
+            });
+            buttons.push(button);
+        }
+
+        return buttons;
+    }
+
     _bindAll() {
         // Event handlers
         this._keydownHandler = this._keydownHandler.bind(this);

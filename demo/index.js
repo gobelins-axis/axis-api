@@ -110,18 +110,19 @@ function player2keyupHandler(e) {
 }
 
 function joystickMoveHandler(e) {
+    console.log(e.position);
     // const speed = 30;
     // position1.target.x += e.position.x * speed;
     // position1.target.y += -e.position.y * speed;
 }
 
 function joystickQuickMoveHandler(e) {
-    console.log(e.direction);
-    const speed = 30;
-    if (e.direction === 'left') position1.target.x += speed * -1;
-    if (e.direction === 'right') position1.target.x += speed;
-    if (e.direction === 'up') position1.target.y += speed * -1;
-    if (e.direction === 'down') position1.target.y += speed;
+    // console.log(e.direction);
+    // const speed = 30;
+    // if (e.direction === 'left') position1.target.x += speed * -1;
+    // if (e.direction === 'right') position1.target.x += speed;
+    // if (e.direction === 'up') position1.target.y += speed * -1;
+    // if (e.direction === 'down') position1.target.y += speed;
 }
 
 function lerp(v0, v1, t) {

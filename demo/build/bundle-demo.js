@@ -465,6 +465,389 @@
     return Joystick;
   }(EventDispatcher);
 
+  var joystickManager = /*#__PURE__*/function () {
+    function joystickManager() {
+
+      _classCallCheck(this, joystickManager);
+
+      // Setup
+      this._joystick1 = this._createJoystick1();
+      this._joystick2 = this._createJoystick2();
+      this._ipcRenderer = null;
+
+      this._bindAll();
+
+      this._setupIpcRendererEventListeners();
+    }
+    /**
+     * Getters & Setters
+     */
+
+
+    _createClass(joystickManager, [{
+      key: "ipcRenderer",
+      get: function get() {
+        return this._ipcRenderer;
+      },
+      set: function set(ipcRenderer) {
+        this._ipcRenderer = ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
+      }
+    }, {
+      key: "joystick1",
+      get: function get() {
+        return this._joystick1;
+      }
+    }, {
+      key: "joystick2",
+      get: function get() {
+        return this._joystick2;
+      }
+      /**
+       * Public
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._removeIpcRendererEventListeners();
+      }
+      /**
+       * Private
+       */
+
+    }, {
+      key: "_createJoystick1",
+      value: function _createJoystick1() {
+        var joystick1 = new Joystick({
+          id: 1
+        });
+        return joystick1;
+      }
+    }, {
+      key: "_createJoystick2",
+      value: function _createJoystick2() {
+        var joystick2 = new Joystick({
+          id: 2
+        });
+        return joystick2;
+      }
+    }, {
+      key: "_bindAll",
+      value: function _bindAll() {
+        // Event handlers
+        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+      }
+    }, {
+      key: "_setupIpcRendererEventListeners",
+      value: function _setupIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
+      }
+    }, {
+      key: "_removeIpcRendererEventListeners",
+      value: function _removeIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
+      }
+      /**
+       * Handlers
+       */
+
+    }, {
+      key: "_joystickMoveHandler",
+      value: function _joystickMoveHandler(event, data) {
+        if (data.id === 1) this._joystick1.moveHandler(data.position); // if (data.id === 2) this._joystick2.moveHandler(data.position);
+      }
+    }]);
+
+    return joystickManager;
+  }();
+
+  var Button = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(Button, _EventDispatcher);
+
+    var _super = _createSuper(Button);
+
+    function Button() {
+      var _this;
+
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Button);
+
+      _this = _super.call(this);
+      _this._id = options.id;
+      _this._key = options.key;
+      _this._keyboardKeys = [];
+      return _this;
+    }
+    /**
+     * Getters & Setters
+     */
+
+
+    _createClass(Button, [{
+      key: "id",
+      get: function get() {
+        return this._id;
+      }
+    }, {
+      key: "key",
+      get: function get() {
+        return this._key;
+      }
+    }, {
+      key: "keyboardKeys",
+      get: function get() {
+        return this._keyboardKeys;
+      },
+      set: function set(keys) {
+        this._keyboardKeys = keys;
+      }
+      /**
+       * Public
+       */
+
+    }, {
+      key: "keydownHandler",
+      value: function keydownHandler(e) {
+        this.dispatchEvent('keydown', {
+          key: this._key,
+          id: this._id,
+          instance: this,
+          originalEvent: e
+        });
+      }
+    }, {
+      key: "keyupHandler",
+      value: function keyupHandler(e) {
+        this.dispatchEvent('keyup', {
+          key: this._key,
+          id: this._id,
+          instance: this,
+          originalEvent: e
+        });
+      }
+      /**
+       * Private
+       */
+
+    }]);
+
+    return Button;
+  }(EventDispatcher);
+
+  var buttons = [// 1
+  {
+    key: 'a',
+    id: 1
+  }, {
+    key: 'b',
+    id: 1
+  }, {
+    key: 'c',
+    id: 1
+  }, {
+    key: 'd',
+    id: 1
+  }, {
+    key: 'e',
+    id: 1
+  }, // 2
+  {
+    key: 'a',
+    id: 2
+  }, {
+    key: 'b',
+    id: 2
+  }, {
+    key: 'c',
+    id: 2
+  }, {
+    key: 'd',
+    id: 2
+  }, {
+    key: 'e',
+    id: 2
+  }];
+
+  var config = {
+    buttons: buttons,
+    joystick: joystick
+  };
+
+  function getArray(value) {
+    if (Array.isArray(value)) return value;else return [value];
+  }
+
+  var ButtonManager = /*#__PURE__*/function () {
+    function ButtonManager() {
+
+      _classCallCheck(this, ButtonManager);
+
+      // Setup
+      this._buttons = this._createButtons();
+      this._ipcRenderer = null;
+
+      this._bindAll();
+
+      this._setupEventListeners();
+    }
+    /**
+     * Getters & Setters
+     */
+
+
+    _createClass(ButtonManager, [{
+      key: "ipcRenderer",
+      get: function get() {
+        return this._ipcRenderer;
+      },
+      set: function set(ipcRenderer) {
+        this._ipcRenderer = ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
+      }
+      /**
+       * Public
+       */
+
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._removeEventListeners();
+
+        this._removeIpcRendererEventListeners();
+      }
+    }, {
+      key: "registerKeys",
+      value: function registerKeys(keyboardKeys, key, id) {
+        var button = this.getButton(key, id);
+        if (button) button.keyboardKeys = getArray(keyboardKeys);
+        return button;
+      }
+    }, {
+      key: "getButton",
+      value: function getButton(key, id) {
+        var button = this._buttons.filter(function (item) {
+          return item.key === key && item.id === id;
+        })[0];
+
+        return button;
+      }
+    }, {
+      key: "getButtonsById",
+      value: function getButtonsById(id) {
+        var buttons = this._buttons.filter(function (item) {
+          return item.id === id;
+        });
+
+        return buttons;
+      }
+    }, {
+      key: "getButtonsByKeyboardKey",
+      value: function getButtonsByKeyboardKey(keyboardKey) {
+        var buttons = this._buttons.filter(function (item) {
+          return item.keyboardKeys.includes(keyboardKey);
+        });
+
+        return buttons;
+      }
+      /**
+       * Private
+       */
+
+    }, {
+      key: "_createButtons",
+      value: function _createButtons() {
+        var buttons = [];
+
+        for (var i = 0; i < config.buttons.length; i++) {
+          var button = new Button({
+            id: config.buttons[i].id,
+            key: config.buttons[i].key
+          });
+          buttons.push(button);
+        }
+
+        return buttons;
+      }
+    }, {
+      key: "_bindAll",
+      value: function _bindAll() {
+        // Event handlers
+        this._keydownHandler = this._keydownHandler.bind(this);
+        this._keyupHandler = this._keyupHandler.bind(this);
+        this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
+        this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
+      }
+    }, {
+      key: "_setupEventListeners",
+      value: function _setupEventListeners() {
+        window.addEventListener('keydown', this._keydownHandler);
+        window.addEventListener('keyup', this._keyupHandler);
+      }
+    }, {
+      key: "_removeEventListeners",
+      value: function _removeEventListeners() {
+        window.removeEventListener('keydown', this._keydownHandler);
+        window.removeEventListener('keyup', this._keyupHandler);
+      }
+    }, {
+      key: "_setupIpcRendererEventListeners",
+      value: function _setupIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.on('keydown', this._machineKeydownHandler);
+
+        this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+      }
+    }, {
+      key: "_removeIpcRendererEventListeners",
+      value: function _removeIpcRendererEventListeners() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
+
+        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
+      }
+      /**
+       * Handlers
+       */
+
+    }, {
+      key: "_keydownHandler",
+      value: function _keydownHandler(e) {
+        var buttons = this.getButtonsByKeyboardKey(e.key);
+
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].keydownHandler(e);
+        }
+      }
+    }, {
+      key: "_keyupHandler",
+      value: function _keyupHandler(e) {
+        var buttons = this.getButtonsByKeyboardKey(e.key);
+
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].keyupHandler(e);
+        }
+      }
+    }, {
+      key: "_machineKeydownHandler",
+      value: function _machineKeydownHandler(event, key) {}
+    }, {
+      key: "_machineKeyupHandler",
+      value: function _machineKeyupHandler(event, key) {}
+    }]);
+
+    return ButtonManager;
+  }();
+
   var Player = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Player, _EventDispatcher);
 
@@ -586,36 +969,33 @@
     return Player;
   }(EventDispatcher);
 
-  var joystickManager = /*#__PURE__*/function () {
-    function joystickManager() {
+  var PlayerManager = /*#__PURE__*/function () {
+    function PlayerManager() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      _classCallCheck(this, joystickManager);
+      _classCallCheck(this, PlayerManager);
 
       // Props
-      this._joystick1 = options.joystick1;
-      this._joystick2 = options.joystick2; // Setup
+      this._joystickManager = options.joystickManager;
+      this._buttonManager = options.buttonManager; // Setup
 
-      this._ipcRenderer = null;
-
-      this._bindAll();
-
-      this._setupIpcRendererEventListeners();
+      this._player1 = this._createPlayer1();
+      this._player2 = this._createPlayer2();
     }
     /**
-     * Getters & Setters
+     * Getters
      */
 
 
-    _createClass(joystickManager, [{
-      key: "ipcRenderer",
+    _createClass(PlayerManager, [{
+      key: "player1",
       get: function get() {
-        return this._ipcRenderer;
-      },
-      set: function set(ipcRenderer) {
-        this._ipcRenderer = ipcRenderer;
-
-        this._setupIpcRendererEventListeners();
+        return this._player1;
+      }
+    }, {
+      key: "player2",
+      get: function get() {
+        return this._player2;
       }
       /**
        * Public
@@ -623,313 +1003,34 @@
 
     }, {
       key: "destroy",
-      value: function destroy() {
-        this._removeIpcRendererEventListeners();
-      }
+      value: function destroy() {}
       /**
        * Private
        */
 
     }, {
-      key: "_bindAll",
-      value: function _bindAll() {
-        // Event handlers
-        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+      key: "_createPlayer1",
+      value: function _createPlayer1() {
+        var player1 = new Player({
+          id: 1,
+          joystick: this._joystickManager.joystick1,
+          buttons: this._buttonManager.getButtonsById(1)
+        });
+        return player1;
       }
     }, {
-      key: "_setupIpcRendererEventListeners",
-      value: function _setupIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
-      }
-    }, {
-      key: "_removeIpcRendererEventListeners",
-      value: function _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
-      }
-      /**
-       * Handlers
-       */
-
-    }, {
-      key: "_joystickMoveHandler",
-      value: function _joystickMoveHandler(event, data) {
-        if (data.id === 1) this._joystick1.moveHandler(data.position); // if (data.id === 2) this._joystick2.moveHandler(data.position);
+      key: "_createPlayer2",
+      value: function _createPlayer2() {
+        var player2 = new Player({
+          id: 2,
+          joystick: this._joystickManager.joystick2,
+          buttons: this._buttonManager.getButtonsById(2)
+        });
+        return player2;
       }
     }]);
 
-    return joystickManager;
-  }();
-
-  var buttons = [// 1
-  {
-    key: 'a',
-    id: 1
-  }, {
-    key: 'b',
-    id: 1
-  }, {
-    key: 'c',
-    id: 1
-  }, {
-    key: 'd',
-    id: 1
-  }, {
-    key: 'e',
-    id: 1
-  }, // 2
-  {
-    key: 'a',
-    id: 2
-  }, {
-    key: 'b',
-    id: 2
-  }, {
-    key: 'c',
-    id: 2
-  }, {
-    key: 'd',
-    id: 2
-  }, {
-    key: 'e',
-    id: 2
-  }];
-
-  var config = {
-    buttons: buttons,
-    joystick: joystick
-  };
-
-  var Button = /*#__PURE__*/function (_EventDispatcher) {
-    _inherits(Button, _EventDispatcher);
-
-    var _super = _createSuper(Button);
-
-    function Button() {
-      var _this;
-
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck(this, Button);
-
-      _this = _super.call(this);
-      _this._id = options.id;
-      _this._key = options.key;
-      _this._keyboardKeys = [];
-      return _this;
-    }
-    /**
-     * Getters & Setters
-     */
-
-
-    _createClass(Button, [{
-      key: "id",
-      get: function get() {
-        return this._id;
-      }
-    }, {
-      key: "key",
-      get: function get() {
-        return this._key;
-      }
-    }, {
-      key: "keyboardKeys",
-      get: function get() {
-        return this._keyboardKeys;
-      },
-      set: function set(keys) {
-        this._keyboardKeys = keys;
-      }
-      /**
-       * Public
-       */
-
-    }, {
-      key: "keydownHandler",
-      value: function keydownHandler(e) {
-        this.dispatchEvent('keydown', {
-          key: this._key,
-          id: this._id,
-          instance: this,
-          originalEvent: e
-        });
-      }
-    }, {
-      key: "keyupHandler",
-      value: function keyupHandler(e) {
-        this.dispatchEvent('keyup', {
-          key: this._key,
-          id: this._id,
-          instance: this,
-          originalEvent: e
-        });
-      }
-      /**
-       * Private
-       */
-
-    }]);
-
-    return Button;
-  }(EventDispatcher);
-
-  function getArray(value) {
-    if (Array.isArray(value)) return value;else return [value];
-  }
-
-  var ButtonManager = /*#__PURE__*/function () {
-    function ButtonManager() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck(this, ButtonManager);
-
-      // Props
-      this._buttons = options.buttons; // Setup
-
-      this._ipcRenderer = null;
-
-      this._bindAll();
-
-      this._setupEventListeners();
-    }
-    /**
-     * Getters & Setters
-     */
-
-
-    _createClass(ButtonManager, [{
-      key: "ipcRenderer",
-      get: function get() {
-        return this._ipcRenderer;
-      },
-      set: function set(ipcRenderer) {
-        this._ipcRenderer = ipcRenderer;
-
-        this._setupIpcRendererEventListeners();
-      }
-      /**
-       * Public
-       */
-
-    }, {
-      key: "destroy",
-      value: function destroy() {
-        this._removeEventListeners();
-
-        this._removeIpcRendererEventListeners();
-      }
-    }, {
-      key: "registerKeys",
-      value: function registerKeys(keyboardKeys, key, id) {
-        var button = this.getButton(key, id);
-        if (button) button.keyboardKeys = getArray(keyboardKeys);
-        return button;
-      }
-    }, {
-      key: "getButton",
-      value: function getButton(key, id) {
-        var button = this._buttons.filter(function (item) {
-          return item.key === key && item.id === id;
-        })[0];
-
-        return button;
-      }
-    }, {
-      key: "getButtonsById",
-      value: function getButtonsById(id) {
-        var buttons = this._buttons.filter(function (item) {
-          return item.id === id;
-        });
-
-        return buttons;
-      }
-    }, {
-      key: "getButtonsByKeyboardKey",
-      value: function getButtonsByKeyboardKey(keyboardKey) {
-        var buttons = this._buttons.filter(function (item) {
-          return item.keyboardKeys.includes(keyboardKey);
-        });
-
-        return buttons;
-      }
-      /**
-       * Private
-       */
-
-    }, {
-      key: "_bindAll",
-      value: function _bindAll() {
-        // Event handlers
-        this._keydownHandler = this._keydownHandler.bind(this);
-        this._keyupHandler = this._keyupHandler.bind(this);
-        this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
-        this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
-      }
-    }, {
-      key: "_setupEventListeners",
-      value: function _setupEventListeners() {
-        window.addEventListener('keydown', this._keydownHandler);
-        window.addEventListener('keyup', this._keyupHandler);
-      }
-    }, {
-      key: "_removeEventListeners",
-      value: function _removeEventListeners() {
-        window.removeEventListener('keydown', this._keydownHandler);
-        window.removeEventListener('keyup', this._keyupHandler);
-      }
-    }, {
-      key: "_setupIpcRendererEventListeners",
-      value: function _setupIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.on('keydown', this._machineKeydownHandler);
-
-        this._ipcRenderer.on('keyup', this._machineKeyupHandler);
-      }
-    }, {
-      key: "_removeIpcRendererEventListeners",
-      value: function _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
-
-        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
-      }
-      /**
-       * Handlers
-       */
-
-    }, {
-      key: "_keydownHandler",
-      value: function _keydownHandler(e) {
-        var buttons = this.getButtonsByKeyboardKey(e.key);
-
-        for (var i = 0; i < buttons.length; i++) {
-          buttons[i].keydownHandler(e);
-        }
-      }
-    }, {
-      key: "_keyupHandler",
-      value: function _keyupHandler(e) {
-        var buttons = this.getButtonsByKeyboardKey(e.key);
-
-        for (var i = 0; i < buttons.length; i++) {
-          buttons[i].keyupHandler(e);
-        }
-      }
-    }, {
-      key: "_machineKeydownHandler",
-      value: function _machineKeydownHandler(event, key) {}
-    }, {
-      key: "_machineKeyupHandler",
-      value: function _machineKeyupHandler(event, key) {}
-    }]);
-
-    return ButtonManager;
+    return PlayerManager;
   }();
 
   var Arcade = /*#__PURE__*/function (_EventDispatcher) {
@@ -945,13 +1046,9 @@
       _this = _super.call(this); // Setup
 
       _this._ipcRenderer = null;
-      _this._joystick1 = _this._createJoystick1();
-      _this._joystick2 = _this._createJoystick2();
       _this._joystickManager = _this._createJoystickManager();
-      _this._buttons = _this._createButtons();
       _this._buttonManager = _this._createButtonManager();
-      _this._player1 = _this._createPlayer1();
-      _this._player2 = _this._createPlayer2();
+      _this._playerManager = _this._createPlayerManager();
 
       _this._bindAll();
 
@@ -979,22 +1076,22 @@
     }, {
       key: "joystick1",
       get: function get() {
-        return this._joystick1;
+        return this._joystickManager.joystick1;
       }
     }, {
       key: "joystick2",
       get: function get() {
-        return this._joystick2;
+        return this._joystickManager.joystick2;
       }
     }, {
       key: "player1",
       get: function get() {
-        return this._player1;
+        return this._playerManager.player1;
       }
     }, {
       key: "player2",
       get: function get() {
-        return this._player2;
+        return this._playerManager.player2;
       }
       /**
        * Public
@@ -1039,72 +1136,25 @@
         this._setupIpcRendererEventListeners();
       }
     }, {
-      key: "_createJoystick1",
-      value: function _createJoystick1() {
-        var joystick1 = new Joystick({
-          id: 1
-        });
-        return joystick1;
-      }
-    }, {
-      key: "_createJoystick2",
-      value: function _createJoystick2() {
-        var joystick2 = new Joystick({
-          id: 2
-        });
-        return joystick2;
-      }
-    }, {
       key: "_createJoystickManager",
       value: function _createJoystickManager() {
-        var joystickManager$1 = new joystickManager({
-          joystick1: this._joystick1,
-          joystick2: this._joystick2
-        });
+        var joystickManager$1 = new joystickManager();
         return joystickManager$1;
-      }
-    }, {
-      key: "_createButtons",
-      value: function _createButtons() {
-        var buttons = [];
-
-        for (var i = 0; i < config.buttons.length; i++) {
-          var button = new Button({
-            id: config.buttons[i].id,
-            key: config.buttons[i].key
-          });
-          buttons.push(button);
-        }
-
-        return buttons;
       }
     }, {
       key: "_createButtonManager",
       value: function _createButtonManager() {
-        var buttonManager = new ButtonManager({
-          buttons: this._buttons
-        });
+        var buttonManager = new ButtonManager();
         return buttonManager;
       }
     }, {
-      key: "_createPlayer1",
-      value: function _createPlayer1() {
-        var player1 = new Player({
-          id: 1,
-          joystick: this._joystick1,
-          buttons: this._buttonManager.getButtonsById(1)
+      key: "_createPlayerManager",
+      value: function _createPlayerManager() {
+        var playerManager = new PlayerManager({
+          joystickManager: this._joystickManager,
+          buttonManager: this._buttonManager
         });
-        return player1;
-      }
-    }, {
-      key: "_createPlayer2",
-      value: function _createPlayer2() {
-        var player2 = new Player({
-          id: 2,
-          joystick: this._joystick2,
-          buttons: this._buttonManager.getButtonsById(2)
-        });
-        return player2;
+        return playerManager;
       }
     }, {
       key: "_bindAll",
@@ -1271,18 +1321,18 @@
   function player2keyupHandler(e) {//
   }
 
-  function joystickMoveHandler(e) {// const speed = 30;
+  function joystickMoveHandler(e) {
+    console.log(e.position); // const speed = 30;
     // position1.target.x += e.position.x * speed;
     // position1.target.y += -e.position.y * speed;
   }
 
-  function joystickQuickMoveHandler(e) {
-    console.log(e.direction);
-    var speed = 30;
-    if (e.direction === 'left') position1.target.x += speed * -1;
-    if (e.direction === 'right') position1.target.x += speed;
-    if (e.direction === 'up') position1.target.y += speed * -1;
-    if (e.direction === 'down') position1.target.y += speed;
+  function joystickQuickMoveHandler(e) {// console.log(e.direction);
+    // const speed = 30;
+    // if (e.direction === 'left') position1.target.x += speed * -1;
+    // if (e.direction === 'right') position1.target.x += speed;
+    // if (e.direction === 'up') position1.target.y += speed * -1;
+    // if (e.direction === 'down') position1.target.y += speed;
   }
 
   function lerp(v0, v1, t) {
