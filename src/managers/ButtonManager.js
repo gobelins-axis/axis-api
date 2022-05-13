@@ -132,11 +132,13 @@ export default class ButtonManager {
         }
     }
 
-    _machineKeydownHandler(event, key) {
-
+    _machineKeydownHandler(event, data) {
+        const button = this.getButton(data.key, data.id);
+        button.keydownHandler(data);
     }
 
-    _machineKeyupHandler(event, key) {
-
+    _machineKeyupHandler(event, data) {
+        const button = this.getButton(data.key, data.id);
+        button.keyupHandler(data);
     }
 }

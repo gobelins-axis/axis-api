@@ -114,6 +114,9 @@ export default class Joystick extends EventDispatcher {
         if (this._position.y <= -1 + this._threshold) {
             this._moveDownHandler();
         }
+
+        // Mouse move
+        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
     }
 
     /**
@@ -140,7 +143,7 @@ export default class Joystick extends EventDispatcher {
     _moveLeftHandler() {
         const inputInterval = this._inputLeftIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveLeft = throttle(this._moveLeftThrottledHandler, inputInterval * 1000, this._throttleMoveLeft);
-        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debounceMoveLeft);
+        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveLeft);
     }
 
     _moveLeftThrottledHandler() {
@@ -155,7 +158,7 @@ export default class Joystick extends EventDispatcher {
     _moveRightHandler() {
         const inputInterval = this._inputRightIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveRight = throttle(this._moveRightThrottledHandler, inputInterval * 1000, this._throttleMoveRight);
-        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debounceMoveRight);
+        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveRight);
     }
 
     _moveRightThrottledHandler() {
@@ -170,7 +173,7 @@ export default class Joystick extends EventDispatcher {
     _moveUpHandler() {
         const inputInterval = this._inputUpIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveUp = throttle(this._moveUpThrottledHandler, inputInterval * 1000, this._throttleMoveUp);
-        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debounceMoveUp);
+        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveUp);
     }
 
     _moveUpThrottledHandler() {
@@ -185,7 +188,7 @@ export default class Joystick extends EventDispatcher {
     _moveDownHandler() {
         const inputInterval = this._inputDownIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveDown = throttle(this._moveDownThrottledHandler, inputInterval * 1000, this._throttleMoveDown);
-        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debounceMoveDown);
+        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveDown);
     }
 
     _moveDownThrottledHandler() {

@@ -21,6 +21,8 @@ export default class joystickManager {
 
     set ipcRenderer(ipcRenderer) {
         this._ipcRenderer = ipcRenderer;
+        this._joystick1.ipcRenderer = ipcRenderer;
+        this._joystick2.ipcRenderer = ipcRenderer;
         this._setupIpcRendererEventListeners();
     }
 

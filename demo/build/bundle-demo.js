@@ -170,7 +170,7 @@
 
   function debounce(callback, delay, timeout) {
     clearTimeout(timeout);
-    timeout = setTimeout(callback, delay * 1000);
+    timeout = setTimeout(callback, delay);
     return timeout;
   }
 
@@ -354,7 +354,10 @@
 
         if (this._position.y <= -1 + this._threshold) {
           this._moveDownHandler();
-        }
+        } // Mouse move
+
+
+        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
       }
       /**
        * Private
@@ -381,7 +384,7 @@
       value: function _moveLeftHandler() {
         var inputInterval = this._inputLeftIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveLeft = throttle(this._moveLeftThrottledHandler, inputInterval * 1000, this._throttleMoveLeft);
-        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay, this._debounceMoveLeft);
+        this._debounceMoveLeft = debounce(this._moveLeftEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveLeft);
       }
     }, {
       key: "_moveLeftThrottledHandler",
@@ -402,7 +405,7 @@
       value: function _moveRightHandler() {
         var inputInterval = this._inputRightIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveRight = throttle(this._moveRightThrottledHandler, inputInterval * 1000, this._throttleMoveRight);
-        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay, this._debounceMoveRight);
+        this._debounceMoveRight = debounce(this._moveRightEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveRight);
       }
     }, {
       key: "_moveRightThrottledHandler",
@@ -423,7 +426,7 @@
       value: function _moveUpHandler() {
         var inputInterval = this._inputUpIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveUp = throttle(this._moveUpThrottledHandler, inputInterval * 1000, this._throttleMoveUp);
-        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay, this._debounceMoveUp);
+        this._debounceMoveUp = debounce(this._moveUpEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveUp);
       }
     }, {
       key: "_moveUpThrottledHandler",
@@ -444,7 +447,7 @@
       value: function _moveDownHandler() {
         var inputInterval = this._inputDownIndex > 1 ? this._inputIntervalMin : this._inputIntervalMax;
         this._throttleMoveDown = throttle(this._moveDownThrottledHandler, inputInterval * 1000, this._throttleMoveDown);
-        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay, this._debounceMoveDown);
+        this._debounceMoveDown = debounce(this._moveDownEndHandler, this._inputInactiveDelay * 1000, this._debounceMoveDown);
       }
     }, {
       key: "_moveDownThrottledHandler",
@@ -491,6 +494,8 @@
       },
       set: function set(ipcRenderer) {
         this._ipcRenderer = ipcRenderer;
+        this._joystick1.ipcRenderer = ipcRenderer;
+        this._joystick2.ipcRenderer = ipcRenderer;
 
         this._setupIpcRendererEventListeners();
       }
@@ -839,10 +844,16 @@
       }
     }, {
       key: "_machineKeydownHandler",
-      value: function _machineKeydownHandler(event, key) {}
+      value: function _machineKeydownHandler(event, data) {
+        var button = this.getButton(data.key, data.id);
+        button.keydownHandler(data);
+      }
     }, {
       key: "_machineKeyupHandler",
-      value: function _machineKeyupHandler(event, key) {}
+      value: function _machineKeyupHandler(event, data) {
+        var button = this.getButton(data.key, data.id);
+        button.keyupHandler(data);
+      }
     }]);
 
     return ButtonManager;
@@ -1115,6 +1126,20 @@
       value: function registerKeys(keyboardKeys, key, id) {
         return this._buttonManager.registerKeys(keyboardKeys, key, id);
       }
+    }, {
+      key: "enableMouseInteraction",
+      value: function enableMouseInteraction(speed) {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.send('mouse:enable', speed);
+      }
+    }, {
+      key: "disableMouseInteraction",
+      value: function disableMouseInteraction() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.send('mouse:disable', null);
+      }
       /**
        * Private
        */
@@ -1272,10 +1297,12 @@
 
     if (e.key === 'a') {
       directionX = -1;
+      Arcade$1.enableMouseInteraction();
     }
 
     if (e.key === 'b') {
       directionX = 1;
+      Arcade$1.disableMouseInteraction();
     }
 
     if (e.key === 'c') {
@@ -1322,13 +1349,12 @@
   }
 
   function joystickMoveHandler(e) {
-    console.log(e.position); // const speed = 30;
-    // position1.target.x += e.position.x * speed;
-    // position1.target.y += -e.position.y * speed;
+    var speed = 30;
+    position1.target.x += e.position.x * speed;
+    position1.target.y += -e.position.y * speed;
   }
 
-  function joystickQuickMoveHandler(e) {// console.log(e.direction);
-    // const speed = 30;
+  function joystickQuickMoveHandler(e) {// const speed = 30;
     // if (e.direction === 'left') position1.target.x += speed * -1;
     // if (e.direction === 'right') position1.target.x += speed;
     // if (e.direction === 'up') position1.target.y += speed * -1;

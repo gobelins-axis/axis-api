@@ -67,6 +67,18 @@ class Arcade extends EventDispatcher {
         return this._buttonManager.registerKeys(keyboardKeys, key, id);
     }
 
+    enableMouseInteraction(speed) {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.send('mouse:enable', speed);
+    }
+
+    disableMouseInteraction() {
+        if (!this._ipcRenderer) return;
+
+        this._ipcRenderer.send('mouse:disable', null);
+    }
+
     /**
      * Private
      */
