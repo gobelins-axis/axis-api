@@ -17,15 +17,23 @@ npm i github:arcade-feu/arcade-api
 ```js
 import Arcade from "arcade-api";
 
-// Map a Machine Key to a Keyboard Key
-Arcade.registerKey("a", "ArrowLeft");
-Arcade.registerKey("b", "ArrowRight");
-Arcade.registerKey("c", "Space");
-Arcade.registerKey("d", "Space");
+// Map a Machine Button to a Keyboard Key
+Arcade.registerKeys("q", "a", 1);
+Arcade.registerKeys("d", "b", 1);
+Arcade.registerKeys("z", "c", 1);
+Arcade.registerKeys("s", "d", 1);
+
+Arcade.registerKeys("ArrowLeft", "a", 2);
+Arcade.registerKeys("ArrowRight", "b", 2);
+Arcade.registerKeys("ArrowUp", "c", 2);
+Arcade.registerKeys("ArrowDown", "d", 2);
+
+// Its also possible to map multiple keyboard keys to a key
+// Arcade.registerKeys(['q', 'ArrowLeft'], 'd', 1);
 
 // Use buttons
-Arcade.addEventListener("keydown", keydownHandler);
-Arcade.addEventListener("keyup", keyupHandler);
+Arcade.player1.addEventListener("keydown", keydownHandler);
+Arcade.player1.addEventListener("keyup", keyupHandler);
 
 const position = { x: 0, y: 0 };
 
@@ -59,26 +67,23 @@ function keyupHandler(e) {
 }
 
 // Use joystick
-Arcade.addEventListener("joystick:move", joystickMoveHandler);
-Arcade.addEventListener("joystick:keydown", joystickKeydownHandler);
-Arcade.addEventListener("joystick:keyup", joystickKeyupHandler);
 
-// Configure the joystick deadzone (default to 0.1)
-Arcade.setJoystickDeadzone(0.05);
-// When the distance from the center is smaller then 0.05
-// the joystick event will output { x: 0, y: 0 }
+//
+Arcade.player1.addEventListener("joystick:move", joystickMoveHandler);
+Arcade.player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
 function joystickMoveHandler(e) {
     const speed = 50;
     position.x += speed * e.x;
 }
 
-function joystickKeydownHandler(e) {
-    //
-}
-
-function joystickKeyupHandler(e) {
-    //
+// This is quite useful to handle joystick ui navigation
+function joystickQuickmoveHandler(e) {
+    const speed = 50;
+    if (e.direction === "left") position1.x += speed * -1;
+    if (e.direction === "right") position1.x += speed;
+    if (e.direction === "up") position1.y += speed * -1;
+    if (e.direction === "down") position1.y += speed;
 }
 ```
 
@@ -149,7 +154,7 @@ npm run dev
 
 ### Build
 
-Pushing to master triggers a build via Github Action to create the bundle file.
+Pushing to main triggers a build via Github Action to create the bundle file.
 
 ## Authors
 

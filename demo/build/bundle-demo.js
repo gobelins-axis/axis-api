@@ -193,8 +193,8 @@
   var joystick = {
     deadzone: 0.1,
     threshold: 0,
-    inputInactiveDelay: 0.3,
-    inputIntervalMax: 0.5,
+    inputInactiveDelay: 0.2,
+    inputIntervalMax: 0.2,
     inputIntervalMin: 0.1
   };
 
@@ -1296,13 +1296,11 @@
     var directionY = 0;
 
     if (e.key === 'a') {
-      directionX = -1;
-      Arcade$1.enableMouseInteraction();
+      directionX = -1; // Arcade.enableMouseInteraction();
     }
 
     if (e.key === 'b') {
-      directionX = 1;
-      Arcade$1.disableMouseInteraction();
+      directionX = 1; // Arcade.disableMouseInteraction();
     }
 
     if (e.key === 'c') {
@@ -1348,17 +1346,17 @@
   function player2keyupHandler(e) {//
   }
 
-  function joystickMoveHandler(e) {
-    var speed = 30;
-    position1.target.x += e.position.x * speed;
-    position1.target.y += -e.position.y * speed;
+  function joystickMoveHandler(e) {// const speed = 30;
+    // position1.target.x += e.position.x * speed;
+    // position1.target.y += -e.position.y * speed;
   }
 
-  function joystickQuickMoveHandler(e) {// const speed = 30;
-    // if (e.direction === 'left') position1.target.x += speed * -1;
-    // if (e.direction === 'right') position1.target.x += speed;
-    // if (e.direction === 'up') position1.target.y += speed * -1;
-    // if (e.direction === 'down') position1.target.y += speed;
+  function joystickQuickMoveHandler(e) {
+    var speed = 30;
+    if (e.direction === 'left') position1.target.x += speed * -1;
+    if (e.direction === 'right') position1.target.x += speed;
+    if (e.direction === 'up') position1.target.y += speed * -1;
+    if (e.direction === 'down') position1.target.y += speed;
   }
 
   function lerp(v0, v1, t) {
