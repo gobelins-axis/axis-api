@@ -1,5 +1,5 @@
 {
-  "name": "arcade-api",
+  "name": "axis-api",
   "version": "1.0.0",
   "description": "",
   "main": "build/bundle.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arcade-feu/arcade.git"
+    "url": "git+https://github.com/gobelins-axis/axis-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/arcade-feu/arcade/issues"
+    "url": "https://github.com/gobelins-axis/axis-api/issues"
   },
-  "homepage": "https://github.com/arcade-feu/arcade#readme",
+  "homepage": "https://github.com/gobelins-axis/axis-api#readme",
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",

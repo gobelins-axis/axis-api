@@ -1,11 +1,11 @@
-# 📦️ Arcade API
+# 📦️ Axis API
 
-An API to help creators building their game for our arcade machine (not existing yet...).
+An API to help creators building their game for our Axis machine (not existing yet...).
 
 ## Installation
 
 ```bash
-npm i github:arcade-feu/arcade-api
+npm i github:gobelins-axis/axis-api
 ```
 
 ## Usage
@@ -15,25 +15,25 @@ npm i github:arcade-feu/arcade-api
 #### Handling controllers
 
 ```js
-import Arcade from "arcade-api";
+import Axis from "axis-api";
 
 // Map a Machine Button to a Keyboard Key
-Arcade.registerKeys("q", "a", 1);
-Arcade.registerKeys("d", "b", 1);
-Arcade.registerKeys("z", "c", 1);
-Arcade.registerKeys("s", "d", 1);
+Axis.registerKeys("q", "a", 1);
+Axis.registerKeys("d", "b", 1);
+Axis.registerKeys("z", "c", 1);
+Axis.registerKeys("s", "d", 1);
 
-Arcade.registerKeys("ArrowLeft", "a", 2);
-Arcade.registerKeys("ArrowRight", "b", 2);
-Arcade.registerKeys("ArrowUp", "c", 2);
-Arcade.registerKeys("ArrowDown", "d", 2);
+Axis.registerKeys("ArrowLeft", "a", 2);
+Axis.registerKeys("ArrowRight", "b", 2);
+Axis.registerKeys("ArrowUp", "c", 2);
+Axis.registerKeys("ArrowDown", "d", 2);
 
 // Its also possible to map multiple keyboard keys to a key
-// Arcade.registerKeys(['q', 'ArrowLeft'], 'd', 1);
+// Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
 
 // Use buttons
-Arcade.player1.addEventListener("keydown", keydownHandler);
-Arcade.player1.addEventListener("keyup", keyupHandler);
+Axis.player1.addEventListener("keydown", keydownHandler);
+Axis.player1.addEventListener("keyup", keyupHandler);
 
 const position = { x: 0, y: 0 };
 
@@ -69,8 +69,8 @@ function keyupHandler(e) {
 // Use joystick
 
 //
-Arcade.player1.addEventListener("joystick:move", joystickMoveHandler);
-Arcade.player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
+Axis.player1.addEventListener("joystick:move", joystickMoveHandler);
+Axis.player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
 function joystickMoveHandler(e) {
     const speed = 50;
@@ -95,7 +95,7 @@ you can handle these situations with the following events:
 
 ```js
 // Exit game events
-Arcade.addEventListener("exit:attempted", exitAttemptHandler);
+Axis.addEventListener("exit:attempted", exitAttemptHandler);
 
 function exitAttemptedHandler() {
     pause();
@@ -129,14 +129,14 @@ const win = new BrowserWindow({
 });
 ```
 
-In preload.js on DOMContentLoaded event you can access the Game Arcade Instance in the window and set the ipc renderer like this :
+In preload.js on DOMContentLoaded event you can access the Game Axis Instance in the window and set the ipc renderer like this :
 
 ```js
 // preload.js
 const { ipcRenderer } = require("electron");
 
 window.addEventListener("DOMContentLoaded", () => {
-    window.__arcade__.set_ipc_renderer(ipcRenderer);
+    window.__axis__.set_ipc_renderer(ipcRenderer);
 });
 ```
 

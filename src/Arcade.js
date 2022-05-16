@@ -6,7 +6,7 @@ import JoystickManager from './managers/JoystickManager';
 import ButtonManager from './managers/ButtonManager';
 import PlayerManager from './managers/PlayerManager';
 
-class Arcade extends EventDispatcher {
+class Axis extends EventDispatcher {
     constructor() {
         super();
 
@@ -83,8 +83,8 @@ class Arcade extends EventDispatcher {
      * Private
      */
     _exposeMethods() {
-        window.__arcade__ = {};
-        window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
+        window.__axis__ = {};
+        window.__axis__.set_ipc_renderer = this._setIpcRenderer;
     }
 
     _setIpcRenderer(ipcRenderer) {
@@ -152,4 +152,4 @@ class Arcade extends EventDispatcher {
     }
 }
 
-export default new Arcade();
+export default new Axis();

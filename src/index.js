@@ -1,9 +1,9 @@
-import Arcade from '../src/Arcade';
+import Axis from '../src/Axis';
 import normalizeJoystickSignal from '../src/utils/normalizeJoystickSignal';
 
-export default Arcade;
+export default Axis;
 
 export {
-    Arcade,
+    Axis,
     normalizeJoystickSignal,
 };

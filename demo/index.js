@@ -1,4 +1,4 @@
-import Arcade from '../src/index';
+import Axis from '../src/index';
 
 const box1 = document.querySelector('.js-box-1');
 const position1 = {
@@ -13,15 +13,15 @@ const position2 = {
 };
 
 function setup() {
-    Arcade.registerKeys('q', 'a', 1);
-    Arcade.registerKeys('d', 'b', 1);
-    Arcade.registerKeys('z', 'c', 1);
-    Arcade.registerKeys('s', 'd', 1);
+    Axis.registerKeys('q', 'a', 1);
+    Axis.registerKeys('d', 'b', 1);
+    Axis.registerKeys('z', 'c', 1);
+    Axis.registerKeys('s', 'd', 1);
 
-    Arcade.registerKeys('ArrowLeft', 'a', 2);
-    Arcade.registerKeys('ArrowRight', 'b', 2);
-    Arcade.registerKeys('ArrowUp', 'c', 2);
-    Arcade.registerKeys('ArrowDown', 'd', 2);
+    Axis.registerKeys('ArrowLeft', 'a', 2);
+    Axis.registerKeys('ArrowRight', 'b', 2);
+    Axis.registerKeys('ArrowUp', 'c', 2);
+    Axis.registerKeys('ArrowDown', 'd', 2);
 
     setupEventListeners();
 
@@ -42,13 +42,13 @@ function update() {
 }
 
 function setupEventListeners() {
-    Arcade.player1.addEventListener('keydown', player1keydownHandler);
-    Arcade.player1.addEventListener('keyup', player1keyupHandler);
-    Arcade.player1.addEventListener('joystick:move', joystickMoveHandler);
-    Arcade.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+    Axis.player1.addEventListener('keydown', player1keydownHandler);
+    Axis.player1.addEventListener('keyup', player1keyupHandler);
+    Axis.player1.addEventListener('joystick:move', joystickMoveHandler);
+    Axis.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
 
-    Arcade.player2.addEventListener('keydown', player2keydownHandler);
-    Arcade.player2.addEventListener('keyup', player2keyupHandler);
+    Axis.player2.addEventListener('keydown', player2keydownHandler);
+    Axis.player2.addEventListener('keyup', player2keyupHandler);
 }
 
 function player1keydownHandler(e) {
@@ -59,13 +59,13 @@ function player1keydownHandler(e) {
     if (e.key === 'a') {
         directionX = -1;
 
-        // Arcade.enableMouseInteraction();
+        // Axis.enableMouseInteraction();
     }
 
     if (e.key === 'b') {
         directionX = 1;
 
-        // Arcade.disableMouseInteraction();
+        // Axis.disableMouseInteraction();
     }
 
     if (e.key === 'c') {
