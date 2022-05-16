@@ -1,5 +1,35 @@
 import Axis from '../src/index';
 
+let isDefaultControls = true;
+
+const buttonsPlayer1 = [
+    Axis.registerKeys('q', 'a', 1),
+    Axis.registerKeys('d', 'b', 1),
+    Axis.registerKeys('z', 'c', 1),
+    Axis.registerKeys('s', 'd', 1),
+];
+
+const buttonsPlayer2 = [
+    Axis.registerKeys('ArrowLeft', 'a', 2),
+    Axis.registerKeys('ArrowRight', 'b', 2),
+    Axis.registerKeys('ArrowUp', 'c', 2),
+    Axis.registerKeys('ArrowDown', 'd', 2),
+];
+
+const player1 = Axis.createPlayer({
+    id: 1,
+    joystick: Axis.joystick1,
+    buttons: buttonsPlayer1,
+    // buttons: Axis.buttonManager.getButtonsById(1),
+});
+
+const player2 = Axis.createPlayer({
+    id: 2,
+    joystick: Axis.joystick2,
+    buttons: buttonsPlayer2,
+    // buttons: Axis.buttonManager.getButtonsById(2),
+});
+
 const box1 = document.querySelector('.js-box-1');
 const position1 = {
     target: { x: 0, y: 0 },
@@ -13,16 +43,6 @@ const position2 = {
 };
 
 function setup() {
-    Axis.registerKeys('q', 'a', 1);
-    Axis.registerKeys('d', 'b', 1);
-    Axis.registerKeys('z', 'c', 1);
-    Axis.registerKeys('s', 'd', 1);
-
-    Axis.registerKeys('ArrowLeft', 'a', 2);
-    Axis.registerKeys('ArrowRight', 'b', 2);
-    Axis.registerKeys('ArrowUp', 'c', 2);
-    Axis.registerKeys('ArrowDown', 'd', 2);
-
     setupEventListeners();
 
     update();
@@ -38,17 +58,39 @@ function update() {
     box1.style.transform = `translate(${position1.current.x}px, ${position1.current.y}px)`;
     box2.style.transform = `translate(${position2.current.x}px, ${position2.current.y}px)`;
 
+    if (position1.current.y < -window.innerHeight / 2) {
+        switchControls();
+    } else {
+        resetControls();
+    }
+
     requestAnimationFrame(update);
 }
 
-function setupEventListeners() {
-    Axis.player1.addEventListener('keydown', player1keydownHandler);
-    Axis.player1.addEventListener('keyup', player1keyupHandler);
-    Axis.player1.addEventListener('joystick:move', joystickMoveHandler);
-    Axis.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+function resetControls() {
+    if (isDefaultControls) return;
+    console.log('Reset Controls');
+    player1.buttons = buttonsPlayer1;
+    player2.buttons = buttonsPlayer2;
+    isDefaultControls = true;
+}
 
-    Axis.player2.addEventListener('keydown', player2keydownHandler);
-    Axis.player2.addEventListener('keyup', player2keyupHandler);
+function switchControls() {
+    if (!isDefaultControls) return;
+    console.log('Switch Controls');
+    player1.buttons = buttonsPlayer2;
+    player2.buttons = buttonsPlayer1;
+    isDefaultControls = false;
+}
+
+function setupEventListeners() {
+    player1.addEventListener('keydown', player1keydownHandler);
+    player1.addEventListener('keyup', player1keyupHandler);
+    player1.addEventListener('joystick:move', joystickMoveHandler);
+    player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+
+    player2.addEventListener('keydown', player2keydownHandler);
+    player2.addEventListener('keyup', player2keyupHandler);
 }
 
 function player1keydownHandler(e) {

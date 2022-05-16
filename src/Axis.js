@@ -41,12 +41,12 @@ class Axis extends EventDispatcher {
         return this._joystickManager.joystick2;
     }
 
-    get player1() {
-        return this._playerManager.player1;
+    get buttonManager() {
+        return this._buttonManager;
     }
 
-    get player2() {
-        return this._playerManager.player2;
+    get players() {
+        return this._playerManager.players;
     }
 
     /**
@@ -77,6 +77,10 @@ class Axis extends EventDispatcher {
         if (!this._ipcRenderer) return;
 
         this._ipcRenderer.send('mouse:disable', null);
+    }
+
+    createPlayer(options) {
+        return this._playerManager.createPlayer(options);
     }
 
     /**

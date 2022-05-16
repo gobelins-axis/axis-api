@@ -889,6 +889,11 @@
 
 
     _createClass(Player, [{
+      key: "id",
+      get: function get() {
+        return this._id;
+      }
+    }, {
       key: "joystick",
       get: function get() {
         return this._joystick;
@@ -990,8 +995,7 @@
       this._joystickManager = options.joystickManager;
       this._buttonManager = options.buttonManager; // Setup
 
-      this._player1 = this._createPlayer1();
-      this._player2 = this._createPlayer2();
+      this._players = [];
     }
     /**
      * Getters
@@ -999,14 +1003,9 @@
 
 
     _createClass(PlayerManager, [{
-      key: "player1",
+      key: "players",
       get: function get() {
-        return this._player1;
-      }
-    }, {
-      key: "player2",
-      get: function get() {
-        return this._player2;
+        return this._players;
       }
       /**
        * Public
@@ -1014,30 +1013,42 @@
 
     }, {
       key: "destroy",
-      value: function destroy() {}
-      /**
-       * Private
-       */
-
-    }, {
-      key: "_createPlayer1",
-      value: function _createPlayer1() {
-        var player1 = new Player({
-          id: 1,
-          joystick: this._joystickManager.joystick1,
-          buttons: this._buttonManager.getButtonsById(1)
-        });
-        return player1;
+      value: function destroy() {
+        for (var i = 0; i < this._players.length; i++) {
+          this._players[i].destroy();
+        }
       }
     }, {
-      key: "_createPlayer2",
-      value: function _createPlayer2() {
-        var player2 = new Player({
-          id: 2,
-          joystick: this._joystickManager.joystick2,
-          buttons: this._buttonManager.getButtonsById(2)
+      key: "createPlayer",
+      value: function createPlayer() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var player = new Player({
+          id: options.id,
+          joystick: options.joystick,
+          buttons: options.buttons
         });
-        return player2;
+
+        this._players.push(player);
+
+        return player;
+      }
+    }, {
+      key: "destroyPlayer",
+      value: function destroyPlayer(player) {
+        var index = this._players.indexOf(player);
+
+        player.destroy();
+
+        this._players.splice(index, 1);
+      }
+    }, {
+      key: "getPlayerById",
+      value: function getPlayerById(id) {
+        var player = this._players.filter(function (item) {
+          return item.id === id;
+        })[0];
+
+        return player;
       }
     }]);
 
@@ -1095,14 +1106,14 @@
         return this._joystickManager.joystick2;
       }
     }, {
-      key: "player1",
+      key: "buttonManager",
       get: function get() {
-        return this._playerManager.player1;
+        return this._buttonManager;
       }
     }, {
-      key: "player2",
+      key: "players",
       get: function get() {
-        return this._playerManager.player2;
+        return this._playerManager.players;
       }
       /**
        * Public
@@ -1139,6 +1150,11 @@
         if (!this._ipcRenderer) return;
 
         this._ipcRenderer.send('mouse:disable', null);
+      }
+    }, {
+      key: "createPlayer",
+      value: function createPlayer(options) {
+        return this._playerManager.createPlayer(options);
       }
       /**
        * Private
@@ -1235,6 +1251,21 @@
 
   var Axis$1 = new Axis();
 
+  var isDefaultControls = true;
+  var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
+  var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
+  var player1 = Axis$1.createPlayer({
+    id: 1,
+    joystick: Axis$1.joystick1,
+    buttons: buttonsPlayer1 // buttons: Axis.buttonManager.getButtonsById(1),
+
+  });
+  var player2 = Axis$1.createPlayer({
+    id: 2,
+    joystick: Axis$1.joystick2,
+    buttons: buttonsPlayer2 // buttons: Axis.buttonManager.getButtonsById(2),
+
+  });
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
     target: {
@@ -1259,14 +1290,6 @@
   };
 
   function setup() {
-    Axis$1.registerKeys('q', 'a', 1);
-    Axis$1.registerKeys('d', 'b', 1);
-    Axis$1.registerKeys('z', 'c', 1);
-    Axis$1.registerKeys('s', 'd', 1);
-    Axis$1.registerKeys('ArrowLeft', 'a', 2);
-    Axis$1.registerKeys('ArrowRight', 'b', 2);
-    Axis$1.registerKeys('ArrowUp', 'c', 2);
-    Axis$1.registerKeys('ArrowDown', 'd', 2);
     setupEventListeners();
     update();
   }
@@ -1278,16 +1301,39 @@
     position2.current.y = lerp(position2.current.y, position2.target.y, 1);
     box1.style.transform = "translate(".concat(position1.current.x, "px, ").concat(position1.current.y, "px)");
     box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
+
+    if (position1.current.y < -window.innerHeight / 2) {
+      switchControls();
+    } else {
+      resetControls();
+    }
+
     requestAnimationFrame(update);
   }
 
+  function resetControls() {
+    if (isDefaultControls) return;
+    console.log('Reset Controls');
+    player1.buttons = buttonsPlayer1;
+    player2.buttons = buttonsPlayer2;
+    isDefaultControls = true;
+  }
+
+  function switchControls() {
+    if (!isDefaultControls) return;
+    console.log('Switch Controls');
+    player1.buttons = buttonsPlayer2;
+    player2.buttons = buttonsPlayer1;
+    isDefaultControls = false;
+  }
+
   function setupEventListeners() {
-    Axis$1.player1.addEventListener('keydown', player1keydownHandler);
-    Axis$1.player1.addEventListener('keyup', player1keyupHandler);
-    Axis$1.player1.addEventListener('joystick:move', joystickMoveHandler);
-    Axis$1.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
-    Axis$1.player2.addEventListener('keydown', player2keydownHandler);
-    Axis$1.player2.addEventListener('keyup', player2keyupHandler);
+    player1.addEventListener('keydown', player1keydownHandler);
+    player1.addEventListener('keyup', player1keyupHandler);
+    player1.addEventListener('joystick:move', joystickMoveHandler);
+    player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+    player2.addEventListener('keydown', player2keydownHandler);
+    player2.addEventListener('keyup', player2keyupHandler);
   }
 
   function player1keydownHandler(e) {

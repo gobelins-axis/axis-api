@@ -18,6 +18,10 @@ export default class Player extends EventDispatcher {
     /**
      * Getters & Setters
      */
+    get id() {
+        return this._id;
+    }
+
     get joystick() {
         return this._joystick;
     }

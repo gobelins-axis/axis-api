@@ -8,46 +8,46 @@ export default class PlayerManager {
         this._buttonManager = options.buttonManager;
 
         // Setup
-        this._player1 = this._createPlayer1();
-        this._player2 = this._createPlayer2();
+        this._players = [];
     }
 
     /**
      * Getters
      */
-    get player1() {
-        return this._player1;
-    }
-
-    get player2() {
-        return this._player2;
+    get players() {
+        return this._players;
     }
 
     /**
      * Public
      */
     destroy() {
-
+        for (let i = 0; i < this._players.length; i++) {
+            this._players[i].destroy();
+        }
     }
 
-    /**
-     * Private
-     */
-    _createPlayer1() {
-        const player1 = new Player({
-            id: 1,
-            joystick: this._joystickManager.joystick1,
-            buttons: this._buttonManager.getButtonsById(1),
+    createPlayer(options = {}) {
+        const player = new Player({
+            id: options.id,
+            joystick: options.joystick,
+            buttons: options.buttons,
         });
-        return player1;
+        this._players.push(player);
+        return player;
     }
 
-    _createPlayer2() {
-        const player2 = new Player({
-            id: 2,
-            joystick: this._joystickManager.joystick2,
-            buttons: this._buttonManager.getButtonsById(2),
-        });
-        return player2;
+    destroyPlayer(player) {
+        const index = this._players.indexOf(player);
+        player.destroy();
+        this._players.splice(index, 1);
+    }
+
+    getPlayerById(id) {
+        const player = this._players.filter((item) => {
+            return item.id === id;
+        })[0];
+
+        return player;
     }
 }

@@ -28,12 +28,25 @@ Axis.registerKeys("ArrowRight", "b", 2);
 Axis.registerKeys("ArrowUp", "c", 2);
 Axis.registerKeys("ArrowDown", "d", 2);
 
+// Create players
+const player1 = Axis.createPlayer({
+    id: 1,
+    joystick: Axis.joystick1,
+    buttons: Axis.buttonManager.getButtonsById(1),
+});
+
+const player2 = Axis.createPlayer({
+    id: 2,
+    joystick: Axis.joystick2,
+    buttons: Axis.buttonManager.getButtonsById(2),
+});
+
 // Its also possible to map multiple keyboard keys to a key
 // Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
 
 // Use buttons
-Axis.player1.addEventListener("keydown", keydownHandler);
-Axis.player1.addEventListener("keyup", keyupHandler);
+player1.addEventListener("keydown", keydownHandler);
+player1.addEventListener("keyup", keyupHandler);
 
 const position = { x: 0, y: 0 };
 
@@ -69,8 +82,8 @@ function keyupHandler(e) {
 // Use joystick
 
 //
-Axis.player1.addEventListener("joystick:move", joystickMoveHandler);
-Axis.player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
+player1.addEventListener("joystick:move", joystickMoveHandler);
+player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
 function joystickMoveHandler(e) {
     const speed = 50;
