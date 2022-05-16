@@ -1044,15 +1044,15 @@
     return PlayerManager;
   }();
 
-  var Arcade = /*#__PURE__*/function (_EventDispatcher) {
-    _inherits(Arcade, _EventDispatcher);
+  var Axis = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(Axis, _EventDispatcher);
 
-    var _super = _createSuper(Arcade);
+    var _super = _createSuper(Axis);
 
-    function Arcade() {
+    function Axis() {
       var _this;
 
-      _classCallCheck(this, Arcade);
+      _classCallCheck(this, Axis);
 
       _this = _super.call(this); // Setup
 
@@ -1074,7 +1074,7 @@
      */
 
 
-    _createClass(Arcade, [{
+    _createClass(Axis, [{
       key: "mappedKeys",
       get: function get() {
         return this._mappedKeys;
@@ -1147,8 +1147,8 @@
     }, {
       key: "_exposeMethods",
       value: function _exposeMethods() {
-        window.__arcade__ = {};
-        window.__arcade__.set_ipc_renderer = this._setIpcRenderer;
+        window.__axis__ = {};
+        window.__axis__.set_ipc_renderer = this._setIpcRenderer;
       }
     }, {
       key: "_setIpcRenderer",
@@ -1230,10 +1230,10 @@
       }
     }]);
 
-    return Arcade;
+    return Axis;
   }(EventDispatcher);
 
-  var Arcade$1 = new Arcade();
+  var Axis$1 = new Axis();
 
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
@@ -1259,14 +1259,14 @@
   };
 
   function setup() {
-    Arcade$1.registerKeys('q', 'a', 1);
-    Arcade$1.registerKeys('d', 'b', 1);
-    Arcade$1.registerKeys('z', 'c', 1);
-    Arcade$1.registerKeys('s', 'd', 1);
-    Arcade$1.registerKeys('ArrowLeft', 'a', 2);
-    Arcade$1.registerKeys('ArrowRight', 'b', 2);
-    Arcade$1.registerKeys('ArrowUp', 'c', 2);
-    Arcade$1.registerKeys('ArrowDown', 'd', 2);
+    Axis$1.registerKeys('q', 'a', 1);
+    Axis$1.registerKeys('d', 'b', 1);
+    Axis$1.registerKeys('z', 'c', 1);
+    Axis$1.registerKeys('s', 'd', 1);
+    Axis$1.registerKeys('ArrowLeft', 'a', 2);
+    Axis$1.registerKeys('ArrowRight', 'b', 2);
+    Axis$1.registerKeys('ArrowUp', 'c', 2);
+    Axis$1.registerKeys('ArrowDown', 'd', 2);
     setupEventListeners();
     update();
   }
@@ -1282,12 +1282,12 @@
   }
 
   function setupEventListeners() {
-    Arcade$1.player1.addEventListener('keydown', player1keydownHandler);
-    Arcade$1.player1.addEventListener('keyup', player1keyupHandler);
-    Arcade$1.player1.addEventListener('joystick:move', joystickMoveHandler);
-    Arcade$1.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
-    Arcade$1.player2.addEventListener('keydown', player2keydownHandler);
-    Arcade$1.player2.addEventListener('keyup', player2keyupHandler);
+    Axis$1.player1.addEventListener('keydown', player1keydownHandler);
+    Axis$1.player1.addEventListener('keyup', player1keyupHandler);
+    Axis$1.player1.addEventListener('joystick:move', joystickMoveHandler);
+    Axis$1.player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+    Axis$1.player2.addEventListener('keydown', player2keydownHandler);
+    Axis$1.player2.addEventListener('keyup', player2keyupHandler);
   }
 
   function player1keydownHandler(e) {
@@ -1296,11 +1296,11 @@
     var directionY = 0;
 
     if (e.key === 'a') {
-      directionX = -1; // Arcade.enableMouseInteraction();
+      directionX = -1; // Axis.enableMouseInteraction();
     }
 
     if (e.key === 'b') {
-      directionX = 1; // Arcade.disableMouseInteraction();
+      directionX = 1; // Axis.disableMouseInteraction();
     }
 
     if (e.key === 'c') {
