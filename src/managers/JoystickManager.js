@@ -1,8 +1,13 @@
 // Modules
 import Joystick from '../modules/Joystick';
 
-export default class joystickManager {
+// Utils
+import EventDispatcher from '../utils/EventDispatcher';
+
+export default class joystickManager extends EventDispatcher {
     constructor(options = {}) {
+        super();
+
         // Setup
         this._joystick1 = this._createJoystick1();
         this._joystick2 = this._createJoystick2();
@@ -74,6 +79,8 @@ export default class joystickManager {
      */
     _joystickMoveHandler(event, data) {
         if (data.id === 1) this._joystick1.moveHandler(data.position);
-        // if (data.id === 2) this._joystick2.moveHandler(data.position);
+        if (data.id === 2) this._joystick2.moveHandler(data.position);
+
+        this.dispatchEvent('joystick:move', data);
     }
 }

@@ -468,19 +468,27 @@
     return Joystick;
   }(EventDispatcher);
 
-  var joystickManager = /*#__PURE__*/function () {
+  var joystickManager = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(joystickManager, _EventDispatcher);
+
+    var _super = _createSuper(joystickManager);
+
     function joystickManager() {
+      var _this;
 
       _classCallCheck(this, joystickManager);
 
-      // Setup
-      this._joystick1 = this._createJoystick1();
-      this._joystick2 = this._createJoystick2();
-      this._ipcRenderer = null;
+      _this = _super.call(this); // Setup
 
-      this._bindAll();
+      _this._joystick1 = _this._createJoystick1();
+      _this._joystick2 = _this._createJoystick2();
+      _this._ipcRenderer = null;
 
-      this._setupIpcRendererEventListeners();
+      _this._bindAll();
+
+      _this._setupIpcRendererEventListeners();
+
+      return _this;
     }
     /**
      * Getters & Setters
@@ -565,12 +573,14 @@
     }, {
       key: "_joystickMoveHandler",
       value: function _joystickMoveHandler(event, data) {
-        if (data.id === 1) this._joystick1.moveHandler(data.position); // if (data.id === 2) this._joystick2.moveHandler(data.position);
+        if (data.id === 1) this._joystick1.moveHandler(data.position);
+        if (data.id === 2) this._joystick2.moveHandler(data.position);
+        this.dispatchEvent('joystick:move', data);
       }
     }]);
 
     return joystickManager;
-  }();
+  }(EventDispatcher);
 
   var Button = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Button, _EventDispatcher);
@@ -689,18 +699,26 @@
     if (Array.isArray(value)) return value;else return [value];
   }
 
-  var ButtonManager = /*#__PURE__*/function () {
+  var ButtonManager = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(ButtonManager, _EventDispatcher);
+
+    var _super = _createSuper(ButtonManager);
+
     function ButtonManager() {
+      var _this;
 
       _classCallCheck(this, ButtonManager);
 
-      // Setup
-      this._buttons = this._createButtons();
-      this._ipcRenderer = null;
+      _this = _super.call(this); // Setup
 
-      this._bindAll();
+      _this._buttons = _this._createButtons();
+      _this._ipcRenderer = null;
 
-      this._setupEventListeners();
+      _this._bindAll();
+
+      _this._setupEventListeners();
+
+      return _this;
     }
     /**
      * Getters & Setters
@@ -830,7 +848,14 @@
         var buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (var i = 0; i < buttons.length; i++) {
-          buttons[i].keydownHandler(e);
+          var button = buttons[i];
+          button.keydownHandler(e);
+          this.dispatchEvent('keydown', {
+            key: button.key,
+            id: button.id,
+            instance: button,
+            originalEvent: e
+          });
         }
       }
     }, {
@@ -839,7 +864,14 @@
         var buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (var i = 0; i < buttons.length; i++) {
+          var button = buttons[i];
           buttons[i].keyupHandler(e);
+          this.dispatchEvent('keyup', {
+            key: button.key,
+            id: button.id,
+            instance: button,
+            originalEvent: e
+          });
         }
       }
     }, {
@@ -847,17 +879,31 @@
       value: function _machineKeydownHandler(event, data) {
         var button = this.getButton(data.key, data.id);
         button.keydownHandler(data);
+        this.dispatchEvent('keydown', {
+          key: button.key,
+          id: button.id,
+          instance: button,
+          originalEvent: data
+        });
       }
     }, {
       key: "_machineKeyupHandler",
       value: function _machineKeyupHandler(event, data) {
         var button = this.getButton(data.key, data.id);
         button.keyupHandler(data);
+        this.dispatchEvent('keyup', {
+          key: button.key,
+          id: button.id,
+          instance: button,
+          originalEvent: data
+        }); // Mouse click
+
+        if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
       }
     }]);
 
     return ButtonManager;
-  }();
+  }(EventDispatcher);
 
   var Player = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Player, _EventDispatcher);
@@ -1076,6 +1122,8 @@
 
       _this._exposeMethods();
 
+      _this._setupEventListeners();
+
       _this._setupIpcRendererEventListeners();
 
       return _this;
@@ -1119,12 +1167,6 @@
        * Public
        */
 
-    }, {
-      key: "start",
-      value: function start() {// Once everything is configued,
-        // we might need a start function to setup
-        // stuffs like LED lights...
-      }
     }, {
       key: "destroy",
       value: function destroy() {
@@ -1203,9 +1245,21 @@
         // Exposed methods
         this._setIpcRenderer = this._setIpcRenderer.bind(this); // Event handlers
 
+        this._keydownHandler = this._keydownHandler.bind(this);
+        this._keyupHandler = this._keyupHandler.bind(this);
+        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
         this._machineExitAttemptHandler = this._machineExitAttemptHandler.bind(this);
         this._machineExitCanceledHandler = this._machineExitCanceledHandler.bind(this);
         this._machineExitCompletedHandler = this._machineExitCompletedHandler.bind(this);
+      }
+    }, {
+      key: "_setupEventListeners",
+      value: function _setupEventListeners() {
+        this._buttonManager.addEventListener('keydown', this._keydownHandler);
+
+        this._buttonManager.addEventListener('keyup', this._keyupHandler);
+
+        this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
       }
     }, {
       key: "_setupIpcRendererEventListeners",
@@ -1228,6 +1282,21 @@
         this._ipcRenderer.removeListener('exit:canceled', this._machineExitCanceledHandler);
 
         this._ipcRenderer.removeListener('exit:completed', this._machineExitCompletedHandler);
+      }
+    }, {
+      key: "_keydownHandler",
+      value: function _keydownHandler(e) {
+        this.dispatchEvent('keydown', e);
+      }
+    }, {
+      key: "_keyupHandler",
+      value: function _keyupHandler(e) {
+        this.dispatchEvent('keyup', e);
+      }
+    }, {
+      key: "_joystickMoveHandler",
+      value: function _joystickMoveHandler(e) {
+        this.dispatchEvent('joystick:move', e);
       }
     }, {
       key: "_machineExitAttemptHandler",

@@ -6,9 +6,12 @@ import config from '../configs';
 
 // Utils
 import getArray from '../utils/getArray';
+import EventDispatcher from '../utils/EventDispatcher';
 
-export default class ButtonManager {
+export default class ButtonManager extends EventDispatcher {
     constructor(options = {}) {
+        super();
+
         // Setup
         this._buttons = this._createButtons();
         this._ipcRenderer = null;
@@ -120,7 +123,14 @@ export default class ButtonManager {
         const buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (let i = 0; i < buttons.length; i++) {
-            buttons[i].keydownHandler(e);
+            const button = buttons[i];
+            button.keydownHandler(e);
+            this.dispatchEvent('keydown', {
+                key: button.key,
+                id: button.id,
+                instance: button,
+                originalEvent: e,
+            });
         }
     }
 
@@ -128,17 +138,41 @@ export default class ButtonManager {
         const buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
             buttons[i].keyupHandler(e);
+            this.dispatchEvent('keyup', {
+                key: button.key,
+                id: button.id,
+                instance: button,
+                originalEvent: e,
+            });
         }
     }
 
     _machineKeydownHandler(event, data) {
         const button = this.getButton(data.key, data.id);
         button.keydownHandler(data);
+        this.dispatchEvent('keydown', {
+            key: button.key,
+            id: button.id,
+            instance: button,
+            originalEvent: data,
+        });
     }
 
     _machineKeyupHandler(event, data) {
         const button = this.getButton(data.key, data.id);
+
         button.keyupHandler(data);
+
+        this.dispatchEvent('keyup', {
+            key: button.key,
+            id: button.id,
+            instance: button,
+            originalEvent: data,
+        });
+
+        // Mouse click
+        if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
     }
 }

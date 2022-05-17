@@ -19,6 +19,7 @@ class Axis extends EventDispatcher {
 
         this._bindAll();
         this._exposeMethods();
+        this._setupEventListeners();
         this._setupIpcRendererEventListeners();
     }
 
@@ -52,12 +53,6 @@ class Axis extends EventDispatcher {
     /**
      * Public
      */
-    start() {
-        // Once everything is configued,
-        // we might need a start function to setup
-        // stuffs like LED lights...
-    }
-
     destroy() {
         this._removeIpcRendererEventListeners();
         this._ipcRenderer = null;
@@ -124,9 +119,18 @@ class Axis extends EventDispatcher {
         this._setIpcRenderer = this._setIpcRenderer.bind(this);
 
         // Event handlers
+        this._keydownHandler = this._keydownHandler.bind(this);
+        this._keyupHandler = this._keyupHandler.bind(this);
+        this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
         this._machineExitAttemptHandler = this._machineExitAttemptHandler.bind(this);
         this._machineExitCanceledHandler = this._machineExitCanceledHandler.bind(this);
         this._machineExitCompletedHandler = this._machineExitCompletedHandler.bind(this);
+    }
+
+    _setupEventListeners() {
+        this._buttonManager.addEventListener('keydown', this._keydownHandler);
+        this._buttonManager.addEventListener('keyup', this._keyupHandler);
+        this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
     }
 
     _setupIpcRendererEventListeners() {
@@ -141,6 +145,18 @@ class Axis extends EventDispatcher {
         this._ipcRenderer.removeListener('exit:attempted', this._machineExitAttemptHandler);
         this._ipcRenderer.removeListener('exit:canceled', this._machineExitCanceledHandler);
         this._ipcRenderer.removeListener('exit:completed', this._machineExitCompletedHandler);
+    }
+
+    _keydownHandler(e) {
+        this.dispatchEvent('keydown', e);
+    }
+
+    _keyupHandler(e) {
+        this.dispatchEvent('keyup', e);
+    }
+
+    _joystickMoveHandler(e) {
+        this.dispatchEvent('joystick:move', e);
     }
 
     _machineExitAttemptHandler() {
