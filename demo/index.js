@@ -36,10 +36,10 @@ const leaderboard = Axis.createLeaderboard({
 leaderboard.postScore({
     username: 'sergiuonthetrack',
     value: 100,
-});
-
-leaderboard.getScores().then((response) => {
-    console.log(response);
+}).then(() => {
+    leaderboard.getScores().then((response) => {
+        console.log(response);
+    });
 });
 
 const box1 = document.querySelector('.js-box-1');

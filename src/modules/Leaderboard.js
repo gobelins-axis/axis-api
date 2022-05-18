@@ -45,7 +45,7 @@ export default class Leaderboard {
 
     getScores() {
         if (this._hasCheckedForIpcRenderer) {
-            return this._getScores(score);
+            return this._getScores();
         } else {
             return new Promise((resolve, reject) => {
                 this._checkForIpcRenderer().then(() => {

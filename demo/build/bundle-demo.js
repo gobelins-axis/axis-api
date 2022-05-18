@@ -1222,7 +1222,7 @@
         var _this2 = this;
 
         if (this._hasCheckedForIpcRenderer) {
-          return this._getScores(score);
+          return this._getScores();
         } else {
           return new Promise(function (resolve, reject) {
             _this2._checkForIpcRenderer().then(function () {
@@ -1616,9 +1616,10 @@
   leaderboard.postScore({
     username: 'sergiuonthetrack',
     value: 100
-  });
-  leaderboard.getScores().then(function (response) {
-    console.log(response);
+  }).then(function () {
+    leaderboard.getScores().then(function (response) {
+      console.log(response);
+    });
   });
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
