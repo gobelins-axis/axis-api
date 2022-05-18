@@ -1342,11 +1342,10 @@
     }, {
       key: "_checkForIpcRenderer",
       value: function _checkForIpcRenderer() {
-        var _this7 = this;
-
+        // If the project is running on the axis machine,
+        // ipcRenderer will be set after one frame
         var promise = new Promise(function (resolve) {
           frameTimeout(function () {
-            console.log(_this7._ipcRenderer);
             resolve();
           }, 1);
         });

@@ -143,9 +143,10 @@ export default class Leaderboard {
     }
 
     _checkForIpcRenderer() {
+        // If the project is running on the axis machine,
+        // ipcRenderer will be set after one frame
         const promise = new Promise((resolve) => {
             frameTimeout(() => {
-                console.log(this._ipcRenderer);
                 resolve();
             }, 1);
         });
