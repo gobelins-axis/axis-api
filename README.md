@@ -81,7 +81,6 @@ function keyupHandler(e) {
 
 // Use joystick
 
-//
 player1.addEventListener("joystick:move", joystickMoveHandler);
 player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
@@ -99,6 +98,48 @@ function joystickQuickmoveHandler(e) {
     if (e.direction === "down") position1.y += speed;
 }
 ```
+
+#### Handling leaderboard
+
+To increase competitivity you can create a leaderboard where your users will be able to save their best scores.
+
+You can create the leaderboard instance like so:
+
+```js
+const leaderboard = Axis.createLeaderboard({
+    id: "my-game",
+});
+```
+
+Here make sure to use exactly the same id that the one you choose when uploading your game to the Axis Machine, otherwise it won't work.
+
+Then you can post scores and fetch all the existing scores like so:
+
+```js
+// Post a score
+// Every score data should at least
+// have username and value keys
+leaderboard
+    .postScore({
+        username: "sergiuonthetrack",
+        value: 100,
+    })
+    .then(() => {
+        // Get all scores
+        leaderboard.getScores().then((response) => {
+            console.log(response);
+        });
+    });
+```
+
+**NB**
+It's important to note that you will not be able to push any data to the database when running the game on your own machine, only the axis machine has the rights to push scores data. But on your machine we simmly use localStorage api to store scores. You don't have to do anything different.
+
+#### Keyboard
+
+So you can now store your users scores but how will they type their usernames?
+
+To do...
 
 #### Handling exit
 

@@ -1,7 +1,6 @@
 import Axis from '../src/index';
 
 let isDefaultControls = true;
-const score = 0;
 
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
