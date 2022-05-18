@@ -5,6 +5,32 @@
   factory();
 })((function () { 'use strict';
 
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      enumerableOnly && (symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      })), keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+
+    return target;
+  }
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -28,6 +54,21 @@
       writable: false
     });
     return Constructor;
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
   }
 
   function _inherits(subClass, superClass) {
@@ -1101,6 +1142,128 @@
     return PlayerManager;
   }();
 
+  var Leaderboard = /*#__PURE__*/function () {
+    function Leaderboard() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Leaderboard);
+
+      // Props
+      this._id = options.id;
+      this._ipcRenderer = options.ipcRenderer; // Setup
+
+      this._scores = [];
+
+      this._getScores();
+    }
+    /**
+     * Getters & Setters
+     */
+
+
+    _createClass(Leaderboard, [{
+      key: "scores",
+      get: function get() {
+        return this._scores;
+      }
+      /**
+       * Public
+       */
+
+    }, {
+      key: "push",
+      value: function push(score) {
+        var isValid = this._isValidScore(score);
+
+        if (isValid) {
+          this._scores.push(score);
+
+          this._setLocalStorageItem(this._id, this._scores);
+        }
+      }
+    }, {
+      key: "clear",
+      value: function clear() {
+        localStorage.removeItem(this._id);
+      }
+      /**
+       * Private
+       */
+
+    }, {
+      key: "_getScores",
+      value: function _getScores() {
+        // if (!this._ipcRenderer) {
+        //     this._scores = this._getLocalStorageItem(this._id) || [];
+        // } else {
+        //     // Fetch scores
+        //     this._getDatabaseScore().then((scores) => {
+        //         this._scores = scores;
+        //     });
+        // }
+        // this._getDatabaseScore().then((response) => {
+        //     response.json().then((response) => {
+        //         console.log(response);
+        //     });
+        // });
+        this._postScore().then(function (response) {
+          console.log(response);
+        });
+      }
+    }, {
+      key: "_getDatabaseScore",
+      value: function _getDatabaseScore() {
+        return fetch("http://localhost:8888/get/".concat(this._id), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }, {
+      key: "_postScore",
+      value: function _postScore() {
+        return fetch("http://localhost:8888/post/".concat(this._id), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            score: 0,
+            username: 'serge'
+          })
+        });
+      }
+      /**
+       * Utils
+       */
+
+    }, {
+      key: "_isValidScore",
+      value: function _isValidScore(score) {
+        // A valid score object should at least have a value key and username key
+        var hasValue = !isNaN(score.value);
+        var hasUsername = score.username !== undefined && score.username !== null;
+        if (!hasValue) console.error('Leaderboard: make sure you have a valid value key');
+        if (!hasUsername) console.error('Leaderboard: make sure you have a valid username key');
+        return hasValue && hasUsername;
+      }
+    }, {
+      key: "_getLocalStorageItem",
+      value: function _getLocalStorageItem(id) {
+        var item = localStorage.getItem(id);
+        if (item) return JSON.parse(item);
+      }
+    }, {
+      key: "_setLocalStorageItem",
+      value: function _setLocalStorageItem(id, data) {
+        return localStorage.setItem(id, JSON.stringify(data));
+      }
+    }]);
+
+    return Leaderboard;
+  }();
+
   var Axis = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Axis, _EventDispatcher);
 
@@ -1114,6 +1277,8 @@
       _this = _super.call(this); // Setup
 
       _this._ipcRenderer = null;
+      _this._firebaseToken = null;
+      _this._leaderboard = null;
       _this._joystickManager = _this._createJoystickManager();
       _this._buttonManager = _this._createButtonManager();
       _this._playerManager = _this._createPlayerManager();
@@ -1163,6 +1328,11 @@
       get: function get() {
         return this._playerManager.players;
       }
+    }, {
+      key: "leaderboard",
+      get: function get() {
+        return this._leaderboard;
+      }
       /**
        * Public
        */
@@ -1198,6 +1368,11 @@
       value: function createPlayer(options) {
         return this._playerManager.createPlayer(options);
       }
+    }, {
+      key: "createLeaderboard",
+      value: function createLeaderboard(options) {
+        return this._createLeaderboard(options);
+      }
       /**
        * Private
        */
@@ -1215,6 +1390,7 @@
         this._ipcRenderer = ipcRenderer;
         this._buttonManager.ipcRenderer = this._ipcRenderer;
         this._joystickManager.ipcRenderer = this._ipcRenderer;
+        if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
 
         this._setupIpcRendererEventListeners();
       }
@@ -1238,6 +1414,14 @@
           buttonManager: this._buttonManager
         });
         return playerManager;
+      }
+    }, {
+      key: "_createLeaderboard",
+      value: function _createLeaderboard(options) {
+        if (!this._leaderboard) this._leaderboard = new Leaderboard(_objectSpread2({
+          ipcRenderer: this._ipcRenderer
+        }, options));
+        return this._leaderboard;
       }
     }, {
       key: "_bindAll",
@@ -1326,15 +1510,25 @@
   var player1 = Axis$1.createPlayer({
     id: 1,
     joystick: Axis$1.joystick1,
-    buttons: buttonsPlayer1 // buttons: Axis.buttonManager.getButtonsById(1),
-
+    buttons: buttonsPlayer1
   });
   var player2 = Axis$1.createPlayer({
     id: 2,
     joystick: Axis$1.joystick2,
-    buttons: buttonsPlayer2 // buttons: Axis.buttonManager.getButtonsById(2),
-
+    buttons: buttonsPlayer2
   });
+  var leaderboard = Axis$1.createLeaderboard({
+    id: 'demo-game'
+  });
+  leaderboard.push({
+    username: 'sergiuonthetrack',
+    value: 100
+  });
+  leaderboard.push({
+    username: 'sergiuonthetrack1',
+    value: 100
+  });
+  console.log(leaderboard.scores);
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
     target: {
@@ -1409,23 +1603,10 @@
     var speed = 50;
     var directionX = 0;
     var directionY = 0;
-
-    if (e.key === 'a') {
-      directionX = -1; // Axis.enableMouseInteraction();
-    }
-
-    if (e.key === 'b') {
-      directionX = 1; // Axis.disableMouseInteraction();
-    }
-
-    if (e.key === 'c') {
-      directionY = -1;
-    }
-
-    if (e.key === 'd') {
-      directionY = 1;
-    }
-
+    if (e.key === 'a') directionX = -1;
+    if (e.key === 'b') directionX = 1;
+    if (e.key === 'c') directionY = -1;
+    if (e.key === 'd') directionY = 1;
     position1.target.x += speed * directionX;
     position1.target.y += speed * directionY;
   }
@@ -1437,23 +1618,10 @@
     var speed = 50;
     var directionX = 0;
     var directionY = 0;
-
-    if (e.key === 'a') {
-      directionX = -1;
-    }
-
-    if (e.key === 'b') {
-      directionX = 1;
-    }
-
-    if (e.key === 'c') {
-      directionY = -1;
-    }
-
-    if (e.key === 'd') {
-      directionY = 1;
-    }
-
+    if (e.key === 'a') directionX = -1;
+    if (e.key === 'b') directionX = 1;
+    if (e.key === 'c') directionY = -1;
+    if (e.key === 'd') directionY = 1;
     position2.target.x += speed * directionX;
     position2.target.y += speed * directionY;
   }

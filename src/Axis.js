@@ -5,6 +5,7 @@ import EventDispatcher from './utils/EventDispatcher';
 import JoystickManager from './managers/JoystickManager';
 import ButtonManager from './managers/ButtonManager';
 import PlayerManager from './managers/PlayerManager';
+import Leaderboard from './modules/Leaderboard';
 
 class Axis extends EventDispatcher {
     constructor() {
@@ -12,6 +13,8 @@ class Axis extends EventDispatcher {
 
         // Setup
         this._ipcRenderer = null;
+        this._firebaseToken = null;
+        this._leaderboard = null;
 
         this._joystickManager = this._createJoystickManager();
         this._buttonManager = this._createButtonManager();
@@ -50,6 +53,10 @@ class Axis extends EventDispatcher {
         return this._playerManager.players;
     }
 
+    get leaderboard() {
+        return this._leaderboard;
+    }
+
     /**
      * Public
      */
@@ -78,6 +85,10 @@ class Axis extends EventDispatcher {
         return this._playerManager.createPlayer(options);
     }
 
+    createLeaderboard(options) {
+        return this._createLeaderboard(options);
+    }
+
     /**
      * Private
      */
@@ -92,6 +103,7 @@ class Axis extends EventDispatcher {
         this._ipcRenderer = ipcRenderer;
         this._buttonManager.ipcRenderer = this._ipcRenderer;
         this._joystickManager.ipcRenderer = this._ipcRenderer;
+        if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
 
         this._setupIpcRendererEventListeners();
     }
@@ -112,6 +124,14 @@ class Axis extends EventDispatcher {
             buttonManager: this._buttonManager,
         });
         return playerManager;
+    }
+
+    _createLeaderboard(options) {
+        if (!this._leaderboard) this._leaderboard = new Leaderboard({
+            ipcRenderer: this._ipcRenderer,
+            ...options,
+        });
+        return this._leaderboard;
     }
 
     _bindAll() {

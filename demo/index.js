@@ -1,6 +1,7 @@
 import Axis from '../src/index';
 
 let isDefaultControls = true;
+const score = 0;
 
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
@@ -20,15 +21,29 @@ const player1 = Axis.createPlayer({
     id: 1,
     joystick: Axis.joystick1,
     buttons: buttonsPlayer1,
-    // buttons: Axis.buttonManager.getButtonsById(1),
 });
 
 const player2 = Axis.createPlayer({
     id: 2,
     joystick: Axis.joystick2,
     buttons: buttonsPlayer2,
-    // buttons: Axis.buttonManager.getButtonsById(2),
 });
+
+const leaderboard = Axis.createLeaderboard({
+    id: 'demo-game',
+});
+
+leaderboard.push({
+    username: 'sergiuonthetrack',
+    value: 100,
+});
+
+leaderboard.push({
+    username: 'sergiuonthetrack1',
+    value: 100,
+});
+
+console.log(leaderboard.scores);
 
 const box1 = document.querySelector('.js-box-1');
 const position1 = {
@@ -98,25 +113,13 @@ function player1keydownHandler(e) {
     let directionX = 0;
     let directionY = 0;
 
-    if (e.key === 'a') {
-        directionX = -1;
+    if (e.key === 'a') directionX = -1;
 
-        // Axis.enableMouseInteraction();
-    }
+    if (e.key === 'b') directionX = 1;
 
-    if (e.key === 'b') {
-        directionX = 1;
+    if (e.key === 'c') directionY = -1;
 
-        // Axis.disableMouseInteraction();
-    }
-
-    if (e.key === 'c') {
-        directionY = -1;
-    }
-
-    if (e.key === 'd') {
-        directionY = 1;
-    }
+    if (e.key === 'd') directionY = 1;
 
     position1.target.x += speed * directionX;
     position1.target.y += speed * directionY;
@@ -131,21 +134,13 @@ function player2keydownHandler(e) {
     let directionX = 0;
     let directionY = 0;
 
-    if (e.key === 'a') {
-        directionX = -1;
-    }
+    if (e.key === 'a') directionX = -1;
 
-    if (e.key === 'b') {
-        directionX = 1;
-    }
+    if (e.key === 'b') directionX = 1;
 
-    if (e.key === 'c') {
-        directionY = -1;
-    }
+    if (e.key === 'c') directionY = -1;
 
-    if (e.key === 'd') {
-        directionY = 1;
-    }
+    if (e.key === 'd') directionY = 1;
 
     position2.target.x += speed * directionX;
     position2.target.y += speed * directionY;
