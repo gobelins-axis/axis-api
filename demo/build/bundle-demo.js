@@ -1149,70 +1149,71 @@
       _classCallCheck(this, Leaderboard);
 
       // Props
-      this._id = options.id;
-      this._ipcRenderer = options.ipcRenderer; // Setup
+      this._id = options.id; // Setup
 
-      this._scores = [];
-
-      this._getScores();
+      this._isAxisMachine = true;
     }
     /**
-     * Getters & Setters
+     * Getters
      */
 
 
     _createClass(Leaderboard, [{
-      key: "scores",
+      key: "id",
       get: function get() {
-        return this._scores;
+        return this._id;
       }
       /**
        * Public
        */
 
     }, {
-      key: "push",
-      value: function push(score) {
+      key: "postScore",
+      value: function postScore(score) {
+        var _this = this;
+
         var isValid = this._isValidScore(score);
 
-        if (isValid) {
-          this._scores.push(score);
+        var promise = new Promise(function (resolve, reject) {
+          if (!isValid) {
+            reject(Error('Leaderboard: Score is not valid'));
+          } else {
+            if (_this._isAxisMachine) {
+              _this._postScoreToDatabase(score).then(resolve, reject);
+            } else {
+              var scores = _this._getLocalStorageScores(_this._id) || [];
+              scores.push(score);
 
-          this._setLocalStorageItem(this._id, this._scores);
-        }
+              _this._setLocalStorageScores(_this._id, scores);
+            }
+          }
+        });
+        return promise;
       }
     }, {
-      key: "clear",
-      value: function clear() {
-        localStorage.removeItem(this._id);
+      key: "getScores",
+      value: function getScores() {
+        var _this2 = this;
+
+        var promise = new Promise(function (resolve, reject) {
+          if (!_this2._isAxisMachine) {
+            var scores = _this2._getLocalStorageScores(_this2._id) || [];
+            resolve(scores);
+          } else {
+            _this2._getScoresFromDatabase().then(function (response) {
+              response.json().then(resolve);
+            }, reject);
+          }
+        });
+        return promise;
       }
       /**
        * Private
        */
 
     }, {
-      key: "_getScores",
-      value: function _getScores() {
-        // if (!this._ipcRenderer) {
-        //     this._scores = this._getLocalStorageItem(this._id) || [];
-        // } else {
-        //     // Fetch scores
-        //     this._getDatabaseScore().then((scores) => {
-        //         this._scores = scores;
-        //     });
-        // }
-        // this._getDatabaseScore().then((response) => {
-        //     response.json().then((response) => {
-        //         console.log(response);
-        //     });
-        // });
-        this._postScore().then(function (response) {
-          console.log(response);
-        });
-      }
-    }, {
-      key: "_getDatabaseScore",
-      value: function _getDatabaseScore() {
+      key: "_getScoresFromDatabase",
+      value: function _getScoresFromDatabase() {
         return fetch("http://localhost:8888/get/".concat(this._id), {
           method: 'GET',
           headers: {
@@ -1221,17 +1222,14 @@
         });
       }
     }, {
-      key: "_postScore",
-      value: function _postScore() {
+      key: "_postScoreToDatabase",
+      value: function _postScoreToDatabase(score) {
         return fetch("http://localhost:8888/post/".concat(this._id), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            score: 0,
-            username: 'serge'
-          })
+          body: JSON.stringify(score)
         });
       }
       /**
@@ -1249,15 +1247,15 @@
         return hasValue && hasUsername;
       }
     }, {
-      key: "_getLocalStorageItem",
-      value: function _getLocalStorageItem(id) {
-        var item = localStorage.getItem(id);
-        if (item) return JSON.parse(item);
+      key: "_getLocalStorageScores",
+      value: function _getLocalStorageScores(id) {
+        var scores = localStorage.getItem(id);
+        if (scores) return JSON.parse(scores);
       }
     }, {
-      key: "_setLocalStorageItem",
-      value: function _setLocalStorageItem(id, data) {
-        return localStorage.setItem(id, JSON.stringify(data));
+      key: "_setLocalStorageScores",
+      value: function _setLocalStorageScores(id, scores) {
+        return localStorage.setItem(id, JSON.stringify(scores));
       }
     }]);
 
@@ -1520,15 +1518,17 @@
   var leaderboard = Axis$1.createLeaderboard({
     id: 'demo-game'
   });
-  leaderboard.push({
+  leaderboard.postScore({
     username: 'sergiuonthetrack',
     value: 100
   });
-  leaderboard.push({
+  leaderboard.postScore({
     username: 'sergiuonthetrack1',
     value: 100
   });
-  console.log(leaderboard.scores);
+  leaderboard.getScores().then(function (response) {
+    console.log(response);
+  });
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
     target: {

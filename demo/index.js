@@ -33,17 +33,19 @@ const leaderboard = Axis.createLeaderboard({
     id: 'demo-game',
 });
 
-leaderboard.push({
+leaderboard.postScore({
     username: 'sergiuonthetrack',
     value: 100,
 });
 
-leaderboard.push({
+leaderboard.postScore({
     username: 'sergiuonthetrack1',
     value: 100,
 });
 
-console.log(leaderboard.scores);
+leaderboard.getScores().then((response) => {
+    console.log(response);
+});
 
 const box1 = document.querySelector('.js-box-1');
 const position1 = {
