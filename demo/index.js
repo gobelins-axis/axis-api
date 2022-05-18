@@ -38,11 +38,6 @@ leaderboard.postScore({
     value: 100,
 });
 
-leaderboard.postScore({
-    username: 'sergiuonthetrack1',
-    value: 100,
-});
-
 leaderboard.getScores().then((response) => {
     console.log(response);
 });

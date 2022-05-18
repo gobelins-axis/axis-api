@@ -1,9 +1,14 @@
+// Utils
+import frameTimeout from '../utils/frameTimeout';
+
 export default class Leaderboard {
     constructor(options = {}) {
         // Props
         this._id = options.id;
+        this._ipcRenderer = options.ipcRenderer;
 
         // Setup
+        this._hasCheckedForIpcRenderer = false;
         this._isAxisMachine = true;
     }
 
@@ -14,22 +19,60 @@ export default class Leaderboard {
         return this._id;
     }
 
+    get ipcRenderer() {
+        return this._ipcRenderer;
+    }
+
+    set ipcRenderer(ipcRenderer) {
+        this._ipcRenderer = ipcRenderer;
+    }
+
     /**
      * Public
      */
     postScore(score) {
+        if (this._hasCheckedForIpcRenderer) {
+            return this._postScore(score);
+        } else {
+            return new Promise((resolve, reject) => {
+                this._checkForIpcRenderer().then(() => {
+                    this._postScore(score).then(resolve, reject);
+                    this._hasCheckedForIpcRenderer = true;
+                });
+            });
+        }
+    }
+
+    getScores() {
+        if (this._hasCheckedForIpcRenderer) {
+            return this._getScores(score);
+        } else {
+            return new Promise((resolve, reject) => {
+                this._checkForIpcRenderer().then(() => {
+                    this._getScores().then(resolve, reject);
+                    this._hasCheckedForIpcRenderer = true;
+                });
+            });
+        }
+    }
+
+    /**
+     * Private
+     */
+    _postScore(score) {
         const isValid = this._isValidScore(score);
 
         const promise = new Promise((resolve, reject) => {
             if (!isValid) {
                 reject(Error('Leaderboard: Score is not valid'));
             } else {
-                if (this._isAxisMachine) {
-                    this._postScoreToDatabase(score).then(resolve, reject);
-                } else {
+                if (!this._ipcRenderer) {
                     const scores = this._getLocalStorageScores(this._id) || [];
                     scores.push(score);
                     this._setLocalStorageScores(this._id, scores);
+                    resolve();
+                } else {
+                    this._postScoreToDatabase(score).then(resolve, reject);
                 }
             }
         });
@@ -37,14 +80,14 @@ export default class Leaderboard {
         return promise;
     }
 
-    getScores() {
+    _getScores() {
         const promise = new Promise((resolve, reject) => {
-            if (!this._isAxisMachine) {
+            if (!this._ipcRenderer) {
                 const scores = this._getLocalStorageScores(this._id) || [];
                 resolve(scores);
             } else {
                 this._getScoresFromDatabase().then(
-                    (response) => { response.json().then(resolve); },
+                    resolve,
                     reject
                 );
             }
@@ -54,21 +97,26 @@ export default class Leaderboard {
     }
 
     /**
-     * Private
+     * Using IPC Renderer
      */
     _getScoresFromDatabase() {
-        return fetch(`http://localhost:8888/get/${this._id}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+        const promise = new Promise((resolve) => {
+            this._ipcRenderer.send('leaderboard:get', { id: this._id });
+            this._ipcRenderer.once('leaderboard:get:completed', (event, response) => {
+                resolve(response);
+            });
         });
+        return promise;
     }
 
     _postScoreToDatabase(score) {
-        return fetch(`http://localhost:8888/post/${this._id}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(score),
+        const promise = new Promise((resolve) => {
+            this._ipcRenderer.send('leaderboard:post', { id: this._id, score });
+            this._ipcRenderer.once('leaderboard:post:completed', (event, response) => {
+                resolve(response);
+            });
         });
+        return promise;
     }
 
     /**
@@ -92,5 +140,16 @@ export default class Leaderboard {
 
     _setLocalStorageScores(id, scores) {
         return localStorage.setItem(id, JSON.stringify(scores));
+    }
+
+    _checkForIpcRenderer() {
+        const promise = new Promise((resolve) => {
+            frameTimeout(() => {
+                console.log(this._ipcRenderer);
+                resolve();
+            }, 1);
+        });
+
+        return promise;
     }
 }
