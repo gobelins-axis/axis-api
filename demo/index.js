@@ -2,14 +2,6 @@ import Axis from '../src/index';
 
 let isDefaultControls = true;
 
-// setTimeout(() => {
-Axis.virtualKeyboard.open();
-// }, 1000);
-
-// setTimeout(() => {
-//     Axis.virtualKeyboard.close();
-// }, 3000);
-
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'b', 1),
@@ -60,6 +52,19 @@ const position2 = {
     target: { x: 0, y: 0 },
     current: { x: 0, y: 0 },
 };
+
+const input = document.querySelector('input');
+
+setTimeout(() => {
+    Axis.virtualKeyboard.open();
+    Axis.virtualKeyboard.addEventListener('input', (e) => {
+        input.value = e;
+    });
+}, 1000);
+
+// setTimeout(() => {
+//     Axis.virtualKeyboard.close();
+// }, 3000);
 
 function setup() {
     setupEventListeners();

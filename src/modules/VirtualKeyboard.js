@@ -123,13 +123,19 @@ export default class VirtualKeyboard extends EventDispatcher {
     inputHandler(e) {
         if (!this._isOpen) return;
 
-        this.dispatchEvent('keyboard:input', e);
+        this.dispatchEvent('input', e);
     }
 
     _keypressHandler(e) {
         if (!this._isOpen) return;
 
-        this.dispatchEvent('keyboard:keypress', e);
+        this.dispatchEvent('keypress', e);
+
+        if (e === '{enter}') this._validatedHandler(e);
+    }
+
+    _validatedHandler(e) {
+        this.dispatchEvent('validate', e);
     }
 
     _modulesLoadedHandler(e) {

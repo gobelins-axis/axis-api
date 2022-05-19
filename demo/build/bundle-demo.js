@@ -7060,13 +7060,19 @@
       key: "inputHandler",
       value: function inputHandler(e) {
         if (!this._isOpen) return;
-        this.dispatchEvent('keyboard:input', e);
+        this.dispatchEvent('input', e);
       }
     }, {
       key: "_keypressHandler",
       value: function _keypressHandler(e) {
         if (!this._isOpen) return;
-        this.dispatchEvent('keyboard:keypress', e);
+        this.dispatchEvent('keypress', e);
+        if (e === '{enter}') this._validatedHandler(e);
+      }
+    }, {
+      key: "_validatedHandler",
+      value: function _validatedHandler(e) {
+        this.dispatchEvent('validate', e);
       }
     }, {
       key: "_modulesLoadedHandler",
@@ -7385,13 +7391,7 @@
 
   var Axis$1 = new Axis();
 
-  var isDefaultControls = true; // setTimeout(() => {
-
-  Axis$1.virtualKeyboard.open(); // }, 1000);
-  // setTimeout(() => {
-  //     Axis.virtualKeyboard.close();
-  // }, 3000);
-
+  var isDefaultControls = true;
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({
@@ -7437,6 +7437,15 @@
       y: 0
     }
   };
+  var input = document.querySelector('input');
+  setTimeout(function () {
+    Axis$1.virtualKeyboard.open();
+    Axis$1.virtualKeyboard.addEventListener('input', function (e) {
+      input.value = e;
+    });
+  }, 1000); // setTimeout(() => {
+  //     Axis.virtualKeyboard.close();
+  // }, 3000);
 
   function setup() {
     setupEventListeners();

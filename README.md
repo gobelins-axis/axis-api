@@ -138,8 +138,26 @@ It's important to note that you will not be able to push any data to the databas
 #### Keyboard
 
 So you can now store your users scores but how will they type their usernames?
+You can use our virtual keyboard:
 
-To do...
+```js
+const input = document.querySelector("input");
+const virtualKeyboard = Axis.virtualKeyboard;
+
+virtualKeyboard.open();
+
+virtualKeyboard.addEventListener("input", (username) => {
+    input.value = username;
+});
+
+virtualKeyboard.addEventListener("validate", (username) => {
+    virtualKeyboard.close();
+    leaderboard.postScore({
+        username,
+        value: 100098796,
+    });
+});
+```
 
 #### Handling exit
 
