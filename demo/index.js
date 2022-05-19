@@ -2,6 +2,14 @@ import Axis from '../src/index';
 
 let isDefaultControls = true;
 
+// setTimeout(() => {
+Axis.virtualKeyboard.open();
+// }, 1000);
+
+// setTimeout(() => {
+//     Axis.virtualKeyboard.close();
+// }, 3000);
+
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'b', 1),
@@ -28,18 +36,18 @@ const player2 = Axis.createPlayer({
     buttons: buttonsPlayer2,
 });
 
-const leaderboard = Axis.createLeaderboard({
-    id: 'demo-game',
-});
+// const leaderboard = Axis.createLeaderboard({
+//     id: 'demo-game',
+// });
 
-leaderboard.postScore({
-    username: 'sergiuonthetrack',
-    value: 100,
-}).then(() => {
-    leaderboard.getScores().then((response) => {
-        console.log(response);
-    });
-});
+// leaderboard.postScore({
+//     username: 'sergiuonthetrack',
+//     value: 100,
+// }).then(() => {
+//     leaderboard.getScores().then((response) => {
+//         console.log(response);
+//     });
+// });
 
 const box1 = document.querySelector('.js-box-1');
 const position1 = {

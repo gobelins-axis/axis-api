@@ -6,6 +6,7 @@ import JoystickManager from './managers/JoystickManager';
 import ButtonManager from './managers/ButtonManager';
 import PlayerManager from './managers/PlayerManager';
 import Leaderboard from './modules/Leaderboard';
+import VirtualKeyboard from './modules/VirtualKeyboard';
 
 class Axis extends EventDispatcher {
     constructor() {
@@ -19,6 +20,8 @@ class Axis extends EventDispatcher {
         this._joystickManager = this._createJoystickManager();
         this._buttonManager = this._createButtonManager();
         this._playerManager = this._createPlayerManager();
+
+        this._virtualKeyboard = this._createVirtualKeyboard();
 
         this._bindAll();
         this._exposeMethods();
@@ -55,6 +58,10 @@ class Axis extends EventDispatcher {
 
     get leaderboard() {
         return this._leaderboard;
+    }
+
+    get virtualKeyboard() {
+        return this._virtualKeyboard;
     }
 
     /**
@@ -132,6 +139,15 @@ class Axis extends EventDispatcher {
             ...options,
         });
         return this._leaderboard;
+    }
+
+    _createVirtualKeyboard() {
+        const keyboard = new VirtualKeyboard({
+            joystick1: this._joystickManager.joystick1,
+            joystick2: this._joystickManager.joystick2,
+            buttonManager: this._buttonManager,
+        });
+        return keyboard;
     }
 
     _bindAll() {
