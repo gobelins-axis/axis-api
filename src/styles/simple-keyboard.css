@@ -139,13 +139,21 @@
 }
 
 .hg-theme-default .hg-button.hg-standardBtn[data-skbtn="@"] {
-  /* max-width: 60px; */
+  width: calc(2 / 12 * 100%);
 }
 
 .hg-theme-default .hg-button.hg-standardBtn[data-skbtn="{bksp}"] {
-  /* max-width: 60px; */
+  max-width: 60px;
 }
 
 .hg-theme-default .hg-button.hg-functionBtn[data-skbtn="{space}"] {
-  min-width: 50%;
+  min-width: 70%;
+}
+
+.hg-theme-default .hg-button.hg-functionBtn[data-skbtn="{shift}"] {
+  /* max-width: 60px; */
+}
+
+.hg-theme-default .hg-button.hg-functionBtn[data-skbtn="{enter}"] {
+    width: calc(2 / 12 * 100%);
 }
