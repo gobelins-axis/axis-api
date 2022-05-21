@@ -37,6 +37,7 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {
+    "color": "^4.2.3",
     "simple-keyboard": "^3.4.100",
     "simple-keyboard-key-navigation": "^2.4.157"
   }

@@ -6,6 +6,10 @@ export default class Button extends EventDispatcher {
 
         this._id = options.id;
         this._key = options.key;
+        this._ledManager = options.ledManager;
+
+        // Setup
+        this._led = this._ledManager.getLedByName(`button-${this._key}-${this._id}`);
         this._keyboardKeys = [];
     }
 
@@ -26,6 +30,10 @@ export default class Button extends EventDispatcher {
 
     set keyboardKeys(keys) {
         this._keyboardKeys = keys;
+    }
+
+    get led() {
+        return this._led;
     }
 
     /**

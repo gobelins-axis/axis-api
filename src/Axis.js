@@ -2,9 +2,12 @@
 import EventDispatcher from './utils/EventDispatcher';
 
 // Managers
+import LedManager from './managers/LedManager';
 import JoystickManager from './managers/JoystickManager';
 import ButtonManager from './managers/ButtonManager';
 import PlayerManager from './managers/PlayerManager';
+
+// Modules
 import Leaderboard from './modules/Leaderboard';
 import VirtualKeyboard from './modules/VirtualKeyboard';
 
@@ -17,6 +20,7 @@ class Axis extends EventDispatcher {
         this._firebaseToken = null;
         this._leaderboard = null;
 
+        this._ledManager = this._createLedManager();
         this._joystickManager = this._createJoystickManager();
         this._buttonManager = this._createButtonManager();
         this._playerManager = this._createPlayerManager();
@@ -62,6 +66,10 @@ class Axis extends EventDispatcher {
 
     get virtualKeyboard() {
         return this._virtualKeyboard;
+    }
+
+    get ledManager() {
+        return this._ledManager;
     }
 
     /**
@@ -110,9 +118,15 @@ class Axis extends EventDispatcher {
         this._ipcRenderer = ipcRenderer;
         this._buttonManager.ipcRenderer = this._ipcRenderer;
         this._joystickManager.ipcRenderer = this._ipcRenderer;
+        this._ledManager.ipcRenderer = this._ipcRenderer;
         if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
 
         this._setupIpcRendererEventListeners();
+    }
+
+    _createLedManager() {
+        const ledManager = new LedManager();
+        return ledManager;
     }
 
     _createJoystickManager() {
@@ -121,7 +135,9 @@ class Axis extends EventDispatcher {
     }
 
     _createButtonManager() {
-        const buttonManager = new ButtonManager();
+        const buttonManager = new ButtonManager({
+            ledManager: this.ledManager,
+        });
         return buttonManager;
     }
 

@@ -12,6 +12,9 @@ export default class ButtonManager extends EventDispatcher {
     constructor(options = {}) {
         super();
 
+        // Props
+        this._ledManager = options.ledManager;
+
         // Setup
         this._buttons = this._createButtons();
         this._ipcRenderer = null;
@@ -79,6 +82,7 @@ export default class ButtonManager extends EventDispatcher {
             const button = new Button({
                 id: config.buttons[i].id,
                 key: config.buttons[i].key,
+                ledManager: this._ledManager,
             });
             buttons.push(button);
         }
