@@ -5,38 +5,6 @@
   factory();
 })((function () { 'use strict';
 
-  var e = [],
-      t = [];
-
-  function n(n, r) {
-    if (n && "undefined" != typeof document) {
-      var a,
-          s = !0 === r.prepend ? "prepend" : "append",
-          d = !0 === r.singleTag,
-          i = "string" == typeof r.container ? document.querySelector(r.container) : document.getElementsByTagName("head")[0];
-
-      if (d) {
-        var u = e.indexOf(i);
-        -1 === u && (u = e.push(i) - 1, t[u] = {}), a = t[u] && t[u][s] ? t[u][s] : t[u][s] = c();
-      } else a = c();
-
-      65279 === n.charCodeAt(0) && (n = n.substring(1)), a.styleSheet ? a.styleSheet.cssText += n : a.appendChild(document.createTextNode(n));
-    }
-
-    function c() {
-      var e = document.createElement("style");
-      if (e.setAttribute("type", "text/css"), r.attributes) for (var t = Object.keys(r.attributes), n = 0; n < t.length; n++) e.setAttribute(t[n], r.attributes[t[n]]);
-      var a = "prepend" === s ? "afterbegin" : "beforeend";
-      return i.insertAdjacentElement(a, e), e;
-    }
-  }
-
-  var css$1 = ".hg-candidate-box {\n  display: inline-flex;\n  border-radius: 5px;\n  position: absolute;\n  background: #ececec;\n  border-bottom: 2px solid #b5b5b5;\n  user-select: none;\n  max-width: 272px;\n  transform: translateY(-100%);\n  margin-top: -10px;\n}\n\nul.hg-candidate-box-list {\n  display: flex;\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  flex: 1;\n}\n\nli.hg-candidate-box-list-item {\n  height: 40px;\n  width: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\nli.hg-candidate-box-list-item:hover {\n  background: rgba(0, 0, 0, 0.03);\n  cursor: pointer;\n}\n\nli.hg-candidate-box-list-item:active {\n  background: rgba(0, 0, 0, 0.1);\n}\n\n.hg-candidate-box-prev::before {\n  content: \"◄\";\n}\n\n.hg-candidate-box-next::before {\n  content: \"►\";\n}\n\n.hg-candidate-box-next,\n.hg-candidate-box-prev {\n  display: flex;\n  align-items: center;\n  padding: 0 10px;\n  background: #d0d0d0;\n  color: #969696;\n  cursor: pointer;\n}\n\n.hg-candidate-box-next {\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n\n.hg-candidate-box-prev {\n  border-top-left-radius: 5px;\n  border-bottom-left-radius: 5px;\n}\n\n.hg-candidate-box-btn-active {\n  color: #444;\n}";
-  n(css$1,{});
-
-  var css = "/**\n * simple-keyboard\n * Theme: hg-theme-default\n */\n.simple-keyboard {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n\n  margin: auto;\n\n  max-width: 1100px;\n\n  transform: translateY(100%);\n  transition: transform 0.5s ease-in-out;\n}\n\n.hg-theme-default {\n  width: 100%;\n  user-select: none;\n  box-sizing: border-box;\n  overflow: hidden;\n  touch-action: manipulation;\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\",\n    Helvetica, Arial, \"Lucida Grande\", sans-serif;\n  background-color: #ececec;\n  padding: 5px;\n  border-radius: 5px;\n}\n\n.hg-theme-default .hg-button span {\n  pointer-events: none;\n}\n\n/* When using option \"useButtonTag\" */\n.hg-theme-default button.hg-button {\n  border-width: 0;\n  outline: 0;\n  font-size: inherit;\n}\n\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n}\n\n.hg-theme-default .hg-button:active {\n  background: #efefef;\n}\n\n.hg-theme-default .hg-button.active {\n  background: #efefef;\n}\n\n.hg-theme-default .hg-button.hg-keyMarker {\n  box-shadow: 0 0 0 2px #88b8ff !important;\n}\n\n.hg-theme-default .hg-row {\n  display: flex;\n}\n\n.hg-theme-default .hg-row:not(:last-child) {\n  margin-bottom: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button:not(:last-child) {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row > div:last-child {\n  margin-right: 0;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  display: flex;\n}\n\n.hg-theme-default .hg-button {\n  box-shadow: 0px 0px 3px -1px rgba(0, 0, 0, 0.3);\n  height: 40px;\n  border-radius: 5px;\n  box-sizing: border-box;\n  padding: 5px;\n  background: white;\n  border-bottom: 1px solid #b5b5b5;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn {\n  width: 20px;\n}\n\n.hg-theme-default.hg-layout-numeric .hg-button {\n  width: 33.3%;\n  height: 60px;\n  align-items: center;\n  display: flex;\n  justify-content: center;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadadd {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadenter {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpad0 {\n  width: 105px;\n}\n\n.hg-theme-default .hg-button.hg-button-com {\n  max-width: 85px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn.hg-button-at {\n  max-width: 45px;\n}\n\n.hg-theme-default .hg-button.hg-selectedButton {\n  background: rgba(5, 25, 70, 0.53);\n  color: white;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\".com\"] {\n  max-width: 82px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"@\"] {\n  width: calc(2 / 12 * 100%);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"{bksp}\"] {\n  max-width: 60px;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{space}\"] {\n  min-width: 70%;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{shift}\"] {\n  /* max-width: 60px; */\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"] {\n    width: calc(2 / 12 * 100%);\n}\n";
-  n(css,{});
-
   function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
 
@@ -325,6 +293,11 @@
     name: 'button-e-2',
     strip: 2,
     index: 4
+  }, // Button Home
+  {
+    name: 'button-home-0',
+    strip: 1,
+    index: 5
   }];
 
   var config = {
@@ -3101,6 +3074,7 @@
 
       _this._ledManager = options.ledManager; // Setup
 
+      _this._buttonHome = _this._createButtonHome();
       _this._buttons = _this._createButtons();
       _this._ipcRenderer = null;
 
@@ -3124,6 +3098,11 @@
         this._ipcRenderer = ipcRenderer;
 
         this._setupIpcRendererEventListeners();
+      }
+    }, {
+      key: "buttonHome",
+      get: function get() {
+        return this._buttonHome;
       }
       /**
        * Public
@@ -3175,6 +3154,16 @@
        */
 
     }, {
+      key: "_createButtonHome",
+      value: function _createButtonHome() {
+        var buttonHome = new Button({
+          id: 0,
+          key: 'home',
+          ledManager: this._ledManager
+        });
+        return buttonHome;
+      }
+    }, {
       key: "_createButtons",
       value: function _createButtons() {
         var buttons = [];
@@ -3198,6 +3187,8 @@
         this._keyupHandler = this._keyupHandler.bind(this);
         this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
+        this._machineHomeKeydownHandler = this._machineHomeKeydownHandler.bind(this);
+        this._machineHomeKeyupHandler = this._machineHomeKeyupHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
@@ -3219,6 +3210,10 @@
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
 
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+
+        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
+
+        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
       }
     }, {
       key: "_removeIpcRendererEventListeners",
@@ -3228,6 +3223,10 @@
         this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
 
         this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
+
+        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
+
+        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
       }
       /**
        * Handlers
@@ -3290,6 +3289,20 @@
         }); // Mouse click
 
         if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
+      }
+    }, {
+      key: "_machineHomeKeydownHandler",
+      value: function _machineHomeKeydownHandler() {
+        this._buttonHome.keydownHandler();
+
+        this.dispatchEvent('home:keydown');
+      }
+    }, {
+      key: "_machineHomeKeyupHandler",
+      value: function _machineHomeKeyupHandler() {
+        this._buttonHome.keyupHandler();
+
+        this.dispatchEvent('home:keyup');
       }
     }]);
 
@@ -3705,6 +3718,38 @@
 
     return Leaderboard;
   }();
+
+  var e = [],
+      t = [];
+
+  function n(n, r) {
+    if (n && "undefined" != typeof document) {
+      var a,
+          s = !0 === r.prepend ? "prepend" : "append",
+          d = !0 === r.singleTag,
+          i = "string" == typeof r.container ? document.querySelector(r.container) : document.getElementsByTagName("head")[0];
+
+      if (d) {
+        var u = e.indexOf(i);
+        -1 === u && (u = e.push(i) - 1, t[u] = {}), a = t[u] && t[u][s] ? t[u][s] : t[u][s] = c();
+      } else a = c();
+
+      65279 === n.charCodeAt(0) && (n = n.substring(1)), a.styleSheet ? a.styleSheet.cssText += n : a.appendChild(document.createTextNode(n));
+    }
+
+    function c() {
+      var e = document.createElement("style");
+      if (e.setAttribute("type", "text/css"), r.attributes) for (var t = Object.keys(r.attributes), n = 0; n < t.length; n++) e.setAttribute(t[n], r.attributes[t[n]]);
+      var a = "prepend" === s ? "afterbegin" : "beforeend";
+      return i.insertAdjacentElement(a, e), e;
+    }
+  }
+
+  var css$2 = ".hg-candidate-box {\n  display: inline-flex;\n  border-radius: 5px;\n  position: absolute;\n  background: #ececec;\n  border-bottom: 2px solid #b5b5b5;\n  user-select: none;\n  max-width: 272px;\n  transform: translateY(-100%);\n  margin-top: -10px;\n}\n\nul.hg-candidate-box-list {\n  display: flex;\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  flex: 1;\n}\n\nli.hg-candidate-box-list-item {\n  height: 40px;\n  width: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\nli.hg-candidate-box-list-item:hover {\n  background: rgba(0, 0, 0, 0.03);\n  cursor: pointer;\n}\n\nli.hg-candidate-box-list-item:active {\n  background: rgba(0, 0, 0, 0.1);\n}\n\n.hg-candidate-box-prev::before {\n  content: \"◄\";\n}\n\n.hg-candidate-box-next::before {\n  content: \"►\";\n}\n\n.hg-candidate-box-next,\n.hg-candidate-box-prev {\n  display: flex;\n  align-items: center;\n  padding: 0 10px;\n  background: #d0d0d0;\n  color: #969696;\n  cursor: pointer;\n}\n\n.hg-candidate-box-next {\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n\n.hg-candidate-box-prev {\n  border-top-left-radius: 5px;\n  border-bottom-left-radius: 5px;\n}\n\n.hg-candidate-box-btn-active {\n  color: #444;\n}";
+  n(css$2,{});
+
+  var css$1 = "/**\n * simple-keyboard\n * Theme: hg-theme-default\n */\n.simple-keyboard {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 0;\n\n  margin: auto;\n\n  max-width: 1100px;\n\n  transform: translateY(100%);\n  transition: transform 0.5s ease-in-out;\n}\n\n.hg-theme-default {\n  width: 100%;\n  user-select: none;\n  box-sizing: border-box;\n  overflow: hidden;\n  touch-action: manipulation;\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\",\n    Helvetica, Arial, \"Lucida Grande\", sans-serif;\n  background-color: #ececec;\n  padding: 5px;\n  border-radius: 5px;\n}\n\n.hg-theme-default .hg-button span {\n  pointer-events: none;\n}\n\n/* When using option \"useButtonTag\" */\n.hg-theme-default button.hg-button {\n  border-width: 0;\n  outline: 0;\n  font-size: inherit;\n}\n\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n}\n\n.hg-theme-default .hg-button:active {\n  background: #efefef;\n}\n\n.hg-theme-default .hg-button.active {\n  background: #efefef;\n}\n\n.hg-theme-default .hg-button.hg-keyMarker {\n  box-shadow: 0 0 0 2px #88b8ff !important;\n}\n\n.hg-theme-default .hg-row {\n  display: flex;\n}\n\n.hg-theme-default .hg-row:not(:last-child) {\n  margin-bottom: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button:not(:last-child) {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row > div:last-child {\n  margin-right: 0;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  display: flex;\n}\n\n.hg-theme-default .hg-button {\n  box-shadow: 0px 0px 3px -1px rgba(0, 0, 0, 0.3);\n  height: 40px;\n  border-radius: 5px;\n  box-sizing: border-box;\n  padding: 5px;\n  background: white;\n  border-bottom: 1px solid #b5b5b5;\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn {\n  width: 20px;\n}\n\n.hg-theme-default.hg-layout-numeric .hg-button {\n  width: 33.3%;\n  height: 60px;\n  align-items: center;\n  display: flex;\n  justify-content: center;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadadd {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadenter {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpad0 {\n  width: 105px;\n}\n\n.hg-theme-default .hg-button.hg-button-com {\n  max-width: 85px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn.hg-button-at {\n  max-width: 45px;\n}\n\n.hg-theme-default .hg-button.hg-selectedButton {\n  background: rgba(5, 25, 70, 0.53);\n  color: white;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\".com\"] {\n  max-width: 82px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"@\"] {\n  width: calc(2 / 12 * 100%);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"{bksp}\"] {\n  max-width: 60px;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{space}\"] {\n  min-width: 70%;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{shift}\"] {\n  /* max-width: 60px; */\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"] {\n    width: calc(2 / 12 * 100%);\n}\n";
+  n(css$1,{});
 
   var build$1 = {exports: {}};
 
@@ -9447,6 +9492,134 @@
     return VirtualKeyboard;
   }(EventDispatcher);
 
+  var css = ".exit-overlay {\n    display: none;\n\n    position: fixed;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n    backdrop-filter: blur(50px);\n}\n\n.exit-overlay.is-visible {\n    display: block;\n}\n\n.exit-overlay:before {\n    position: absolute;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n\n    content: '';\n\n    background-color: rgba(0, 0, 0, 0.5);\n}\n\n.exit-overlay .message {\n    position: absolute;\n    top: 40%;\n\n    width: 100%;\n\n    font-size: 50px;\n    text-align: center;\n    font-family: sans-serif;\n    color: white;\n}";
+  n(css,{});
+
+  var ExitOverlay = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(ExitOverlay, _EventDispatcher);
+
+    var _super = _createSuper(ExitOverlay);
+
+    function ExitOverlay() {
+      var _this;
+
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, ExitOverlay);
+
+      _this = _super.call(this); // Props
+
+      _this._buttonManager = options.buttonManager; // Setup
+
+      _this._active = false;
+      _this._container = document.body;
+      _this._element = _this._createElement();
+      _this._buttonValidation1 = _this._buttonManager.getButton('a', 1);
+      _this._buttonValidation2 = _this._buttonManager.getButton('a', 2);
+      _this._buttonCancelation1 = _this._buttonManager.getButton('b', 1);
+      _this._buttonCancelation2 = _this._buttonManager.getButton('b', 2);
+
+      _this._bindAll();
+
+      _this._setupEventListeners();
+
+      return _this;
+    }
+    /**
+     * Private
+     */
+
+
+    _createClass(ExitOverlay, [{
+      key: "_show",
+      value: function _show() {
+        if (!this._element.classList.contains('is-visible')) this._element.classList.add('is-visible');
+      }
+    }, {
+      key: "_hide",
+      value: function _hide() {
+        if (this._element.classList.contains('is-visible')) this._element.classList.remove('is-visible');
+      }
+    }, {
+      key: "_createElement",
+      value: function _createElement() {
+        var element = document.createElement('div');
+        element.classList.add('exit-overlay');
+        var message = document.createElement('p');
+        message.innerHTML = 'Êtes-vous sûr de vouloir quitter ?';
+        message.classList.add('message');
+        element.appendChild(message);
+
+        this._container.appendChild(element);
+
+        return element;
+      }
+    }, {
+      key: "_bindAll",
+      value: function _bindAll() {
+        this._keydownHandler = this._keydownHandler.bind(this);
+        this._homeKeydownHandler = this._homeKeydownHandler.bind(this);
+        this._validationKeydownHandler = this._validationKeydownHandler.bind(this);
+        this._cancelationKeydownHandler = this._cancelationKeydownHandler.bind(this);
+      }
+    }, {
+      key: "_setupEventListeners",
+      value: function _setupEventListeners() {
+        window.addEventListener('keydown', this._keydownHandler);
+
+        this._buttonManager.addEventListener('home:keydown', this._homeKeydownHandler);
+
+        this._buttonValidation1.addEventListener('keydown', this._validationKeydownHandler);
+
+        this._buttonValidation2.addEventListener('keydown', this._validationKeydownHandler);
+
+        this._buttonCancelation1.addEventListener('keydown', this._cancelationKeydownHandler);
+
+        this._buttonCancelation2.addEventListener('keydown', this._cancelationKeydownHandler);
+      }
+    }, {
+      key: "_keydownHandler",
+      value: function _keydownHandler(e) {
+        if (e.key !== 'Escape') return;
+
+        this._homeKeydownHandler();
+      }
+    }, {
+      key: "_homeKeydownHandler",
+      value: function _homeKeydownHandler() {
+        if (!this._active) {
+          this._active = true;
+          this.dispatchEvent('exit:attempted');
+
+          this._show();
+        } else {
+          this.dispatchEvent('exit:completed');
+
+          this._hide();
+        }
+      }
+    }, {
+      key: "_validationKeydownHandler",
+      value: function _validationKeydownHandler() {
+        if (!this._active) return;
+        this.dispatchEvent('exit:completed');
+
+        this._hide();
+      }
+    }, {
+      key: "_cancelationKeydownHandler",
+      value: function _cancelationKeydownHandler() {
+        if (!this._active) return;
+        this._active = false;
+        this.dispatchEvent('exit:canceled');
+
+        this._hide();
+      }
+    }]);
+
+    return ExitOverlay;
+  }(EventDispatcher);
+
   var Axis = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Axis, _EventDispatcher);
 
@@ -9467,14 +9640,13 @@
       _this._buttonManager = _this._createButtonManager();
       _this._playerManager = _this._createPlayerManager();
       _this._virtualKeyboard = _this._createVirtualKeyboard();
+      _this._exitOverlay = _this._createExitOverlay();
 
       _this._bindAll();
 
       _this._exposeMethods();
 
       _this._setupEventListeners();
-
-      _this._setupIpcRendererEventListeners();
 
       return _this;
     }
@@ -9535,8 +9707,6 @@
     }, {
       key: "destroy",
       value: function destroy() {
-        this._removeIpcRendererEventListeners();
-
         this._ipcRenderer = null;
       }
     }, {
@@ -9587,8 +9757,6 @@
         this._joystickManager.ipcRenderer = this._ipcRenderer;
         this._ledManager.ipcRenderer = this._ipcRenderer;
         if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
-
-        this._setupIpcRendererEventListeners();
       }
     }, {
       key: "_createLedManager",
@@ -9638,6 +9806,14 @@
         return keyboard;
       }
     }, {
+      key: "_createExitOverlay",
+      value: function _createExitOverlay() {
+        var exitOverlay = new ExitOverlay({
+          buttonManager: this._buttonManager
+        });
+        return exitOverlay;
+      }
+    }, {
       key: "_bindAll",
       value: function _bindAll() {
         // Exposed methods
@@ -9646,9 +9822,9 @@
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
-        this._machineExitAttemptHandler = this._machineExitAttemptHandler.bind(this);
-        this._machineExitCanceledHandler = this._machineExitCanceledHandler.bind(this);
-        this._machineExitCompletedHandler = this._machineExitCompletedHandler.bind(this);
+        this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
+        this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
+        this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
@@ -9658,28 +9834,12 @@
         this._buttonManager.addEventListener('keyup', this._keyupHandler);
 
         this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
-      }
-    }, {
-      key: "_setupIpcRendererEventListeners",
-      value: function _setupIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
 
-        this._ipcRenderer.on('exit:attempted', this._machineExitAttemptHandler);
+        this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
 
-        this._ipcRenderer.on('exit:canceled', this._machineExitCanceledHandler);
+        this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);
 
-        this._ipcRenderer.on('exit:completed', this._machineExitCompletedHandler);
-      }
-    }, {
-      key: "_removeIpcRendererEventListeners",
-      value: function _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.removeListener('exit:attempted', this._machineExitAttemptHandler);
-
-        this._ipcRenderer.removeListener('exit:canceled', this._machineExitCanceledHandler);
-
-        this._ipcRenderer.removeListener('exit:completed', this._machineExitCompletedHandler);
+        this._exitOverlay.addEventListener('exit:completed', this._exitCompletedHandler);
       }
     }, {
       key: "_keydownHandler",
@@ -9697,19 +9857,22 @@
         this.dispatchEvent('joystick:move', e);
       }
     }, {
-      key: "_machineExitAttemptHandler",
-      value: function _machineExitAttemptHandler() {
+      key: "_exitAttemptHandler",
+      value: function _exitAttemptHandler() {
         this.dispatchEvent('exit:attempted');
       }
     }, {
-      key: "_machineExitCanceledHandler",
-      value: function _machineExitCanceledHandler() {
+      key: "_exitCanceledHandler",
+      value: function _exitCanceledHandler() {
         this.dispatchEvent('exit:canceled');
       }
     }, {
-      key: "_machineExitCompletedHandler",
-      value: function _machineExitCompletedHandler() {
+      key: "_exitCompletedHandler",
+      value: function _exitCompletedHandler() {
+        var _this$_ipcRenderer;
+
         this.dispatchEvent('exit:completed');
+        (_this$_ipcRenderer = this._ipcRenderer) === null || _this$_ipcRenderer === void 0 ? void 0 : _this$_ipcRenderer.send('exit');
       }
     }]);
 

@@ -16,6 +16,7 @@ export default class ButtonManager extends EventDispatcher {
         this._ledManager = options.ledManager;
 
         // Setup
+        this._buttonHome = this._createButtonHome();
         this._buttons = this._createButtons();
         this._ipcRenderer = null;
 
@@ -33,6 +34,10 @@ export default class ButtonManager extends EventDispatcher {
     set ipcRenderer(ipcRenderer) {
         this._ipcRenderer = ipcRenderer;
         this._setupIpcRendererEventListeners();
+    }
+
+    get buttonHome() {
+        return this._buttonHome;
     }
 
     /**
@@ -75,6 +80,15 @@ export default class ButtonManager extends EventDispatcher {
     /**
      * Private
      */
+    _createButtonHome() {
+        const buttonHome = new Button({
+            id: 0,
+            key: 'home',
+            ledManager: this._ledManager,
+        });
+        return buttonHome;
+    }
+
     _createButtons() {
         const buttons = [];
 
@@ -96,6 +110,8 @@ export default class ButtonManager extends EventDispatcher {
         this._keyupHandler = this._keyupHandler.bind(this);
         this._machineKeydownHandler = this._machineKeydownHandler.bind(this);
         this._machineKeyupHandler = this._machineKeyupHandler.bind(this);
+        this._machineHomeKeydownHandler = this._machineHomeKeydownHandler.bind(this);
+        this._machineHomeKeyupHandler = this._machineHomeKeyupHandler.bind(this);
     }
 
     _setupEventListeners() {
@@ -112,12 +128,16 @@ export default class ButtonManager extends EventDispatcher {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
+        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
+        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
     }
 
     _removeIpcRendererEventListeners() {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
         this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
+        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
+        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
     }
 
     /**
@@ -178,5 +198,15 @@ export default class ButtonManager extends EventDispatcher {
 
         // Mouse click
         if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
+    }
+
+    _machineHomeKeydownHandler() {
+        this._buttonHome.keydownHandler();
+        this.dispatchEvent('home:keydown');
+    }
+
+    _machineHomeKeyupHandler() {
+        this._buttonHome.keyupHandler();
+        this.dispatchEvent('home:keyup');
     }
 }

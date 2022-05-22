@@ -51,4 +51,10 @@ export default [
         strip: 2,
         index: 4,
     },
+    // Button Home
+    {
+        name: 'button-home-0',
+        strip: 1,
+        index: 5,
+    },
 ];

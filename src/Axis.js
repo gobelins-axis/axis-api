@@ -10,6 +10,7 @@ import PlayerManager from './managers/PlayerManager';
 // Modules
 import Leaderboard from './modules/Leaderboard';
 import VirtualKeyboard from './modules/VirtualKeyboard';
+import ExitOverlay from './modules/ExitOverlay';
 
 class Axis extends EventDispatcher {
     constructor() {
@@ -26,11 +27,11 @@ class Axis extends EventDispatcher {
         this._playerManager = this._createPlayerManager();
 
         this._virtualKeyboard = this._createVirtualKeyboard();
+        this._exitOverlay = this._createExitOverlay();
 
         this._bindAll();
         this._exposeMethods();
         this._setupEventListeners();
-        this._setupIpcRendererEventListeners();
     }
 
     /**
@@ -76,7 +77,6 @@ class Axis extends EventDispatcher {
      * Public
      */
     destroy() {
-        this._removeIpcRendererEventListeners();
         this._ipcRenderer = null;
     }
 
@@ -120,8 +120,6 @@ class Axis extends EventDispatcher {
         this._joystickManager.ipcRenderer = this._ipcRenderer;
         this._ledManager.ipcRenderer = this._ipcRenderer;
         if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
-
-        this._setupIpcRendererEventListeners();
     }
 
     _createLedManager() {
@@ -166,6 +164,13 @@ class Axis extends EventDispatcher {
         return keyboard;
     }
 
+    _createExitOverlay() {
+        const exitOverlay = new ExitOverlay({
+            buttonManager: this._buttonManager,
+        });
+        return exitOverlay;
+    }
+
     _bindAll() {
         // Exposed methods
         this._setIpcRenderer = this._setIpcRenderer.bind(this);
@@ -173,30 +178,23 @@ class Axis extends EventDispatcher {
         // Event handlers
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
+
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
-        this._machineExitAttemptHandler = this._machineExitAttemptHandler.bind(this);
-        this._machineExitCanceledHandler = this._machineExitCanceledHandler.bind(this);
-        this._machineExitCompletedHandler = this._machineExitCompletedHandler.bind(this);
+
+        this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
+        this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
+        this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
     }
 
     _setupEventListeners() {
         this._buttonManager.addEventListener('keydown', this._keydownHandler);
         this._buttonManager.addEventListener('keyup', this._keyupHandler);
+
         this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
-    }
 
-    _setupIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-        this._ipcRenderer.on('exit:attempted', this._machineExitAttemptHandler);
-        this._ipcRenderer.on('exit:canceled', this._machineExitCanceledHandler);
-        this._ipcRenderer.on('exit:completed', this._machineExitCompletedHandler);
-    }
-
-    _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-        this._ipcRenderer.removeListener('exit:attempted', this._machineExitAttemptHandler);
-        this._ipcRenderer.removeListener('exit:canceled', this._machineExitCanceledHandler);
-        this._ipcRenderer.removeListener('exit:completed', this._machineExitCompletedHandler);
+        this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
+        this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);
+        this._exitOverlay.addEventListener('exit:completed', this._exitCompletedHandler);
     }
 
     _keydownHandler(e) {
@@ -211,16 +209,18 @@ class Axis extends EventDispatcher {
         this.dispatchEvent('joystick:move', e);
     }
 
-    _machineExitAttemptHandler() {
+    _exitAttemptHandler() {
         this.dispatchEvent('exit:attempted');
     }
 
-    _machineExitCanceledHandler() {
+    _exitCanceledHandler() {
         this.dispatchEvent('exit:canceled');
     }
 
-    _machineExitCompletedHandler() {
+    _exitCompletedHandler() {
         this.dispatchEvent('exit:completed');
+
+        this._ipcRenderer?.send('exit');
     }
 }
 

@@ -1,3 +1,8 @@
+
+// Styles
+import '../styles/simple-keyboard-candidate-box.css';
+import '../styles/simple-keyboard.css';
+
 // Vendor
 import Keyboard from 'simple-keyboard';
 import keyNavigation from 'simple-keyboard-key-navigation';
