@@ -272,6 +272,18 @@
     name: 'button-e-1',
     strip: 1,
     index: 4
+  }, {
+    name: 'button-f-1',
+    strip: 1,
+    index: 5
+  }, {
+    name: 'button-g-1',
+    strip: 1,
+    index: 6
+  }, {
+    name: 'button-h-1',
+    strip: 1,
+    index: 7
   }, // Controllers 2
   {
     name: 'button-a-2',
@@ -2601,8 +2613,8 @@
   var MIN_INPUT_SIGNAL_Y = 18;
   var MAX_INPUT_SIGNAL_Y = 840;
   function normalizeJoystickSignal(position, threshold) {
-    var x = map(position.x, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
-    var y = map(position.y, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1) * -1;
+    var x = map(position.y, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
+    var y = map(position.x, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1);
     var dist = distance({
       x: x,
       y: y
@@ -2965,7 +2977,6 @@
       value: function _joystickMoveHandler(event, data) {
         if (data.id === 1) this._joystick1.moveHandler(data.position);
         if (data.id === 2) this._joystick2.moveHandler(data.position);
-        this.dispatchEvent('joystick:move', data);
       }
     }]);
 
@@ -3031,6 +3042,7 @@
         this.dispatchEvent('keydown', {
           key: this._key,
           id: this._id,
+          keyboardKeys: this._keyboardKeys,
           instance: this,
           originalEvent: e
         });
@@ -3041,6 +3053,7 @@
         this.dispatchEvent('keyup', {
           key: this._key,
           id: this._id,
+          keyboardKeys: this._keyboardKeys,
           instance: this,
           originalEvent: e
         });
@@ -9833,7 +9846,9 @@
 
         this._buttonManager.addEventListener('keyup', this._keyupHandler);
 
-        this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
+
+        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
 
@@ -9926,21 +9941,21 @@
       x: 0,
       y: 0
     }
-  };
-  document.querySelector('input');
-  setTimeout(function () {// Axis.virtualKeyboard.open();
-    // Axis.virtualKeyboard.addEventListener('input', (e) => {
-    //     input.value = e;
-    // });
-  }, 1000);
+  }; // const input = document.querySelector('input');
+  // setTimeout(() => {
+  // Axis.virtualKeyboard.open();
+  // Axis.virtualKeyboard.addEventListener('input', (e) => {
+  //     input.value = e;
+  // });
+  // }, 1000);
 
   function setup() {
+    Axis$1.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[3].setColor('rgb(255, 0, 0)');
     setupEventListeners();
     update();
-    setInterval(function () {
-    }, 100); // const red = Math.round((Math.sin(time * 0.05) / 2 + 0.5) * 255);
-    // const green = Math.round((Math.cos(time * 0.05) / 2 + 0.5) * 255);
-    // Axis.ledManager.leds[0].setColor(`rgb(${red}, ${green}, 0)`);
   }
 
   function update() {
@@ -9987,7 +10002,10 @@
     var speed = 50;
     var directionX = 0;
     var directionY = 0;
-    Axis$1.ledManager.leds[0].setColor('rgb(255, 255, 0)');
+    Axis$1.ledManager.leds[0].setColor('rgb(255, 255, 255)');
+    Axis$1.ledManager.leds[1].setColor('rgb(255, 255, 255)');
+    Axis$1.ledManager.leds[2].setColor('rgb(255, 255, 255)');
+    Axis$1.ledManager.leds[3].setColor('rgb(255, 255, 255)');
 
     if (e.key === 'a') {
       directionX = -1;
@@ -10011,7 +10029,10 @@
 
   function player1keyupHandler(e) {
     //
-    Axis$1.ledManager.leds[0].setColor('rgb(0, 0, 0)');
+    Axis$1.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    Axis$1.ledManager.leds[3].setColor('rgb(255, 0, 0)');
   }
 
   function player2keydownHandler(e) {

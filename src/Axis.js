@@ -190,7 +190,8 @@ class Axis extends EventDispatcher {
         this._buttonManager.addEventListener('keydown', this._keydownHandler);
         this._buttonManager.addEventListener('keyup', this._keyupHandler);
 
-        this._joystickManager.addEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
         this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);

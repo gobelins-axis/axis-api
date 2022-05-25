@@ -25,6 +25,21 @@ export default [
         strip: 1,
         index: 4,
     },
+    {
+        name: 'button-f-1',
+        strip: 1,
+        index: 5,
+    },
+    {
+        name: 'button-g-1',
+        strip: 1,
+        index: 6,
+    },
+    {
+        name: 'button-h-1',
+        strip: 1,
+        index: 7,
+    },
     // Controllers 2
     {
         name: 'button-a-2',

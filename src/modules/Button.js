@@ -43,6 +43,7 @@ export default class Button extends EventDispatcher {
         this.dispatchEvent('keydown', {
             key: this._key,
             id: this._id,
+            keyboardKeys: this._keyboardKeys,
             instance: this,
             originalEvent: e,
         });
@@ -52,6 +53,7 @@ export default class Button extends EventDispatcher {
         this.dispatchEvent('keyup', {
             key: this._key,
             id: this._id,
+            keyboardKeys: this._keyboardKeys,
             instance: this,
             originalEvent: e,
         });

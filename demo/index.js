@@ -54,39 +54,22 @@ const position2 = {
     current: { x: 0, y: 0 },
 };
 
-const input = document.querySelector('input');
+// const input = document.querySelector('input');
 
-setTimeout(() => {
-    // Axis.virtualKeyboard.open();
-    // Axis.virtualKeyboard.addEventListener('input', (e) => {
-    //     input.value = e;
-    // });
-}, 1000);
+// setTimeout(() => {
+// Axis.virtualKeyboard.open();
+// Axis.virtualKeyboard.addEventListener('input', (e) => {
+//     input.value = e;
+// });
+// }, 1000);
 
 function setup() {
+    Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
     setupEventListeners();
-
     update();
-
-    let index = 0;
-    let isOff = false;
-
-    setInterval(() => {
-        if (index % 4 === 0) isOff = !isOff;
-
-        const red = Math.round((Math.sin(time * 0.2) / 2 + 0.5) * 255);
-        const green = Math.round((Math.cos(time * 0.2) / 2 + 0.5) * 255);
-        const blue = Math.round((Math.sin(time * 0.2) / 2 + 0.5) * 255);
-
-        const color = isOff ? 'rgb(0, 0, 0)' : `rgb(${red}, ${green}, ${blue})`;
-        // Axis.ledManager.leds[index % 4].setColor(color);
-
-        index++;
-    }, 100);
-
-    // const red = Math.round((Math.sin(time * 0.05) / 2 + 0.5) * 255);
-    // const green = Math.round((Math.cos(time * 0.05) / 2 + 0.5) * 255);
-    // Axis.ledManager.leds[0].setColor(`rgb(${red}, ${green}, 0)`);
 }
 
 function update() {
@@ -139,7 +122,10 @@ function player1keydownHandler(e) {
     let directionX = 0;
     let directionY = 0;
 
-    Axis.ledManager.leds[0].setColor('rgb(255, 255, 0)');
+    Axis.ledManager.leds[0].setColor('rgb(255, 255, 255)');
+    Axis.ledManager.leds[1].setColor('rgb(255, 255, 255)');
+    Axis.ledManager.leds[2].setColor('rgb(255, 255, 255)');
+    Axis.ledManager.leds[3].setColor('rgb(255, 255, 255)');
 
     if (e.key === 'a') {
         directionX = -1;
@@ -163,7 +149,10 @@ function player1keydownHandler(e) {
 
 function player1keyupHandler(e) {
     //
-    Axis.ledManager.leds[0].setColor('rgb(0, 0, 0)');
+    Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
 }
 
 function player2keydownHandler(e) {

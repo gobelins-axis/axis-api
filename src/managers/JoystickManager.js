@@ -80,7 +80,5 @@ export default class joystickManager extends EventDispatcher {
     _joystickMoveHandler(event, data) {
         if (data.id === 1) this._joystick1.moveHandler(data.position);
         if (data.id === 2) this._joystick2.moveHandler(data.position);
-
-        this.dispatchEvent('joystick:move', data);
     }
 }
