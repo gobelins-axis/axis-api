@@ -110,10 +110,13 @@ export default class Leaderboard {
     }
 
     _postScoreToDatabase(score) {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise((resolve, reject) => {
             this._ipcRenderer.send('leaderboard:post', { id: this._id, score });
             this._ipcRenderer.once('leaderboard:post:completed', (event, response) => {
                 resolve(response);
+            });
+            this._ipcRenderer.once('leaderboard:post:error', (event, response) => {
+                reject(response);
             });
         });
         return promise;

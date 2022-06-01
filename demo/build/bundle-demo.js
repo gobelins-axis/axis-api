@@ -2604,17 +2604,18 @@
     return Math.sqrt(a * a + b * b);
   }
 
-  // const MIN_INPUT_SIGNAL = 0;
-  // const MAX_INPUT_SIGNAL = 1023;
-  // Ultra Stick 360
+  var MIN_INPUT_SIGNAL_X = 0;
+  var MAX_INPUT_SIGNAL_X = 1023;
+  var MIN_INPUT_SIGNAL_Y = 0;
+  var MAX_INPUT_SIGNAL_Y = 1023; // Ultra Stick 360
+  // const MIN_INPUT_SIGNAL_X = 18;
+  // const MAX_INPUT_SIGNAL_X = 840;
+  // const MIN_INPUT_SIGNAL_Y = 18;
+  // const MAX_INPUT_SIGNAL_Y = 840;
 
-  var MIN_INPUT_SIGNAL_X = 18;
-  var MAX_INPUT_SIGNAL_X = 840;
-  var MIN_INPUT_SIGNAL_Y = 18;
-  var MAX_INPUT_SIGNAL_Y = 840;
   function normalizeJoystickSignal(position, threshold) {
-    var x = map(position.y, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
-    var y = map(position.x, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1);
+    var x = map(position.x, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
+    var y = map(position.y, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1) * -1;
     var dist = distance({
       x: x,
       y: y
@@ -3678,7 +3679,7 @@
       value: function _postScoreToDatabase(score) {
         var _this6 = this;
 
-        var promise = new Promise(function (resolve) {
+        var promise = new Promise(function (resolve, reject) {
           _this6._ipcRenderer.send('leaderboard:post', {
             id: _this6._id,
             score: score
@@ -3686,6 +3687,10 @@
 
           _this6._ipcRenderer.once('leaderboard:post:completed', function (event, response) {
             resolve(response);
+          });
+
+          _this6._ipcRenderer.once('leaderboard:post:error', function (event, response) {
+            reject(response);
           });
         });
         return promise;
@@ -9908,18 +9913,7 @@
     id: 2,
     joystick: Axis$1.joystick2,
     buttons: buttonsPlayer2
-  }); // const leaderboard = Axis.createLeaderboard({
-  //     id: 'demo-game',
-  // });
-  // leaderboard.postScore({
-  //     username: 'sergiuonthetrack',
-  //     value: 100,
-  // }).then(() => {
-  //     leaderboard.getScores().then((response) => {
-  //         console.log(response);
-  //     });
-  // });
-
+  });
   var box1 = document.querySelector('.js-box-1');
   var position1 = {
     target: {
@@ -10024,7 +10018,19 @@
     }
 
     position1.target.x += speed * directionX;
-    position1.target.y += speed * directionY;
+    position1.target.y += speed * directionY; // Leaderboard tests
+    // console.log('Pushing score');
+    // const leaderboard = Axis.createLeaderboard({
+    //     id: 'A-Cairn-Tale-9a63183e-7c86-49c4-9d31-5ff4b16717a3',
+    // });
+    // leaderboard.postScore({
+    //     username: 'coucou',
+    //     value: 100,
+    // }).then(() => {
+    //     leaderboard.getScores().then((response) => {
+    //         console.log(response);
+    //     });
+    // });
   }
 
   function player1keyupHandler(e) {

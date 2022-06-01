@@ -29,19 +29,6 @@ const player2 = Axis.createPlayer({
     buttons: buttonsPlayer2,
 });
 
-// const leaderboard = Axis.createLeaderboard({
-//     id: 'demo-game',
-// });
-
-// leaderboard.postScore({
-//     username: 'sergiuonthetrack',
-//     value: 100,
-// }).then(() => {
-//     leaderboard.getScores().then((response) => {
-//         console.log(response);
-//     });
-// });
-
 const box1 = document.querySelector('.js-box-1');
 const position1 = {
     target: { x: 0, y: 0 },
@@ -145,6 +132,22 @@ function player1keydownHandler(e) {
 
     position1.target.x += speed * directionX;
     position1.target.y += speed * directionY;
+
+    // Leaderboard tests
+    // console.log('Pushing score');
+
+    // const leaderboard = Axis.createLeaderboard({
+    //     id: 'A-Cairn-Tale-9a63183e-7c86-49c4-9d31-5ff4b16717a3',
+    // });
+
+    // leaderboard.postScore({
+    //     username: 'coucou',
+    //     value: 100,
+    // }).then(() => {
+    //     leaderboard.getScores().then((response) => {
+    //         console.log(response);
+    //     });
+    // });
 }
 
 function player1keyupHandler(e) {
