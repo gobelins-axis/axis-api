@@ -62,6 +62,8 @@ export default class Leaderboard {
     _postScore(score) {
         const isValid = this._isValidScore(score);
 
+        score.createdAt = Date.now();
+
         const promise = new Promise((resolve, reject) => {
             if (!isValid) {
                 reject(Error('Leaderboard: Score is not valid'));
