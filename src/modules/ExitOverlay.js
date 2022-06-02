@@ -50,7 +50,7 @@ export default class ExitOverlay extends EventDispatcher {
 
     _bindAll() {
         this._keydownHandler = this._keydownHandler.bind(this);
-        this._homeKeydownHandler = this._homeKeydownHandler.bind(this);
+        this._homeKeyupHandler = this._homeKeyupHandler.bind(this);
         this._validationKeydownHandler = this._validationKeydownHandler.bind(this);
         this._cancelationKeydownHandler = this._cancelationKeydownHandler.bind(this);
     }
@@ -58,7 +58,7 @@ export default class ExitOverlay extends EventDispatcher {
     _setupEventListeners() {
         window.addEventListener('keydown', this._keydownHandler);
 
-        this._buttonManager.addEventListener('home:keydown', this._homeKeydownHandler);
+        this._buttonManager.addEventListener('home:keyup', this._homeKeyupHandler);
 
         this._buttonValidation1.addEventListener('keydown', this._validationKeydownHandler);
         this._buttonValidation2.addEventListener('keydown', this._validationKeydownHandler);
@@ -69,10 +69,10 @@ export default class ExitOverlay extends EventDispatcher {
     _keydownHandler(e) {
         if (e.key !== 'Escape') return;
 
-        this._homeKeydownHandler();
+        this._homeKeyupHandler();
     }
 
-    _homeKeydownHandler() {
+    _homeKeyupHandler() {
         if (!this._active) {
             this._active = true;
             this.dispatchEvent('exit:attempted');
