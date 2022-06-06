@@ -3340,8 +3340,8 @@
       _this = _super.call(this); // Props
 
       _this._id = options.id;
-      _this._joystick = options.joystick;
-      _this._buttons = options.buttons; // Setup
+      _this._joysticks = options.joysticks || [];
+      _this._buttons = options.buttons || []; // Setup
 
       _this._bindAll();
 
@@ -3360,12 +3360,12 @@
         return this._id;
       }
     }, {
-      key: "joystick",
+      key: "joysticks",
       get: function get() {
-        return this._joystick;
+        return this._joysticks;
       },
-      set: function set(joystick) {
-        this._joystick = joystick;
+      set: function set(joysticks) {
+        this._joysticks = getArray(joysticks);
       }
     }, {
       key: "buttons",
@@ -3403,27 +3403,31 @@
     }, {
       key: "_setupEventListeners",
       value: function _setupEventListeners() {
-        this._joystick.addEventListener('joystick:move', this._joystickMoveHandler);
+        for (var i = 0; i < this._joysticks.length; i++) {
+          this._joysticks[i].addEventListener('joystick:move', this._joystickMoveHandler);
 
-        this._joystick.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+          this._joysticks[i].addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        }
 
-        for (var i = 0; i < this._buttons.length; i++) {
-          this._buttons[i].addEventListener('keydown', this._keydownHandler);
+        for (var _i = 0; _i < this._buttons.length; _i++) {
+          this._buttons[_i].addEventListener('keydown', this._keydownHandler);
 
-          this._buttons[i].addEventListener('keyup', this._keyupHandler);
+          this._buttons[_i].addEventListener('keyup', this._keyupHandler);
         }
       }
     }, {
       key: "_removeEventListeners",
       value: function _removeEventListeners() {
-        this._joystick.removeEventListener('joystick:move', this._joystickMoveHandler);
+        for (var i = 0; i < this._joysticks.length; i++) {
+          this._joysticks[i].removeEventListener('joystick:move', this._joystickMoveHandler);
 
-        this._joystick.removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+          this._joysticks[i].removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        }
 
-        for (var i = 0; i < this._buttons.length; i++) {
-          this._buttons[i].removeEventListener('keydown', this._keydownHandler);
+        for (var _i2 = 0; _i2 < this._buttons.length; _i2++) {
+          this._buttons[_i2].removeEventListener('keydown', this._keydownHandler);
 
-          this._buttons[i].removeEventListener('keyup', this._keyupHandler);
+          this._buttons[_i2].removeEventListener('keyup', this._keyupHandler);
         }
       }
     }, {
@@ -9917,12 +9921,12 @@
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({
     id: 1,
-    joystick: Axis$1.joystick1,
+    joysticks: Axis$1.joystick1,
     buttons: buttonsPlayer1
   });
   var player2 = Axis$1.createPlayer({
     id: 2,
-    joystick: Axis$1.joystick2,
+    joysticks: Axis$1.joystick2,
     buttons: buttonsPlayer2
   });
   var box1 = document.querySelector('.js-box-1');

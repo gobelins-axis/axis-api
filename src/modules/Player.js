@@ -1,4 +1,5 @@
 // Utils
+import getArray from '../utils/getArray';
 import EventDispatcher from '../utils/EventDispatcher';
 
 export default class Player extends EventDispatcher {
@@ -7,8 +8,8 @@ export default class Player extends EventDispatcher {
 
         // Props
         this._id = options.id;
-        this._joystick = options.joystick;
-        this._buttons = options.buttons;
+        this._joysticks = options.joysticks || [];
+        this._buttons = options.buttons || [];
 
         // Setup
         this._bindAll();
@@ -22,12 +23,12 @@ export default class Player extends EventDispatcher {
         return this._id;
     }
 
-    get joystick() {
-        return this._joystick;
+    get joysticks() {
+        return this._joysticks;
     }
 
-    set joystick(joystick) {
-        this._joystick = joystick;
+    set joysticks(joysticks) {
+        this._joysticks = getArray(joysticks);
     }
 
     get buttons() {
@@ -58,8 +59,10 @@ export default class Player extends EventDispatcher {
     }
 
     _setupEventListeners() {
-        this._joystick.addEventListener('joystick:move', this._joystickMoveHandler);
-        this._joystick.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        for (let i = 0; i < this._joysticks.length; i++) {
+            this._joysticks[i].addEventListener('joystick:move', this._joystickMoveHandler);
+            this._joysticks[i].addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        }
 
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].addEventListener('keydown', this._keydownHandler);
@@ -68,8 +71,10 @@ export default class Player extends EventDispatcher {
     }
 
     _removeEventListeners() {
-        this._joystick.removeEventListener('joystick:move', this._joystickMoveHandler);
-        this._joystick.removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        for (let i = 0; i < this._joysticks.length; i++) {
+            this._joysticks[i].removeEventListener('joystick:move', this._joystickMoveHandler);
+            this._joysticks[i].removeEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
+        }
 
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].removeEventListener('keydown', this._keydownHandler);

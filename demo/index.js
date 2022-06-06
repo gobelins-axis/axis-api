@@ -19,13 +19,13 @@ const buttonsPlayer2 = [
 
 const player1 = Axis.createPlayer({
     id: 1,
-    joystick: Axis.joystick1,
+    joysticks: Axis.joystick1,
     buttons: buttonsPlayer1,
 });
 
 const player2 = Axis.createPlayer({
     id: 2,
-    joystick: Axis.joystick2,
+    joysticks: Axis.joystick2,
     buttons: buttonsPlayer2,
 });
 
