@@ -2,14 +2,9 @@ import Axis from '../src/index';
 
 let isDefaultControls = true;
 let time = 0;
-// let gamepad = null;
-
-window.addEventListener('gamepadconnected', (e) => {
-    // gamepad = e.gamepad;
-});
 
 const gamepadEmulator = Axis.createGamepadEmulator(0);
-Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 1); // Left
+Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 0);
 
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),

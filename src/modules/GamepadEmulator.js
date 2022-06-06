@@ -51,10 +51,11 @@ export default class GamepadEmulator extends EventDispatcher {
     }
 
     _gamepadConnectedHandler() {
-        console.log('CONNECTED');
         const gamepad = navigator.getGamepads()[this._index];
 
         if (!gamepad) return;
+
+        console.log(`🎮 GAMEPAD ${this._index} CONNECTED`);
 
         for (let i = 0; i < gamepad.buttons.length; i++) {
             this._buttons.push({
@@ -69,8 +70,8 @@ export default class GamepadEmulator extends EventDispatcher {
     }
 
     buttonStateChangedHandler(index, state) {
+        console.log(index);
         if (state) this.dispatchEvent('gamepad:keydown', index);
-        else this.dispatchEvent('gamepad:keyup', index);
     }
 
     joystickMoveHandler(axes) {

@@ -9775,11 +9775,10 @@
     }, {
       key: "_gamepadConnectedHandler",
       value: function _gamepadConnectedHandler() {
-        console.log('CONNECTED');
-
         var gamepad = navigator.getGamepads()[this._index];
 
         if (!gamepad) return;
+        console.log("\uD83C\uDFAE GAMEPAD ".concat(this._index, " CONNECTED"));
 
         for (var i = 0; i < gamepad.buttons.length; i++) {
           this._buttons.push({
@@ -9795,7 +9794,8 @@
     }, {
       key: "buttonStateChangedHandler",
       value: function buttonStateChangedHandler(index, state) {
-        if (state) this.dispatchEvent('gamepad:keydown', index);else this.dispatchEvent('gamepad:keyup', index);
+        console.log(index);
+        if (state) this.dispatchEvent('gamepad:keydown', index);
       }
     }, {
       key: "joystickMoveHandler",
@@ -10115,11 +10115,8 @@
 
   var Axis$1 = new Axis();
 
-  window.addEventListener('gamepadconnected', function (e) {// gamepad = e.gamepad;
-  });
   var gamepadEmulator = Axis$1.createGamepadEmulator(0);
-  Axis$1.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 1); // Left
-
+  Axis$1.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 0);
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator, 1, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator, 0, 'b', 1);
