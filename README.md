@@ -234,6 +234,18 @@ function exitCompletedHandler() {
 }
 ```
 
+#### Handling leds
+
+The Axis Machine has many leds connected to it, you can interact with each of them very easily:
+
+```js
+Axis.ledManager.leds[0].setColor("rgb(255, 0, 0)");
+Axis.ledManager.leds[0].setColor("red");
+Axis.ledManager.leds[0].setColor("#ff0000");
+```
+
+All the leds instances will be ordered by groups later on.
+
 ### Electron usage
 
 #### Trouble shooting
