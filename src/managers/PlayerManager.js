@@ -30,7 +30,7 @@ export default class PlayerManager {
     createPlayer(options = {}) {
         const player = new Player({
             id: options.id,
-            joystick: options.joystick,
+            joysticks: options.joysticks,
             buttons: options.buttons,
         });
         this._players.push(player);

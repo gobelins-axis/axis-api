@@ -87,6 +87,47 @@ function joystickQuickmoveHandler(e) {
 }
 ```
 
+For debug purposes when you don't have access to the axis machine, you can use a gamepad to emulate joystick events without changing your code too much:
+
+```js
+const joystick1 = Axis.joystick1;
+const joystick2 = Axis.joystick2;
+
+const position1 = { x: 0, y: 0 };
+const position2 = { x: 0, y: 0 };
+
+joystick1.addEventListener("joystick:move", joystick1moveHandler);
+joystick2.addEventListener("joystick:move", joystick2moveHandler);
+
+update();
+
+function update() {
+    // With 2 gamepads connected
+    const gamepads = navigator.getGamepads();
+    if (gamepads[0]) joystick1.setGamepadJoystick(gamepads[0], 1); // First joystick of gamepad 1
+    if (gamepads[1]) joystick2.setGamepadJoystick(gamepads[1], 1); // First joystick of gamepad 2
+
+    // Or With only 1 gamepad connected
+    const gamepads = navigator.getGamepads();
+    if (gamepads[0]) joystick1.setGamepadJoystick(gamepads[0], 1); // First joystick of gamepad 1
+    if (gamepads[0]) joystick2.setGamepadJoystick(gamepads[0], 2); // Second joystick of gamepad 1
+
+    requestAnimationFrame(update);
+}
+
+function joystick1moveHandler(e) {
+    const speed = 50;
+    position1.x += speed * e.position.x;
+    position1.y += speed * e.position.y;
+}
+
+function joystick2moveHandler(e) {
+    const speed = 50;
+    position2.x += speed * e.position.x;
+    position2.y += speed * e.position.y;
+}
+```
+
 #### Handling players
 
 ```js

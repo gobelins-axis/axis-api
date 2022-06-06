@@ -8,6 +8,7 @@ import config from '../configs/joystick';
 
 // Modules
 import normalizeJoystickSignal from '../utils/normalizeJoystickSignal';
+import normalizeGamepadSignal from '../utils/normalizeGamepadSignal';
 
 export default class Joystick extends EventDispatcher {
     constructor(options = {}) {
@@ -89,11 +90,40 @@ export default class Joystick extends EventDispatcher {
     /**
      * Public
      */
-    moveHandler(e) {
-        this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
-        this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
+    setGamepadJoystick(gamepad, id) {
+        if (!gamepad) return;
 
-        console.log(this._position);
+        if (id === 1) this._position = normalizeGamepadSignal({ x: gamepad.axes[0], y: gamepad.axes[1] }, this._deadzone);
+        if (id === 2) this._position = normalizeGamepadSignal({ x: gamepad.axes[2], y: gamepad.axes[5] }, this._deadzone);
+
+        this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
+
+        // Left
+        if (this._position.x <= -1 + this._threshold) {
+            this._moveLeftHandler();
+        }
+
+        // Right
+        if (this._position.x >= 1 - this._threshold) {
+            this._moveRightHandler();
+        }
+
+        // Up
+        if (this._position.y >= 1 - this._threshold) {
+            this._moveUpHandler();
+        }
+
+        // Down
+        if (this._position.y <= -1 + this._threshold) {
+            this._moveDownHandler();
+        }
+
+        // Mouse move
+        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
+    }
+
+    moveHandler(e) {
+        this._position = normalizeJoystickSignal(e, this._deadzone);
 
         this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
 

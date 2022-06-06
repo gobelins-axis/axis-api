@@ -2614,9 +2614,31 @@
   var MAX_INPUT_SIGNAL_X = 840;
   var MIN_INPUT_SIGNAL_Y = 36;
   var MAX_INPUT_SIGNAL_Y = 867;
-  function normalizeJoystickSignal(position, threshold) {
+  function normalizeJoystickSignal$1(position, threshold) {
     var x = map(position.x, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
     var y = map(position.y, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1) * -1;
+    var dist = distance({
+      x: x,
+      y: y
+    }, {
+      x: 0,
+      y: 0
+    });
+
+    if (dist < threshold) {
+      x = 0;
+      y = 0;
+    }
+
+    return {
+      x: x,
+      y: y
+    };
+  }
+
+  function normalizeJoystickSignal(position, threshold) {
+    var x = position.x;
+    var y = position.y * -1;
     var dist = distance({
       x: x,
       y: y
@@ -2732,11 +2754,48 @@
        */
 
     }, {
+      key: "setGamepadJoystick",
+      value: function setGamepadJoystick(gamepad, id) {
+        if (!gamepad) return;
+        if (id === 1) this._position = normalizeJoystickSignal({
+          x: gamepad.axes[0],
+          y: gamepad.axes[1]
+        }, this._deadzone);
+        if (id === 2) this._position = normalizeJoystickSignal({
+          x: gamepad.axes[2],
+          y: gamepad.axes[5]
+        }, this._deadzone);
+        this.dispatchEvent('joystick:move', {
+          id: this._id,
+          position: this._position
+        }); // Left
+
+        if (this._position.x <= -1 + this._threshold) {
+          this._moveLeftHandler();
+        } // Right
+
+
+        if (this._position.x >= 1 - this._threshold) {
+          this._moveRightHandler();
+        } // Up
+
+
+        if (this._position.y >= 1 - this._threshold) {
+          this._moveUpHandler();
+        } // Down
+
+
+        if (this._position.y <= -1 + this._threshold) {
+          this._moveDownHandler();
+        } // Mouse move
+
+
+        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
+      }
+    }, {
       key: "moveHandler",
       value: function moveHandler(e) {
-        this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
-        this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
-        console.log(this._position);
+        this._position = normalizeJoystickSignal$1(e, this._deadzone);
         this.dispatchEvent('joystick:move', {
           id: this._id,
           position: this._position
@@ -3340,7 +3399,7 @@
       _this = _super.call(this); // Props
 
       _this._id = options.id;
-      _this._joysticks = options.joysticks || [];
+      _this._joysticks = options.joysticks ? getArray(options.joysticks) : [];
       _this._buttons = options.buttons || []; // Setup
 
       _this._bindAll();
@@ -3494,7 +3553,7 @@
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         var player = new Player({
           id: options.id,
-          joystick: options.joystick,
+          joysticks: options.joysticks,
           buttons: options.buttons
         });
 
@@ -9691,6 +9750,11 @@
         return this._ipcRenderer;
       }
     }, {
+      key: "joystickManager",
+      get: function get() {
+        return this._joystickManager;
+      }
+    }, {
       key: "joystick1",
       get: function get() {
         return this._joystickManager.joystick1;
@@ -9916,7 +9980,8 @@
 
   var Axis$1 = new Axis();
 
-  var isDefaultControls = true;
+  window.addEventListener('gamepadconnected', function (e) {// gamepad = e.gamepad;
+  });
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({
@@ -9951,19 +10016,18 @@
       y: 0
     }
   };
-  var input = document.querySelector('input');
-  setTimeout(function () {
-    Axis$1.virtualKeyboard.open();
-    Axis$1.virtualKeyboard.addEventListener('input', function (e) {
-      input.value = e;
-    });
+  document.querySelector('input');
+  setTimeout(function () {// Axis.virtualKeyboard.open();
+    // Axis.virtualKeyboard.addEventListener('input', (e) => {
+    //     input.value = e;
+    // });
   }, 1000);
 
   function setup() {
-    Axis$1.ledManager.leds[0].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[1].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[2].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[3].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
     setupEventListeners();
     update();
   }
@@ -9975,47 +10039,34 @@
     position2.current.y = lerp(position2.current.y, position2.target.y, 1);
     box1.style.transform = "translate(".concat(position1.current.x, "px, ").concat(position1.current.y, "px)");
     box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
-
-    if (position1.current.y < -window.innerHeight / 2) {
-      switchControls();
-    } else {
-      resetControls();
-    }
+    var gamepad = navigator.getGamepads()[0];
+    if (gamepad) Axis$1.joystick1.setGamepadJoystick(gamepad, 1);
+    if (gamepad) Axis$1.joystick2.setGamepadJoystick(gamepad, 2); // if (position1.current.y < -window.innerHeight / 2) {
+    //     switchControls();
+    // } else {
+    //     resetControls();
+    // }
 
     requestAnimationFrame(update);
-  }
-
-  function resetControls() {
-    if (isDefaultControls) return;
-    player1.buttons = buttonsPlayer1;
-    player2.buttons = buttonsPlayer2;
-    isDefaultControls = true;
-  }
-
-  function switchControls() {
-    if (!isDefaultControls) return;
-    player1.buttons = buttonsPlayer2;
-    player2.buttons = buttonsPlayer1;
-    isDefaultControls = false;
   }
 
   function setupEventListeners() {
     player1.addEventListener('keydown', player1keydownHandler);
     player1.addEventListener('keyup', player1keyupHandler);
-    player1.addEventListener('joystick:move', joystickMoveHandler);
-    player1.addEventListener('joystick:quickmove', joystickQuickMoveHandler);
+    player1.addEventListener('joystick:move', player1joystickMoveHandler);
+    player1.addEventListener('joystick:quickmove', player1JoystickQuickMoveHandler);
     player2.addEventListener('keydown', player2keydownHandler);
     player2.addEventListener('keyup', player2keyupHandler);
+    player2.addEventListener('joystick:move', player2joystickMoveHandler);
   }
 
   function player1keydownHandler(e) {
     var speed = 50;
     var directionX = 0;
-    var directionY = 0;
-    Axis$1.ledManager.leds[0].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[1].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[2].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[3].setColor('rgb(255, 255, 255)');
+    var directionY = 0; // Axis.ledManager.leds[0].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 255, 255)');
 
     if (e.key === 'a') {
       directionX = -1;
@@ -10035,19 +10086,18 @@
 
     position1.target.x += speed * directionX;
     position1.target.y += speed * directionY; // Leaderboard tests
-
-    console.log('Pushing score');
-    var leaderboard = Axis$1.createLeaderboard({
-      id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8'
-    });
-    leaderboard.postScore({
-      username: 'coucou',
-      value: 100
-    }).then(function () {
-      leaderboard.getScores().then(function (response) {
-        console.log(response);
-      });
-    });
+    // console.log('Pushing score');
+    // const leaderboard = Axis.createLeaderboard({
+    //     id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8',
+    // });
+    // leaderboard.postScore({
+    //     username: 'coucou',
+    //     value: 100,
+    // }).then(() => {
+    //     leaderboard.getScores().then((response) => {
+    //         console.log(response);
+    //     });
+    // });
   }
 
   function player1keyupHandler(e) {
@@ -10073,13 +10123,24 @@
   function player2keyupHandler(e) {//
   }
 
-  function joystickMoveHandler(e) {
-    var speed = 30;
+  function player1joystickMoveHandler(e) {
+    var speed = 10;
     position1.target.x += e.position.x * speed;
     position1.target.y += -e.position.y * speed;
+    position1.current.x += e.position.x * speed;
+    position1.current.y += -e.position.y * speed;
   }
 
-  function joystickQuickMoveHandler(e) {// const speed = 30;
+  function player2joystickMoveHandler(e) {
+    var speed = 10;
+    position2.target.x += e.position.x * speed;
+    position2.target.y += -e.position.y * speed;
+    position2.current.x += e.position.x * speed;
+    position2.current.y += -e.position.y * speed;
+  }
+
+  function player1JoystickQuickMoveHandler(e) {
+    console.log(e); // const speed = 30;
     // if (e.direction === 'left') position1.target.x += speed * -1;
     // if (e.direction === 'right') position1.target.x += speed;
     // if (e.direction === 'up') position1.target.y += speed * -1;

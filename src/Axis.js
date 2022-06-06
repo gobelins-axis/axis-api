@@ -45,6 +45,10 @@ class Axis extends EventDispatcher {
         return this._ipcRenderer;
     }
 
+    get joystickManager() {
+        return this._joystickManager;
+    }
+
     get joystick1() {
         return this._joystickManager.joystick1;
     }

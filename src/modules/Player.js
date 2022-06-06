@@ -8,7 +8,7 @@ export default class Player extends EventDispatcher {
 
         // Props
         this._id = options.id;
-        this._joysticks = options.joysticks || [];
+        this._joysticks = options.joysticks ? getArray(options.joysticks) : [];
         this._buttons = options.buttons || [];
 
         // Setup
