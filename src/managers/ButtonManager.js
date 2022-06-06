@@ -55,6 +55,17 @@ export default class ButtonManager extends EventDispatcher {
         return button;
     }
 
+    registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id) {
+        const button = this.getButton(key, id);
+
+        if (button) {
+            button.gamepadEmulator = gamepadEmulator;
+            button.gamepadEmulatorKeys = getArray(gamepadButtonIndexes);
+        }
+
+        return button;
+    }
+
     getButton(key, id) {
         const button = this._buttons.filter((item) => {
             return item.key === key && item.id === id;

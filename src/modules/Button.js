@@ -11,6 +11,10 @@ export default class Button extends EventDispatcher {
         // Setup
         this._led = this._ledManager.getLedByName(`button-${this._key}-${this._id}`);
         this._keyboardKeys = [];
+        this._gamepadEmulator = null;
+        this._gamepadEmulatorKeys = [];
+
+        this._bindAll();
     }
 
     /**
@@ -36,30 +40,66 @@ export default class Button extends EventDispatcher {
         return this._led;
     }
 
+    get gamepadEmulator() {
+        return this._gamepadEmulator;
+    }
+
+    set gamepadEmulator(gamepadEmulator) {
+        if (this._gamepadEmulator) return;
+
+        this._gamepadEmulator = gamepadEmulator;
+
+        this._gamepadEmulator.addEventListener('gamepad:keydown', this._gamepadKeydownHandler);
+        this._gamepadEmulator.addEventListener('gamepad:keyup', this._gamepadKeyupHandler);
+    }
+
+    get gamepadEmulatorKeys() {
+        return this._gamepadEmulatorKeys;
+    }
+
+    set gamepadEmulatorKeys(keys) {
+        this._gamepadEmulatorKeys = keys;
+    }
+
     /**
      * Public
      */
-    keydownHandler(e) {
+    keydownHandler() {
         this.dispatchEvent('keydown', {
             key: this._key,
             id: this._id,
             keyboardKeys: this._keyboardKeys,
+            gamepadEmulatorKeys: this._gamepadEmulatorKeys,
             instance: this,
-            originalEvent: e,
         });
     }
 
-    keyupHandler(e) {
+    keyupHandler() {
         this.dispatchEvent('keyup', {
             key: this._key,
             id: this._id,
             keyboardKeys: this._keyboardKeys,
             instance: this,
-            originalEvent: e,
         });
     }
 
     /**
      * Private
      */
+    _bindAll() {
+        this._gamepadKeydownHandler = this._gamepadKeydownHandler.bind(this);
+        this._gamepadKeyupHandler = this._gamepadKeyupHandler.bind(this);
+    }
+
+    _gamepadKeydownHandler(index) {
+        if (!this._gamepadEmulatorKeys.includes(index)) return;
+
+        this.keydownHandler();
+    }
+
+    _gamepadKeyupHandler(index) {
+        if (!this._gamepadEmulatorKeys.includes(index)) return;
+
+        this.keyupHandler();
+    }
 }

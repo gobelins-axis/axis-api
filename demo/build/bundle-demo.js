@@ -2680,6 +2680,8 @@
       _this._inputIntervalMin = config$1.inputIntervalMin;
       _this._inputIntervalMax = config$1.inputIntervalMax;
       _this._ipcRenderer = null;
+      _this._gamepadEmulatorJoystick = null;
+      _this._gamepadEmulatorJoystickIndex = null;
       _this._position = {
         x: 0,
         y: 0
@@ -2754,17 +2756,10 @@
        */
 
     }, {
-      key: "setGamepadJoystick",
-      value: function setGamepadJoystick(gamepad, id) {
-        if (!gamepad) return;
-        if (id === 1) this._position = normalizeJoystickSignal({
-          x: gamepad.axes[0],
-          y: gamepad.axes[1]
-        }, this._deadzone);
-        if (id === 2) this._position = normalizeJoystickSignal({
-          x: gamepad.axes[2],
-          y: gamepad.axes[5]
-        }, this._deadzone);
+      key: "moveHandler",
+      value: function moveHandler(e) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        this._position = options.isGamepad ? normalizeJoystickSignal(e, this._deadzone) : normalizeJoystickSignal$1(e, this._deadzone);
         this.dispatchEvent('joystick:move', {
           id: this._id,
           position: this._position
@@ -2793,35 +2788,13 @@
         if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
       }
     }, {
-      key: "moveHandler",
-      value: function moveHandler(e) {
-        this._position = normalizeJoystickSignal$1(e, this._deadzone);
-        this.dispatchEvent('joystick:move', {
-          id: this._id,
-          position: this._position
-        }); // Left
+      key: "setGamepadEmulatorJoystick",
+      value: function setGamepadEmulatorJoystick(gamepadEmulator, joystickIndex) {
+        if (this._gamepadEmulatorJoystick) return;
+        this._gamepadEmulatorJoystick = gamepadEmulator;
+        this._gamepadEmulatorJoystickIndex = joystickIndex;
 
-        if (this._position.x <= -1 + this._threshold) {
-          this._moveLeftHandler();
-        } // Right
-
-
-        if (this._position.x >= 1 - this._threshold) {
-          this._moveRightHandler();
-        } // Up
-
-
-        if (this._position.y >= 1 - this._threshold) {
-          this._moveUpHandler();
-        } // Down
-
-
-        if (this._position.y <= -1 + this._threshold) {
-          this._moveDownHandler();
-        } // Mouse move
-
-
-        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
+        this._gamepadEmulatorJoystick.addEventListener('gamepad:joystick:move', this._gamepadJoystickMoveHandler);
       }
       /**
        * Private
@@ -2842,6 +2815,7 @@
         this._moveDownHandler = this._moveDownHandler.bind(this);
         this._moveDownThrottledHandler = this._moveDownThrottledHandler.bind(this);
         this._moveDownEndHandler = this._moveDownEndHandler.bind(this);
+        this._gamepadJoystickMoveHandler = this._gamepadJoystickMoveHandler.bind(this);
       }
     }, {
       key: "_moveLeftHandler",
@@ -2927,6 +2901,14 @@
       value: function _moveDownEndHandler() {
         this._inputDownIndex = 0;
       }
+    }, {
+      key: "_gamepadJoystickMoveHandler",
+      value: function _gamepadJoystickMoveHandler(e) {
+        if (e.index !== this._gamepadEmulatorJoystickIndex) return;
+        this.moveHandler(e.position, {
+          isGamepad: true
+        });
+      }
     }]);
 
     return Joystick;
@@ -2982,15 +2964,6 @@
         return this._joystick2;
       }
       /**
-       * Public
-       */
-
-    }, {
-      key: "destroy",
-      value: function destroy() {
-        this._removeIpcRendererEventListeners();
-      }
-      /**
        * Private
        */
 
@@ -3022,13 +2995,6 @@
         if (!this._ipcRenderer) return;
 
         this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
-      }
-    }, {
-      key: "_removeIpcRendererEventListeners",
-      value: function _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
       }
       /**
        * Handlers
@@ -3064,6 +3030,11 @@
 
       _this._led = _this._ledManager.getLedByName("button-".concat(_this._key, "-").concat(_this._id));
       _this._keyboardKeys = [];
+      _this._gamepadEmulator = null;
+      _this._gamepadEmulatorKeys = [];
+
+      _this._bindAll();
+
       return _this;
     }
     /**
@@ -3094,36 +3065,74 @@
       get: function get() {
         return this._led;
       }
+    }, {
+      key: "gamepadEmulator",
+      get: function get() {
+        return this._gamepadEmulator;
+      },
+      set: function set(gamepadEmulator) {
+        if (this._gamepadEmulator) return;
+        this._gamepadEmulator = gamepadEmulator;
+
+        this._gamepadEmulator.addEventListener('gamepad:keydown', this._gamepadKeydownHandler);
+
+        this._gamepadEmulator.addEventListener('gamepad:keyup', this._gamepadKeyupHandler);
+      }
+    }, {
+      key: "gamepadEmulatorKeys",
+      get: function get() {
+        return this._gamepadEmulatorKeys;
+      },
+      set: function set(keys) {
+        this._gamepadEmulatorKeys = keys;
+      }
       /**
        * Public
        */
 
     }, {
       key: "keydownHandler",
-      value: function keydownHandler(e) {
+      value: function keydownHandler() {
         this.dispatchEvent('keydown', {
           key: this._key,
           id: this._id,
           keyboardKeys: this._keyboardKeys,
-          instance: this,
-          originalEvent: e
+          gamepadEmulatorKeys: this._gamepadEmulatorKeys,
+          instance: this
         });
       }
     }, {
       key: "keyupHandler",
-      value: function keyupHandler(e) {
+      value: function keyupHandler() {
         this.dispatchEvent('keyup', {
           key: this._key,
           id: this._id,
           keyboardKeys: this._keyboardKeys,
-          instance: this,
-          originalEvent: e
+          instance: this
         });
       }
       /**
        * Private
        */
 
+    }, {
+      key: "_bindAll",
+      value: function _bindAll() {
+        this._gamepadKeydownHandler = this._gamepadKeydownHandler.bind(this);
+        this._gamepadKeyupHandler = this._gamepadKeyupHandler.bind(this);
+      }
+    }, {
+      key: "_gamepadKeydownHandler",
+      value: function _gamepadKeydownHandler(index) {
+        if (!this._gamepadEmulatorKeys.includes(index)) return;
+        this.keydownHandler();
+      }
+    }, {
+      key: "_gamepadKeyupHandler",
+      value: function _gamepadKeyupHandler(index) {
+        if (!this._gamepadEmulatorKeys.includes(index)) return;
+        this.keyupHandler();
+      }
     }]);
 
     return Button;
@@ -3195,6 +3204,18 @@
       value: function registerKeys(keyboardKeys, key, id) {
         var button = this.getButton(key, id);
         if (button) button.keyboardKeys = getArray(keyboardKeys);
+        return button;
+      }
+    }, {
+      key: "registerGamepadEmulatorKeys",
+      value: function registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id) {
+        var button = this.getButton(key, id);
+
+        if (button) {
+          button.gamepadEmulator = gamepadEmulator;
+          button.gamepadEmulatorKeys = getArray(gamepadButtonIndexes);
+        }
+
         return button;
       }
     }, {
@@ -9704,6 +9725,120 @@
     return ExitOverlay;
   }(EventDispatcher);
 
+  var GamepadEmulator = /*#__PURE__*/function (_EventDispatcher) {
+    _inherits(GamepadEmulator, _EventDispatcher);
+
+    var _super = _createSuper(GamepadEmulator);
+
+    function GamepadEmulator(index) {
+      var _this;
+
+      _classCallCheck(this, GamepadEmulator);
+
+      _this = _super.call(this); // Props
+
+      _this._buttons = [];
+      _this._index = index; // Setup
+
+      _this._bindAll();
+
+      _this._setupEventListeners();
+
+      return _this;
+    }
+    /**
+     * Public
+     */
+
+
+    _createClass(GamepadEmulator, [{
+      key: "update",
+      value: function update() {
+        var gamepad = navigator.getGamepads()[this._index];
+
+        if (!gamepad) return; // Buttons
+
+        for (var i = 0; i < this._buttons.length; i++) {
+          var button = this._buttons[i];
+          button.current.pressed = gamepad.buttons[i].pressed;
+
+          if (button.current.pressed !== button.previous.pressed) {
+            this.buttonStateChangedHandler(i, button.current.pressed);
+          }
+
+          button.previous.pressed = button.current.pressed;
+        } // Joystick
+
+
+        this.joystickMoveHandler(gamepad.axes);
+      }
+    }, {
+      key: "isConnected",
+      value: function isConnected() {
+        return !!navigator.getGamepads()[this._index];
+      }
+      /**
+       * Private
+       */
+
+    }, {
+      key: "_bindAll",
+      value: function _bindAll() {
+        this._gamepadConnectedHandler = this._gamepadConnectedHandler.bind(this);
+      }
+    }, {
+      key: "_setupEventListeners",
+      value: function _setupEventListeners() {
+        window.addEventListener('gamepadconnected', this._gamepadConnectedHandler);
+      }
+    }, {
+      key: "_gamepadConnectedHandler",
+      value: function _gamepadConnectedHandler() {
+        var gamepad = navigator.getGamepads()[this._index];
+
+        if (!gamepad) return;
+
+        for (var i = 0; i < gamepad.buttons.length; i++) {
+          this._buttons.push({
+            previous: {
+              pressed: gamepad.buttons[i].pressed
+            },
+            current: {
+              pressed: gamepad.buttons[i].pressed
+            }
+          });
+        }
+      }
+    }, {
+      key: "buttonStateChangedHandler",
+      value: function buttonStateChangedHandler(index, state) {
+        if (state) this.dispatchEvent('gamepad:keydown', index);else this.dispatchEvent('gamepad:keyup', index);
+      }
+    }, {
+      key: "joystickMoveHandler",
+      value: function joystickMoveHandler(axes) {
+        // Left
+        this.dispatchEvent('gamepad:joystick:move', {
+          index: 0,
+          position: {
+            x: axes[0],
+            y: axes[1]
+          }
+        }); // Right
+
+        this.dispatchEvent('gamepad:joystick:move', {
+          index: 1,
+          position: {
+            x: axes[2],
+            y: axes[5]
+          }
+        });
+      }
+    }]);
+
+    return GamepadEmulator;
+  }(EventDispatcher);
+
   var Axis = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Axis, _EventDispatcher);
 
@@ -9719,6 +9854,7 @@
       _this._ipcRenderer = null;
       _this._firebaseToken = null;
       _this._leaderboard = null;
+      _this._gamepadEmulators = [];
       _this._ledManager = _this._createLedManager();
       _this._joystickManager = _this._createJoystickManager();
       _this._buttonManager = _this._createButtonManager();
@@ -9804,6 +9940,11 @@
         return this._buttonManager.registerKeys(keyboardKeys, key, id);
       }
     }, {
+      key: "registerGamepadEmulatorKeys",
+      value: function registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id) {
+        return this._buttonManager.registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id);
+      }
+    }, {
       key: "enableMouseInteraction",
       value: function enableMouseInteraction(speed) {
         if (!this._ipcRenderer) return;
@@ -9826,6 +9967,15 @@
       key: "createLeaderboard",
       value: function createLeaderboard(options) {
         return this._createLeaderboard(options);
+      }
+    }, {
+      key: "createGamepadEmulator",
+      value: function createGamepadEmulator(index) {
+        var gamepadEmulator = new GamepadEmulator(index);
+
+        this._gamepadEmulators.push(gamepadEmulator);
+
+        return gamepadEmulator;
       }
       /**
        * Private
@@ -9982,7 +10132,12 @@
 
   window.addEventListener('gamepadconnected', function (e) {// gamepad = e.gamepad;
   });
+  var gamepadEmulator = Axis$1.createGamepadEmulator(0);
+  Axis$1.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 1); // Left
+
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
+  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator, 1, 'a', 1);
+  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator, 0, 'b', 1);
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({
     id: 1,
@@ -10033,15 +10188,16 @@
   }
 
   function update() {
+    gamepadEmulator.update();
     position1.current.x = lerp(position1.current.x, position1.target.x, 1);
     position1.current.y = lerp(position1.current.y, position1.target.y, 1);
     position2.current.x = lerp(position2.current.x, position2.target.x, 1);
     position2.current.y = lerp(position2.current.y, position2.target.y, 1);
     box1.style.transform = "translate(".concat(position1.current.x, "px, ").concat(position1.current.y, "px)");
-    box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
-    var gamepad = navigator.getGamepads()[0];
-    if (gamepad) Axis$1.joystick1.setGamepadJoystick(gamepad, 1);
-    if (gamepad) Axis$1.joystick2.setGamepadJoystick(gamepad, 2); // if (position1.current.y < -window.innerHeight / 2) {
+    box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)"); // const gamepad = navigator.getGamepads()[0];
+    // if (gamepad) Axis.joystick1.setGamepadJoystick(gamepad, 1);
+    // if (gamepad) Axis.joystick2.setGamepadJoystick(gamepad, 2);
+    // if (position1.current.y < -window.innerHeight / 2) {
     //     switchControls();
     // } else {
     //     resetControls();
@@ -10139,8 +10295,7 @@
     position2.current.y += -e.position.y * speed;
   }
 
-  function player1JoystickQuickMoveHandler(e) {
-    console.log(e); // const speed = 30;
+  function player1JoystickQuickMoveHandler(e) {// const speed = 30;
     // if (e.direction === 'left') position1.target.x += speed * -1;
     // if (e.direction === 'right') position1.target.x += speed;
     // if (e.direction === 'up') position1.target.y += speed * -1;

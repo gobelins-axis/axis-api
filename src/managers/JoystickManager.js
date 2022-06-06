@@ -40,13 +40,6 @@ export default class joystickManager extends EventDispatcher {
     }
 
     /**
-     * Public
-     */
-    destroy() {
-        this._removeIpcRendererEventListeners();
-    }
-
-    /**
      * Private
      */
     _createJoystick1() {
@@ -67,11 +60,6 @@ export default class joystickManager extends EventDispatcher {
     _setupIpcRendererEventListeners() {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.on('joystick:move', this._joystickMoveHandler);
-    }
-
-    _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-        this._ipcRenderer.removeListener('joystick:move', this._joystickMoveHandler);
     }
 
     /**

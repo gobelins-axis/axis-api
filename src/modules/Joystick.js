@@ -25,6 +25,8 @@ export default class Joystick extends EventDispatcher {
         this._inputIntervalMax = config.inputIntervalMax;
 
         this._ipcRenderer = null;
+        this._gamepadEmulatorJoystick = null;
+        this._gamepadEmulatorJoystickIndex = null;
         this._position = { x: 0, y: 0 };
 
         this._inputLeftIndex = 0;
@@ -90,11 +92,8 @@ export default class Joystick extends EventDispatcher {
     /**
      * Public
      */
-    setGamepadJoystick(gamepad, id) {
-        if (!gamepad) return;
-
-        if (id === 1) this._position = normalizeGamepadSignal({ x: gamepad.axes[0], y: gamepad.axes[1] }, this._deadzone);
-        if (id === 2) this._position = normalizeGamepadSignal({ x: gamepad.axes[2], y: gamepad.axes[5] }, this._deadzone);
+    moveHandler(e, options = {}) {
+        this._position = options.isGamepad ? normalizeGamepadSignal(e, this._deadzone) : normalizeJoystickSignal(e, this._deadzone);
 
         this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
 
@@ -122,33 +121,12 @@ export default class Joystick extends EventDispatcher {
         if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
     }
 
-    moveHandler(e) {
-        this._position = normalizeJoystickSignal(e, this._deadzone);
+    setGamepadEmulatorJoystick(gamepadEmulator, joystickIndex) {
+        if (this._gamepadEmulatorJoystick) return;
+        this._gamepadEmulatorJoystick = gamepadEmulator;
+        this._gamepadEmulatorJoystickIndex = joystickIndex;
 
-        this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
-
-        // Left
-        if (this._position.x <= -1 + this._threshold) {
-            this._moveLeftHandler();
-        }
-
-        // Right
-        if (this._position.x >= 1 - this._threshold) {
-            this._moveRightHandler();
-        }
-
-        // Up
-        if (this._position.y >= 1 - this._threshold) {
-            this._moveUpHandler();
-        }
-
-        // Down
-        if (this._position.y <= -1 + this._threshold) {
-            this._moveDownHandler();
-        }
-
-        // Mouse move
-        if (this._ipcRenderer && this._id === 1) this._ipcRenderer.send('mouse:move', this._position);
+        this._gamepadEmulatorJoystick.addEventListener('gamepad:joystick:move', this._gamepadJoystickMoveHandler);
     }
 
     /**
@@ -170,6 +148,8 @@ export default class Joystick extends EventDispatcher {
         this._moveDownHandler = this._moveDownHandler.bind(this);
         this._moveDownThrottledHandler = this._moveDownThrottledHandler.bind(this);
         this._moveDownEndHandler = this._moveDownEndHandler.bind(this);
+
+        this._gamepadJoystickMoveHandler = this._gamepadJoystickMoveHandler.bind(this);
     }
 
     _moveLeftHandler() {
@@ -230,5 +210,11 @@ export default class Joystick extends EventDispatcher {
 
     _moveDownEndHandler() {
         this._inputDownIndex = 0;
+    }
+
+    _gamepadJoystickMoveHandler(e) {
+        if (e.index !== this._gamepadEmulatorJoystickIndex) return;
+
+        this.moveHandler(e.position, { isGamepad: true });
     }
 }

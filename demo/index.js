@@ -8,12 +8,18 @@ window.addEventListener('gamepadconnected', (e) => {
     // gamepad = e.gamepad;
 });
 
+const gamepadEmulator = Axis.createGamepadEmulator(0);
+Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 1); // Left
+
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'b', 1),
     Axis.registerKeys('z', 'c', 1),
     Axis.registerKeys('s', 'd', 1),
 ];
+
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 1, 'a', 1);
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 0, 'b', 1);
 
 const buttonsPlayer2 = [
     Axis.registerKeys('ArrowLeft', 'a', 2),
@@ -65,6 +71,8 @@ function setup() {
 }
 
 function update() {
+    gamepadEmulator.update();
+
     position1.current.x = lerp(position1.current.x, position1.target.x, 1);
     position1.current.y = lerp(position1.current.y, position1.target.y, 1);
 
@@ -74,9 +82,9 @@ function update() {
     box1.style.transform = `translate(${position1.current.x}px, ${position1.current.y}px)`;
     box2.style.transform = `translate(${position2.current.x}px, ${position2.current.y}px)`;
 
-    const gamepad = navigator.getGamepads()[0];
-    if (gamepad) Axis.joystick1.setGamepadJoystick(gamepad, 1);
-    if (gamepad) Axis.joystick2.setGamepadJoystick(gamepad, 2);
+    // const gamepad = navigator.getGamepads()[0];
+    // if (gamepad) Axis.joystick1.setGamepadJoystick(gamepad, 1);
+    // if (gamepad) Axis.joystick2.setGamepadJoystick(gamepad, 2);
 
     // if (position1.current.y < -window.innerHeight / 2) {
     //     switchControls();
@@ -206,7 +214,6 @@ function player2joystickMoveHandler(e) {
 }
 
 function player1JoystickQuickMoveHandler(e) {
-    console.log(e);
     // const speed = 30;
     // if (e.direction === 'left') position1.target.x += speed * -1;
     // if (e.direction === 'right') position1.target.x += speed;

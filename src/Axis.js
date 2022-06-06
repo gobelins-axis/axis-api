@@ -11,6 +11,7 @@ import PlayerManager from './managers/PlayerManager';
 import Leaderboard from './modules/Leaderboard';
 import VirtualKeyboard from './modules/VirtualKeyboard';
 import ExitOverlay from './modules/ExitOverlay';
+import GamepadEmulator from './modules/GamepadEmulator';
 
 class Axis extends EventDispatcher {
     constructor() {
@@ -20,6 +21,7 @@ class Axis extends EventDispatcher {
         this._ipcRenderer = null;
         this._firebaseToken = null;
         this._leaderboard = null;
+        this._gamepadEmulators = [];
 
         this._ledManager = this._createLedManager();
         this._joystickManager = this._createJoystickManager();
@@ -88,6 +90,10 @@ class Axis extends EventDispatcher {
         return this._buttonManager.registerKeys(keyboardKeys, key, id);
     }
 
+    registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id) {
+        return this._buttonManager.registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id);
+    }
+
     enableMouseInteraction(speed) {
         if (!this._ipcRenderer) return;
 
@@ -106,6 +112,12 @@ class Axis extends EventDispatcher {
 
     createLeaderboard(options) {
         return this._createLeaderboard(options);
+    }
+
+    createGamepadEmulator(index) {
+        const gamepadEmulator = new GamepadEmulator(index);
+        this._gamepadEmulators.push(gamepadEmulator);
+        return gamepadEmulator;
     }
 
     /**
