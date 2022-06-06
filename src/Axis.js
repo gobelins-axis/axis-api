@@ -204,8 +204,10 @@ class Axis extends EventDispatcher {
     }
 
     _setupEventListeners() {
-        this._buttonManager.addEventListener('keydown', this._keydownHandler);
-        this._buttonManager.addEventListener('keyup', this._keyupHandler);
+        for (let i = 0; i < this._buttonManager.buttons.length; i++) {
+            this._buttonManager.buttons[i].addEventListener('keydown', this._keydownHandler);
+            this._buttonManager.buttons[i].addEventListener('keyup', this._keyupHandler);
+        }
 
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
         this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);

@@ -3188,6 +3188,11 @@
       get: function get() {
         return this._buttonHome;
       }
+    }, {
+      key: "buttons",
+      get: function get() {
+        return this._buttons;
+      }
       /**
        * Public
        */
@@ -3336,12 +3341,6 @@
         for (var i = 0; i < buttons.length; i++) {
           var button = buttons[i];
           button.keydownHandler(e);
-          this.dispatchEvent('keydown', {
-            key: button.key,
-            id: button.id,
-            instance: button,
-            originalEvent: e
-          });
         }
       }
     }, {
@@ -3350,14 +3349,8 @@
         var buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (var i = 0; i < buttons.length; i++) {
-          var button = buttons[i];
+          buttons[i];
           buttons[i].keyupHandler(e);
-          this.dispatchEvent('keyup', {
-            key: button.key,
-            id: button.id,
-            instance: button,
-            originalEvent: e
-          });
         }
       }
     }, {
@@ -3365,24 +3358,12 @@
       value: function _machineKeydownHandler(event, data) {
         var button = this.getButton(data.key, data.id);
         button.keydownHandler(data);
-        this.dispatchEvent('keydown', {
-          key: button.key,
-          id: button.id,
-          instance: button,
-          originalEvent: data
-        });
       }
     }, {
       key: "_machineKeyupHandler",
       value: function _machineKeyupHandler(event, data) {
         var button = this.getButton(data.key, data.id);
-        button.keyupHandler(data);
-        this.dispatchEvent('keyup', {
-          key: button.key,
-          id: button.id,
-          instance: button,
-          originalEvent: data
-        }); // Mouse click
+        button.keyupHandler(data); // Mouse click
 
         if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
       }
@@ -9794,6 +9775,8 @@
     }, {
       key: "_gamepadConnectedHandler",
       value: function _gamepadConnectedHandler() {
+        console.log('CONNECTED');
+
         var gamepad = navigator.getGamepads()[this._index];
 
         if (!gamepad) return;
@@ -10069,9 +10052,11 @@
     }, {
       key: "_setupEventListeners",
       value: function _setupEventListeners() {
-        this._buttonManager.addEventListener('keydown', this._keydownHandler);
+        for (var i = 0; i < this._buttonManager.buttons.length; i++) {
+          this._buttonManager.buttons[i].addEventListener('keydown', this._keydownHandler);
 
-        this._buttonManager.addEventListener('keyup', this._keyupHandler);
+          this._buttonManager.buttons[i].addEventListener('keyup', this._keyupHandler);
+        }
 
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
 

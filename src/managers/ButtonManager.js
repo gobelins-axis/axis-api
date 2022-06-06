@@ -40,6 +40,10 @@ export default class ButtonManager extends EventDispatcher {
         return this._buttonHome;
     }
 
+    get buttons() {
+        return this._buttons;
+    }
+
     /**
      * Public
      */
@@ -160,12 +164,6 @@ export default class ButtonManager extends EventDispatcher {
         for (let i = 0; i < buttons.length; i++) {
             const button = buttons[i];
             button.keydownHandler(e);
-            this.dispatchEvent('keydown', {
-                key: button.key,
-                id: button.id,
-                instance: button,
-                originalEvent: e,
-            });
         }
     }
 
@@ -175,37 +173,17 @@ export default class ButtonManager extends EventDispatcher {
         for (let i = 0; i < buttons.length; i++) {
             const button = buttons[i];
             buttons[i].keyupHandler(e);
-            this.dispatchEvent('keyup', {
-                key: button.key,
-                id: button.id,
-                instance: button,
-                originalEvent: e,
-            });
         }
     }
 
     _machineKeydownHandler(event, data) {
         const button = this.getButton(data.key, data.id);
         button.keydownHandler(data);
-        this.dispatchEvent('keydown', {
-            key: button.key,
-            id: button.id,
-            instance: button,
-            originalEvent: data,
-        });
     }
 
     _machineKeyupHandler(event, data) {
         const button = this.getButton(data.key, data.id);
-
         button.keyupHandler(data);
-
-        this.dispatchEvent('keyup', {
-            key: button.key,
-            id: button.id,
-            instance: button,
-            originalEvent: data,
-        });
 
         // Mouse click
         if (this._ipcRenderer && button.id === 1 && button.key === 'a') this._ipcRenderer.send('mouse:click', {});
