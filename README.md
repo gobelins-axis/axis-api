@@ -12,7 +12,7 @@ npm i github:gobelins-axis/axis-api
 
 ### Game usage
 
-#### Handling controllers
+#### Handling buttons
 
 ```js
 import Axis from "axis-api";
@@ -28,23 +28,86 @@ Axis.registerKeys("ArrowRight", "b", 2);
 Axis.registerKeys("ArrowUp", "c", 2);
 Axis.registerKeys("ArrowDown", "d", 2);
 
+// Its also possible to map multiple keyboard keys to a key
+// Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
+
+Axis.addEventListener("keydown", keydownHandler);
+Axis.addEventListener("keyup", keyupHandler);
+
+const position = { x: 0, y: 0 };
+
+function keydownHandler(e) {
+    const speed = 50;
+
+    if (e.key === "a") {
+        const direction = -1;
+        position.x += speed * direction;
+    }
+
+    if (e.key === "b") {
+        const direction = 1;
+        position.x += speed * direction;
+    }
+}
+
+function keyupHandler(e) {
+    //
+}
+```
+
+#### Handling joysticks
+
+```js
+import Axis from "axis-api";
+
+const joystick1 = Axis.joystick1;
+const joystick2 = Axis.joystick2;
+
+// Joystick move
+joystick1.addEventListener("joystick:move", joystickMoveHandler);
+
+const position = { x: 0, y: 0 };
+
+function joystickMoveHandler(e) {
+    const speed = 50;
+    position.x += speed * e.position.x;
+    position.y += speed * e.position.y;
+}
+
+// Joystick quickmove: events are throttled and only give one direction at the time
+// it can be usefull for UI navigation for example.
+joystick1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
+
+function joystickQuickmoveHandler(e) {
+    const speed = 50;
+    if (e.direction === "left") position.x += speed * -1;
+    if (e.direction === "right") position.x += speed;
+    if (e.direction === "up") position.y += speed * -1;
+    if (e.direction === "down") position.y += speed;
+}
+```
+
+#### Handling players
+
+```js
+import Axis from "axis-api";
+
 // Create players
 const player1 = Axis.createPlayer({
     id: 1,
-    joystick: Axis.joystick1,
+    joysticks: Axis.joystick1,
+    // Can also be an array of both joysticks
+    // joysticks: [Axis.joystick1, Axis.joystick2],
     buttons: Axis.buttonManager.getButtonsById(1),
 });
 
 const player2 = Axis.createPlayer({
     id: 2,
-    joystick: Axis.joystick2,
+    joysticks: Axis.joystick2,
     buttons: Axis.buttonManager.getButtonsById(2),
 });
 
-// Its also possible to map multiple keyboard keys to a key
-// Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
-
-// Use buttons
+// Use buttons from player 1
 player1.addEventListener("keydown", keydownHandler);
 player1.addEventListener("keyup", keyupHandler);
 
@@ -53,40 +116,28 @@ const position = { x: 0, y: 0 };
 function keydownHandler(e) {
     const speed = 50;
 
-    if (e.machineKey === "a") {
+    if (e.key === "a") {
         const direction = -1;
         position.x += speed * direction;
     }
 
-    if (e.machineKey === "b") {
+    if (e.key === "b") {
         const direction = 1;
         position.x += speed * direction;
     }
-
-    // Or
-    // if (e.keyboardKey === "ArrowLeft") {
-    //     const direction = -1;
-    //     position.x += speed * direction;
-    // }
-
-    // if (e.keyboardKey === "ArrowRight") {
-    //     const direction = 1;
-    //     position.x += speed * direction;
-    // }
 }
 
 function keyupHandler(e) {
     //
 }
 
-// Use joystick
-
+// Use joystick from player 1
 player1.addEventListener("joystick:move", joystickMoveHandler);
 player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
 function joystickMoveHandler(e) {
     const speed = 50;
-    position.x += speed * e.x;
+    position.x += speed * e.position.x;
 }
 
 // This is quite useful to handle joystick ui navigation
@@ -111,7 +162,9 @@ const leaderboard = Axis.createLeaderboard({
 });
 ```
 
-Here make sure to use exactly the same id that the one you choose when uploading your game to the Axis Machine, otherwise it won't work.
+Here make sure to use exactly the same id that the one you received when uploading your game to the Axis Machine, otherwise it won't work.
+If you haven't uploaded your game yet and want to try out the leaderboard, just use a random string, scores will be stored locally
+and you'll be able to use the leaderboard API just like it was in the machine.
 
 Then you can post scores and fetch all the existing scores like so:
 
@@ -142,15 +195,14 @@ You can use our virtual keyboard:
 
 ```js
 const input = document.querySelector("input");
-const virtualKeyboard = Axis.virtualKeyboard;
 
-virtualKeyboard.open();
+Axis.virtualKeyboard.open();
 
-virtualKeyboard.addEventListener("input", (username) => {
+Axis.virtualKeyboard.addEventListener("input", (username) => {
     input.value = username;
 });
 
-virtualKeyboard.addEventListener("validate", (username) => {
+Axis.virtualKeyboard.addEventListener("validate", (username) => {
     virtualKeyboard.close();
     leaderboard.postScore({
         username,
