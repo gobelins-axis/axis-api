@@ -41,14 +41,14 @@ const position2 = {
     current: { x: 0, y: 0 },
 };
 
-// const input = document.querySelector('input');
+const input = document.querySelector('input');
 
-// setTimeout(() => {
-// Axis.virtualKeyboard.open();
-// Axis.virtualKeyboard.addEventListener('input', (e) => {
-//     input.value = e;
-// });
-// }, 1000);
+setTimeout(() => {
+    Axis.virtualKeyboard.open();
+    Axis.virtualKeyboard.addEventListener('input', (e) => {
+        input.value = e;
+    });
+}, 1000);
 
 function setup() {
     Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
@@ -134,20 +134,20 @@ function player1keydownHandler(e) {
     position1.target.y += speed * directionY;
 
     // Leaderboard tests
-    // console.log('Pushing score');
+    console.log('Pushing score');
 
-    // const leaderboard = Axis.createLeaderboard({
-    //     id: 'A-Cairn-Tale-9a63183e-7c86-49c4-9d31-5ff4b16717a3',
-    // });
+    const leaderboard = Axis.createLeaderboard({
+        id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8',
+    });
 
-    // leaderboard.postScore({
-    //     username: 'coucou',
-    //     value: 100,
-    // }).then(() => {
-    //     leaderboard.getScores().then((response) => {
-    //         console.log(response);
-    //     });
-    // });
+    leaderboard.postScore({
+        username: 'coucou',
+        value: 100,
+    }).then(() => {
+        leaderboard.getScores().then((response) => {
+            console.log(response);
+        });
+    });
 }
 
 function player1keyupHandler(e) {

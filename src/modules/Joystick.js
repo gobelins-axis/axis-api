@@ -93,6 +93,8 @@ export default class Joystick extends EventDispatcher {
         this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
         this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
 
+        console.log(this._position);
+
         this.dispatchEvent('joystick:move', { id: this._id, position: this._position });
 
         // Left

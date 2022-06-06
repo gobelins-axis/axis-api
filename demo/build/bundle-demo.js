@@ -2604,15 +2604,16 @@
     return Math.sqrt(a * a + b * b);
   }
 
-  var MIN_INPUT_SIGNAL_X = 0;
-  var MAX_INPUT_SIGNAL_X = 1023;
-  var MIN_INPUT_SIGNAL_Y = 0;
-  var MAX_INPUT_SIGNAL_Y = 1023; // Ultra Stick 360
-  // const MIN_INPUT_SIGNAL_X = 18;
-  // const MAX_INPUT_SIGNAL_X = 840;
-  // const MIN_INPUT_SIGNAL_Y = 18;
-  // const MAX_INPUT_SIGNAL_Y = 840;
+  // const MIN_INPUT_SIGNAL_X = 0;
+  // const MAX_INPUT_SIGNAL_X = 1023;
+  // const MIN_INPUT_SIGNAL_Y = 0;
+  // const MAX_INPUT_SIGNAL_Y = 1023;
+  // Ultra Stick 360
 
+  var MIN_INPUT_SIGNAL_X = 18;
+  var MAX_INPUT_SIGNAL_X = 840;
+  var MIN_INPUT_SIGNAL_Y = 36;
+  var MAX_INPUT_SIGNAL_Y = 867;
   function normalizeJoystickSignal(position, threshold) {
     var x = map(position.x, MIN_INPUT_SIGNAL_X, MAX_INPUT_SIGNAL_X, -1, 1);
     var y = map(position.y, MIN_INPUT_SIGNAL_Y, MAX_INPUT_SIGNAL_Y, -1, 1) * -1;
@@ -2735,6 +2736,7 @@
       value: function moveHandler(e) {
         this._position.x = normalizeJoystickSignal(e, this._deadzone).x;
         this._position.y = normalizeJoystickSignal(e, this._deadzone).y;
+        console.log(this._position);
         this.dispatchEvent('joystick:move', {
           id: this._id,
           position: this._position
@@ -3621,6 +3623,7 @@
 
         var isValid = this._isValidScore(score);
 
+        score.createdAt = new Date();
         var promise = new Promise(function (resolve, reject) {
           if (!isValid) {
             reject(Error('Leaderboard: Score is not valid'));
@@ -9576,7 +9579,7 @@
       key: "_bindAll",
       value: function _bindAll() {
         this._keydownHandler = this._keydownHandler.bind(this);
-        this._homeKeydownHandler = this._homeKeydownHandler.bind(this);
+        this._homeKeyupHandler = this._homeKeyupHandler.bind(this);
         this._validationKeydownHandler = this._validationKeydownHandler.bind(this);
         this._cancelationKeydownHandler = this._cancelationKeydownHandler.bind(this);
       }
@@ -9585,7 +9588,7 @@
       value: function _setupEventListeners() {
         window.addEventListener('keydown', this._keydownHandler);
 
-        this._buttonManager.addEventListener('home:keydown', this._homeKeydownHandler);
+        this._buttonManager.addEventListener('home:keyup', this._homeKeyupHandler);
 
         this._buttonValidation1.addEventListener('keydown', this._validationKeydownHandler);
 
@@ -9600,11 +9603,11 @@
       value: function _keydownHandler(e) {
         if (e.key !== 'Escape') return;
 
-        this._homeKeydownHandler();
+        this._homeKeyupHandler();
       }
     }, {
-      key: "_homeKeydownHandler",
-      value: function _homeKeydownHandler() {
+      key: "_homeKeyupHandler",
+      value: function _homeKeyupHandler() {
         if (!this._active) {
           this._active = true;
           this.dispatchEvent('exit:attempted');
@@ -9840,6 +9843,7 @@
         this._keydownHandler = this._keydownHandler.bind(this);
         this._keyupHandler = this._keyupHandler.bind(this);
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+        this._joystickQuickMoveHandler = this._joystickQuickMoveHandler.bind(this);
         this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
         this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
         this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
@@ -9853,7 +9857,9 @@
 
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
 
-        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
+        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler); // this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+        // this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
 
@@ -9875,6 +9881,11 @@
       key: "_joystickMoveHandler",
       value: function _joystickMoveHandler(e) {
         this.dispatchEvent('joystick:move', e);
+      }
+    }, {
+      key: "_joystickQuickMoveHandler",
+      value: function _joystickQuickMoveHandler(e) {
+        this.dispatchEvent('joystick:quickmove', e);
       }
     }, {
       key: "_exitAttemptHandler",
@@ -9935,13 +9946,14 @@
       x: 0,
       y: 0
     }
-  }; // const input = document.querySelector('input');
-  // setTimeout(() => {
-  // Axis.virtualKeyboard.open();
-  // Axis.virtualKeyboard.addEventListener('input', (e) => {
-  //     input.value = e;
-  // });
-  // }, 1000);
+  };
+  var input = document.querySelector('input');
+  setTimeout(function () {
+    Axis$1.virtualKeyboard.open();
+    Axis$1.virtualKeyboard.addEventListener('input', function (e) {
+      input.value = e;
+    });
+  }, 1000);
 
   function setup() {
     Axis$1.ledManager.leds[0].setColor('rgb(255, 0, 0)');
@@ -10019,18 +10031,19 @@
 
     position1.target.x += speed * directionX;
     position1.target.y += speed * directionY; // Leaderboard tests
-    // console.log('Pushing score');
-    // const leaderboard = Axis.createLeaderboard({
-    //     id: 'A-Cairn-Tale-9a63183e-7c86-49c4-9d31-5ff4b16717a3',
-    // });
-    // leaderboard.postScore({
-    //     username: 'coucou',
-    //     value: 100,
-    // }).then(() => {
-    //     leaderboard.getScores().then((response) => {
-    //         console.log(response);
-    //     });
-    // });
+
+    console.log('Pushing score');
+    var leaderboard = Axis$1.createLeaderboard({
+      id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8'
+    });
+    leaderboard.postScore({
+      username: 'coucou',
+      value: 100
+    }).then(function () {
+      leaderboard.getScores().then(function (response) {
+        console.log(response);
+      });
+    });
   }
 
   function player1keyupHandler(e) {

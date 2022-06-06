@@ -180,6 +180,7 @@ class Axis extends EventDispatcher {
         this._keyupHandler = this._keyupHandler.bind(this);
 
         this._joystickMoveHandler = this._joystickMoveHandler.bind(this);
+        this._joystickQuickMoveHandler = this._joystickQuickMoveHandler.bind(this);
 
         this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
         this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
@@ -192,6 +193,9 @@ class Axis extends EventDispatcher {
 
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
         this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
+
+        // this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+        // this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
         this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);
@@ -208,6 +212,10 @@ class Axis extends EventDispatcher {
 
     _joystickMoveHandler(e) {
         this.dispatchEvent('joystick:move', e);
+    }
+
+    _joystickQuickMoveHandler(e) {
+        this.dispatchEvent('joystick:quickmove', e);
     }
 
     _exitAttemptHandler() {
