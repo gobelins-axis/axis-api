@@ -171,7 +171,6 @@ export default class ButtonManager extends EventDispatcher {
         const buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (let i = 0; i < buttons.length; i++) {
-            const button = buttons[i];
             buttons[i].keyupHandler(e);
         }
     }

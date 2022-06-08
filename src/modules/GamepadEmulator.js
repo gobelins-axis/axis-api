@@ -50,10 +50,10 @@ export default class GamepadEmulator extends EventDispatcher {
         window.addEventListener('gamepadconnected', this._gamepadConnectedHandler);
     }
 
-    _gamepadConnectedHandler() {
-        const gamepad = navigator.getGamepads()[this._index];
+    _gamepadConnectedHandler(e) {
+        const gamepad = e.gamepad;
 
-        if (!gamepad) return;
+        if (!gamepad || gamepad.index !== this._index) return;
 
         console.log(`🎮 GAMEPAD ${this._index} CONNECTED`);
 

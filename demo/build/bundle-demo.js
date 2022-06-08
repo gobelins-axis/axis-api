@@ -245,7 +245,7 @@
 
   var config$1 = {
     deadzone: 0.2,
-    threshold: 0,
+    threshold: 0.1,
     inputInactiveDelay: 0.2,
     inputIntervalMax: 0.2,
     inputIntervalMin: 0.1
@@ -3368,7 +3368,6 @@
         var buttons = this.getButtonsByKeyboardKey(e.key);
 
         for (var i = 0; i < buttons.length; i++) {
-          buttons[i];
           buttons[i].keyupHandler(e);
         }
       }
@@ -9793,10 +9792,9 @@
       }
     }, {
       key: "_gamepadConnectedHandler",
-      value: function _gamepadConnectedHandler() {
-        var gamepad = navigator.getGamepads()[this._index];
-
-        if (!gamepad) return;
+      value: function _gamepadConnectedHandler(e) {
+        var gamepad = e.gamepad;
+        if (!gamepad || gamepad.index !== this._index) return;
         console.log("\uD83C\uDFAE GAMEPAD ".concat(this._index, " CONNECTED"));
 
         for (var i = 0; i < gamepad.buttons.length; i++) {
@@ -10151,6 +10149,9 @@
   Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 1, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 1, 'a', 2);
+  Axis$1.addEventListener('keydown', function () {
+    console.log('keydown');
+  });
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({
