@@ -70,8 +70,8 @@ export default class GamepadEmulator extends EventDispatcher {
     }
 
     buttonStateChangedHandler(index, state) {
-        console.log(index);
         if (state) this.dispatchEvent('gamepad:keydown', index);
+        if (!state) this.dispatchEvent('gamepad:keyup', index);
     }
 
     joystickMoveHandler(axes) {
