@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600&display=swap');
+
 /**
  * simple-keyboard
  * Theme: hg-theme-default
@@ -6,27 +8,74 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 70px;
 
   margin: auto;
 
   max-width: 1100px;
 
-  transform: translateY(100%);
+  /* transform: translateY(calc(100% + 70px)); */
   transition: transform 0.5s ease-in-out;
+
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 30px;
+}
+
+.simple-keyboard .indicator {
+  opacity: 0.6;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+
+  width: 50%;
+
+  margin: auto;
+
+  text-align: center;
+}
+
+.simple-keyboard .indicator span {
+  margin-bottom: 2px;
+}
+
+.simple-keyboard .indicator svg {
+  width: 20px;
+  height: 20px;
+
+  margin-left: 10px;
 }
 
 .hg-theme-default {
+  --background-color: #1F1F1F;
+  --color: #ffffff;
+  --button-background-color: #1F1F1F;
+  --button-border-color: rgba(255, 255, 255, 0.3);
+  --button-focus-background-color: #FFD600;
+  --button-focus-color: #1F1F1F;
+  --button-enter-background-color: #7E00FF;
+  --button-enter-focus-background-color: #FFFFFF;
+
   width: 100%;
   user-select: none;
   box-sizing: border-box;
   overflow: hidden;
   touch-action: manipulation;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue",
-    Helvetica, Arial, "Lucida Grande", sans-serif;
-  background-color: #ececec;
-  padding: 5px;
-  border-radius: 5px;
+  font-family: 'Darker Grotesque', sans-serif;
+  font-weight: 600;
+  background-color: var(--background-color);
+  color: var(--color);
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
+  padding-top: 80px;
 }
 
 .hg-theme-default .hg-button span {
@@ -37,7 +86,29 @@
 .hg-theme-default button.hg-button {
   border-width: 0;
   outline: 0;
-  font-size: inherit;
+}
+
+.hg-theme-default .hg-button {
+  display: inline-block;
+  flex-grow: 1;
+  cursor: pointer;
+  background-color: var(--button-background-color);
+  font-size: 20px;
+  padding-top: 2px;
+}
+
+.hg-theme-default .hg-button>span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hg-theme-default .hg-button svg {
+    width: 20px;
+    height: 20px;
+
+    margin-top: 4px;
+    margin-left: 10px;
 }
 
 .hg-theme-default .hg-button {
@@ -47,15 +118,20 @@
 }
 
 .hg-theme-default .hg-button:active {
-  background: #efefef;
+  /* transform: scale(0.95); */
+  opacity: 0.4;
 }
 
 .hg-theme-default .hg-button.active {
-  background: #efefef;
+  /* transform: scale(0.95); */
+  opacity: 0.4;
 }
 
 .hg-theme-default .hg-button.hg-keyMarker {
-  box-shadow: 0 0 0 2px #88b8ff !important;
+  background-color: var(--button-focus-background-color);
+  color: var(--button-focus-color);
+  box-shadow: none !important;
+  border-radius: 10px !important;
 }
 
 .hg-theme-default .hg-row {
@@ -83,13 +159,13 @@
 }
 
 .hg-theme-default .hg-button {
-  box-shadow: 0px 0px 3px -1px rgba(0, 0, 0, 0.3);
   height: 40px;
-  border-radius: 5px;
+  border-radius: 10px;
   box-sizing: border-box;
   padding: 5px;
-  background: white;
-  border-bottom: 1px solid #b5b5b5;
+  padding-top: 2px;
+  background-color: var(--button-background-color);
+  border: 1px solid var(--button-border-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -156,4 +232,15 @@
 
 .hg-theme-default .hg-button.hg-functionBtn[data-skbtn="{enter}"] {
     width: calc(2 / 12 * 100%);
+    border-bottom-left-radius: 0px !important;
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    font-weight: 600;
+    background-color: var(--button-enter-background-color);
+    border: solid 1px var(--button-enter-background-color);
+  }
+  
+  .hg-theme-default .hg-button.hg-functionBtn[data-skbtn="{enter}"].hg-keyMarker {
+    background-color: var(--button-enter-focus-background-color);
+    border: solid 1px var(--button-enter-focus-background-color);
 }

@@ -66,10 +66,10 @@ const leaderboard = Axis.createLeaderboard({ id: 'Beyond-Memories-76b9304f-a7f8-
 const input = document.querySelector('input');
 
 setTimeout(() => {
-    // Axis.virtualKeyboard.open();
-    // Axis.virtualKeyboard.addEventListener('input', (e) => {
-    //     input.value = e;
-    // });
+    Axis.virtualKeyboard.open();
+    Axis.virtualKeyboard.addEventListener('input', (e) => {
+        input.value = e;
+    });
 }, 1000);
 
 function setup() {

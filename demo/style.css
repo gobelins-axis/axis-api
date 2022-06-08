@@ -1,4 +1,6 @@
-
+body {
+    background-color: grey;
+}
 
 .box {
     position: fixed;
