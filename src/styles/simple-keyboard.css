@@ -23,6 +23,31 @@
   border-bottom-left-radius: 30px;
 }
 
+.hg-theme-default {
+  --background-color: #1F1F1F;
+  --color: #ffffff;
+  --button-background-color: #1F1F1F;
+  --button-border-color: rgba(255, 255, 255, 0.3);
+  --button-focus-background-color: #FFD600;
+  --button-focus-color: #1F1F1F;
+  --button-enter-background-color: #7E00FF;
+  --button-enter-focus-background-color: #FFFFFF;
+
+  width: 100%;
+  user-select: none;
+  box-sizing: border-box;
+  overflow: hidden;
+  touch-action: manipulation;
+  font-family: 'Darker Grotesque', sans-serif;
+  font-weight: 600;
+  background-color: var(--background-color);
+  color: var(--color);
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-bottom: 40px;
+  padding-top: 80px;
+}
+
 .simple-keyboard .indicator {
   opacity: 0.6;
 
@@ -53,41 +78,36 @@
   margin-left: 10px;
 }
 
-.hg-theme-default {
-  --background-color: #1F1F1F;
-  --color: #ffffff;
-  --button-background-color: #1F1F1F;
-  --button-border-color: rgba(255, 255, 255, 0.3);
-  --button-focus-background-color: #FFD600;
-  --button-focus-color: #1F1F1F;
-  --button-enter-background-color: #7E00FF;
-  --button-enter-focus-background-color: #FFFFFF;
+/* Row */
+.hg-theme-default .hg-row {
+  display: flex;
+}
 
-  width: 100%;
-  user-select: none;
-  box-sizing: border-box;
-  overflow: hidden;
-  touch-action: manipulation;
-  font-family: 'Darker Grotesque', sans-serif;
-  font-weight: 600;
-  background-color: var(--background-color);
-  color: var(--color);
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-bottom: 40px;
-  padding-top: 80px;
+.hg-theme-default .hg-row:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.hg-theme-default .hg-row .hg-button:not(:last-child) {
+  margin-right: 5px;
+}
+
+.hg-theme-default .hg-row .hg-button-container {
+  margin-right: 5px;
+}
+
+.hg-theme-default .hg-row > div:last-child {
+  margin-right: 0;
+}
+
+.hg-theme-default .hg-row .hg-button-container {
+  display: flex;
 }
 
 .hg-theme-default .hg-button span {
   pointer-events: none;
 }
 
-/* When using option "useButtonTag" */
-.hg-theme-default button.hg-button {
-  border-width: 0;
-  outline: 0;
-}
-
+/* Buttons */
 .hg-theme-default .hg-button {
   display: inline-block;
   flex-grow: 1;
@@ -117,47 +137,6 @@
   cursor: pointer;
 }
 
-.hg-theme-default .hg-button:active {
-  /* transform: scale(0.95); */
-  opacity: 0.4;
-}
-
-.hg-theme-default .hg-button.active {
-  /* transform: scale(0.95); */
-  opacity: 0.4;
-}
-
-.hg-theme-default .hg-button.hg-keyMarker {
-  background-color: var(--button-focus-background-color);
-  color: var(--button-focus-color);
-  box-shadow: none !important;
-  border-radius: 10px !important;
-}
-
-.hg-theme-default .hg-row {
-  display: flex;
-}
-
-.hg-theme-default .hg-row:not(:last-child) {
-  margin-bottom: 5px;
-}
-
-.hg-theme-default .hg-row .hg-button:not(:last-child) {
-  margin-right: 5px;
-}
-
-.hg-theme-default .hg-row .hg-button-container {
-  margin-right: 5px;
-}
-
-.hg-theme-default .hg-row > div:last-child {
-  margin-right: 0;
-}
-
-.hg-theme-default .hg-row .hg-button-container {
-  display: flex;
-}
-
 .hg-theme-default .hg-button {
   height: 40px;
   border-radius: 10px;
@@ -185,6 +164,7 @@
   justify-content: center;
 }
 
+/* Buttons numpad */
 .hg-theme-default .hg-button.hg-button-numpadadd {
   height: 85px;
 }
@@ -197,17 +177,35 @@
   width: 105px;
 }
 
+/* Click */
+.hg-theme-default .hg-button:active {
+  opacity: 0.4;
+}
+
+/* Click */
+.hg-theme-default .hg-button.active {
+  opacity: 0.4;
+}
+
+/* Focus */
+.hg-theme-default .hg-button.hg-keyMarker {
+  background-color: var(--button-focus-background-color);
+  color: var(--button-focus-color);
+  box-shadow: none !important;
+  border-radius: 10px !important;
+}
+
+.hg-theme-default .hg-button.hg-keyMarker svg path {
+  fill: var(--button-focus-color);
+}
+
+/* Spacial buttons */
 .hg-theme-default .hg-button.hg-button-com {
   max-width: 85px;
 }
 
 .hg-theme-default .hg-button.hg-standardBtn.hg-button-at {
   max-width: 45px;
-}
-
-.hg-theme-default .hg-button.hg-selectedButton {
-  background: rgba(5, 25, 70, 0.53);
-  color: white;
 }
 
 .hg-theme-default .hg-button.hg-standardBtn[data-skbtn=".com"] {
