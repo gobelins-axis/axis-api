@@ -14,13 +14,18 @@
 
   max-width: 1100px;
 
-  /* transform: translateY(calc(100% + 70px)); */
-  transition: transform 0.5s ease-in-out;
-
+  transform: translateY(calc(100% + 70px));
+  transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);
+  
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 30px;
+}
+
+.simple-keyboard.open {
+  transform: translateY(0);
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hg-theme-default {

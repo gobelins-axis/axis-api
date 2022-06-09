@@ -41,12 +41,12 @@ export default class VirtualKeyboard extends EventDispatcher {
     open() {
         this._isOpen = true;
         this._keyboard.clearInput();
-        this._container.style.transform = 'translateY(0%)';
+        if (!this._container.classList.contains('open')) this._container.classList.add('open');
     }
 
     close() {
         this._isOpen = false;
-        this._container.style.transform = 'translateY(100%)';
+        if (this._container.classList.contains('open')) this._container.classList.remove('open');
     }
 
     clear() {

@@ -70,6 +70,10 @@ setTimeout(() => {
     Axis.virtualKeyboard.addEventListener('input', (e) => {
         input.value = e;
     });
+
+    setTimeout(() => {
+        Axis.virtualKeyboard.close();
+    }, 2000);
 }, 1000);
 
 function setup() {
