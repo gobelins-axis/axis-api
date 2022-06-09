@@ -71,9 +71,9 @@ setTimeout(() => {
         input.value = e;
     });
 
-    setTimeout(() => {
-        Axis.virtualKeyboard.close();
-    }, 2000);
+    // setTimeout(() => {
+    //     Axis.virtualKeyboard.close();
+    // }, 2000);
 }, 1000);
 
 function setup() {

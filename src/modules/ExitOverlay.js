@@ -1,6 +1,8 @@
-// Styles
-import '../styles/exit-overlay.css';
+// Utils
 import EventDispatcher from '../utils/EventDispatcher';
+
+// Components
+import '../components/ExitOverlayComponent';
 
 export default class ExitOverlay extends EventDispatcher {
     constructor(options = {}) {
@@ -11,8 +13,8 @@ export default class ExitOverlay extends EventDispatcher {
 
         // Setup
         this._active = false;
-        this._container = document.body;
-        this._element = this._createElement();
+        this._component = this._createComponent();
+
         this._buttonValidation1 = this._buttonManager.getButton('a', 1);
         this._buttonValidation2 = this._buttonManager.getButton('a', 2);
         this._buttonCancelation1 = this._buttonManager.getButton('b', 1);
@@ -26,26 +28,18 @@ export default class ExitOverlay extends EventDispatcher {
      * Private
      */
     _show() {
-        if (!this._element.classList.contains('is-visible')) this._element.classList.add('is-visible');
+        if (!this._component.classList.contains('is-visible')) this._component.classList.add('is-visible');
     }
 
     _hide() {
-        if (this._element.classList.contains('is-visible')) this._element.classList.remove('is-visible');
+        if (this._component.classList.contains('is-visible')) this._component.classList.remove('is-visible');
     }
 
-    _createElement() {
-        const element = document.createElement('div');
-        element.classList.add('exit-overlay');
+    _createComponent() {
+        const component = document.createElement('axis-exit-overlay');
+        document.documentElement.appendChild(component);
 
-        const message = document.createElement('p');
-        message.innerHTML = 'Êtes-vous sûr de vouloir quitter ?';
-        message.classList.add('message');
-
-        element.appendChild(message);
-
-        this._container.appendChild(element);
-
-        return element;
+        return component.shadowRoot.childNodes[1];
     }
 
     _bindAll() {

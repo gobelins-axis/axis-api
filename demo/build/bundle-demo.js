@@ -118,6 +118,61 @@
     }
   }
 
+  function _construct(Parent, args, Class) {
+    if (_isNativeReflectConstruct()) {
+      _construct = Reflect.construct;
+    } else {
+      _construct = function _construct(Parent, args, Class) {
+        var a = [null];
+        a.push.apply(a, args);
+        var Constructor = Function.bind.apply(Parent, a);
+        var instance = new Constructor();
+        if (Class) _setPrototypeOf(instance, Class.prototype);
+        return instance;
+      };
+    }
+
+    return _construct.apply(null, arguments);
+  }
+
+  function _isNativeFunction(fn) {
+    return Function.toString.call(fn).indexOf("[native code]") !== -1;
+  }
+
+  function _wrapNativeSuper(Class) {
+    var _cache = typeof Map === "function" ? new Map() : undefined;
+
+    _wrapNativeSuper = function _wrapNativeSuper(Class) {
+      if (Class === null || !_isNativeFunction(Class)) return Class;
+
+      if (typeof Class !== "function") {
+        throw new TypeError("Super expression must either be null or a function");
+      }
+
+      if (typeof _cache !== "undefined") {
+        if (_cache.has(Class)) return _cache.get(Class);
+
+        _cache.set(Class, Wrapper);
+      }
+
+      function Wrapper() {
+        return _construct(Class, arguments, _getPrototypeOf(this).constructor);
+      }
+
+      Wrapper.prototype = Object.create(Class.prototype, {
+        constructor: {
+          value: Wrapper,
+          enumerable: false,
+          writable: true,
+          configurable: true
+        }
+      });
+      return _setPrototypeOf(Wrapper, Class);
+    };
+
+    return _wrapNativeSuper(Class);
+  }
+
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -3822,38 +3877,6 @@
 
     return Leaderboard;
   }();
-
-  var e = [],
-      t = [];
-
-  function n(n, r) {
-    if (n && "undefined" != typeof document) {
-      var a,
-          s = !0 === r.prepend ? "prepend" : "append",
-          d = !0 === r.singleTag,
-          i = "string" == typeof r.container ? document.querySelector(r.container) : document.getElementsByTagName("head")[0];
-
-      if (d) {
-        var u = e.indexOf(i);
-        -1 === u && (u = e.push(i) - 1, t[u] = {}), a = t[u] && t[u][s] ? t[u][s] : t[u][s] = c();
-      } else a = c();
-
-      65279 === n.charCodeAt(0) && (n = n.substring(1)), a.styleSheet ? a.styleSheet.cssText += n : a.appendChild(document.createTextNode(n));
-    }
-
-    function c() {
-      var e = document.createElement("style");
-      if (e.setAttribute("type", "text/css"), r.attributes) for (var t = Object.keys(r.attributes), n = 0; n < t.length; n++) e.setAttribute(t[n], r.attributes[t[n]]);
-      var a = "prepend" === s ? "afterbegin" : "beforeend";
-      return i.insertAdjacentElement(a, e), e;
-    }
-  }
-
-  var css$2 = ".hg-candidate-box {\n  display: inline-flex;\n  border-radius: 5px;\n  position: absolute;\n  background: #ececec;\n  border-bottom: 2px solid #b5b5b5;\n  user-select: none;\n  max-width: 272px;\n  transform: translateY(-100%);\n  margin-top: -10px;\n}\n\nul.hg-candidate-box-list {\n  display: flex;\n  list-style: none;\n  padding: 0;\n  margin: 0;\n  flex: 1;\n}\n\nli.hg-candidate-box-list-item {\n  height: 40px;\n  width: 40px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\nli.hg-candidate-box-list-item:hover {\n  background: rgba(0, 0, 0, 0.03);\n  cursor: pointer;\n}\n\nli.hg-candidate-box-list-item:active {\n  background: rgba(0, 0, 0, 0.1);\n}\n\n.hg-candidate-box-prev::before {\n  content: \"◄\";\n}\n\n.hg-candidate-box-next::before {\n  content: \"►\";\n}\n\n.hg-candidate-box-next,\n.hg-candidate-box-prev {\n  display: flex;\n  align-items: center;\n  padding: 0 10px;\n  background: #d0d0d0;\n  color: #969696;\n  cursor: pointer;\n}\n\n.hg-candidate-box-next {\n  border-top-right-radius: 5px;\n  border-bottom-right-radius: 5px;\n}\n\n.hg-candidate-box-prev {\n  border-top-left-radius: 5px;\n  border-bottom-left-radius: 5px;\n}\n\n.hg-candidate-box-btn-active {\n  color: #444;\n}";
-  n(css$2,{});
-
-  var css$1 = "@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600&display=swap');\n\n/**\n * simple-keyboard\n * Theme: hg-theme-default\n */\n.simple-keyboard {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 70px;\n\n  margin: auto;\n\n  max-width: 1100px;\n\n  transform: translateY(calc(100% + 70px));\n  transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);\n  \n  border-top-left-radius: 30px;\n  border-top-right-radius: 30px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 30px;\n}\n\n.simple-keyboard.open {\n  transform: translateY(0);\n  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);\n}\n\n.hg-theme-default {\n  --background-color: #1F1F1F;\n  --color: #ffffff;\n  --button-background-color: #1F1F1F;\n  --button-border-color: rgba(255, 255, 255, 0.3);\n  --button-focus-background-color: #FFD600;\n  --button-focus-color: #1F1F1F;\n  --button-enter-background-color: #7E00FF;\n  --button-enter-focus-background-color: #FFFFFF;\n\n  width: 100%;\n  user-select: none;\n  box-sizing: border-box;\n  overflow: hidden;\n  touch-action: manipulation;\n  font-family: 'Darker Grotesque', sans-serif;\n  font-weight: 600;\n  background-color: var(--background-color);\n  color: var(--color);\n  padding-left: 40px;\n  padding-right: 40px;\n  padding-bottom: 40px;\n  padding-top: 80px;\n}\n\n.simple-keyboard .indicator {\n  opacity: 0.6;\n\n  display: flex;\n  justify-content: center;\n  align-items: center;\n\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 30px;\n\n  width: 50%;\n\n  margin: auto;\n\n  text-align: center;\n}\n\n.simple-keyboard .indicator span {\n  margin-bottom: 2px;\n}\n\n.simple-keyboard .indicator svg {\n  width: 20px;\n  height: 20px;\n\n  margin-left: 10px;\n}\n\n/* Row */\n.hg-theme-default .hg-row {\n  display: flex;\n}\n\n.hg-theme-default .hg-row:not(:last-child) {\n  margin-bottom: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button:not(:last-child) {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row > div:last-child {\n  margin-right: 0;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  display: flex;\n}\n\n.hg-theme-default .hg-button span {\n  pointer-events: none;\n}\n\n/* Buttons */\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n  background-color: var(--button-background-color);\n  font-size: 20px;\n  padding-top: 2px;\n}\n\n.hg-theme-default .hg-button>span {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n.hg-theme-default .hg-button svg {\n    width: 20px;\n    height: 20px;\n\n    margin-top: 4px;\n    margin-left: 10px;\n}\n\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n}\n\n.hg-theme-default .hg-button {\n  height: 40px;\n  border-radius: 10px;\n  box-sizing: border-box;\n  padding: 5px;\n  padding-top: 2px;\n  background-color: var(--button-background-color);\n  border: 1px solid var(--button-border-color);\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn {\n  width: 20px;\n}\n\n.hg-theme-default.hg-layout-numeric .hg-button {\n  width: 33.3%;\n  height: 60px;\n  align-items: center;\n  display: flex;\n  justify-content: center;\n}\n\n/* Buttons numpad */\n.hg-theme-default .hg-button.hg-button-numpadadd {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadenter {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpad0 {\n  width: 105px;\n}\n\n/* Click */\n.hg-theme-default .hg-button:active {\n  opacity: 0.4;\n}\n\n/* Click */\n.hg-theme-default .hg-button.active {\n  opacity: 0.4;\n}\n\n/* Focus */\n.hg-theme-default .hg-button.hg-keyMarker {\n  background-color: var(--button-focus-background-color);\n  color: var(--button-focus-color);\n  box-shadow: none !important;\n  border-radius: 10px !important;\n}\n\n.hg-theme-default .hg-button.hg-keyMarker svg path {\n  fill: var(--button-focus-color);\n}\n\n/* Spacial buttons */\n.hg-theme-default .hg-button.hg-button-com {\n  max-width: 85px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn.hg-button-at {\n  max-width: 45px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\".com\"] {\n  max-width: 82px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"@\"] {\n  width: calc(2 / 12 * 100%);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"{bksp}\"] {\n  max-width: 60px;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{space}\"] {\n  min-width: 70%;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{shift}\"] {\n  /* max-width: 60px; */\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"] {\n    width: calc(2 / 12 * 100%);\n    border-bottom-left-radius: 0px !important;\n    border-top-right-radius: 5px !important;\n    border-bottom-right-radius: 5px !important;\n    font-weight: 600;\n    background-color: var(--button-enter-background-color);\n    border: solid 1px var(--button-enter-background-color);\n  }\n  \n  .hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"].hg-keyMarker {\n    background-color: var(--button-enter-focus-background-color);\n    border: solid 1px var(--button-enter-focus-background-color);\n}\n";
-  n(css$1,{});
 
   var build$1 = {exports: {}};
 
@@ -9374,10 +9397,53 @@
 
   var keyNavigation = /*@__PURE__*/getDefaultExportFromCjs(build.exports);
 
-  var iconA = '<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08614 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42 15.4311 39.788 10.0903 35.8506 6.15213C31.9132 2.21398 26.5728 0.00103316 21.0039 3.61321e-07ZM32.8242 32.8359H28.3064C26.8694 32.8349 25.4748 32.3492 24.3482 31.4572C23.2215 30.5653 22.4288 29.3192 22.0983 27.9208C22.09 27.8826 22.0689 27.8483 22.0384 27.8237C22.0079 27.7992 21.97 27.7858 21.9308 27.7858C21.8917 27.7858 21.8537 27.7992 21.8233 27.8237C21.7928 27.8483 21.7717 27.8826 21.7634 27.9208C21.5284 28.9296 21.0508 29.8659 20.3722 30.6484C19.6935 31.4309 18.8342 32.036 17.8687 32.4113C17.0861 32.7157 16.2505 32.86 15.4112 32.8359C13.7772 32.7908 12.2224 32.1221 11.0658 30.9669C9.90919 29.8118 9.23854 28.2578 9.1914 26.6239C9.16302 25.7843 9.30752 24.9478 9.61592 24.1663C9.61489 24.1521 9.61489 24.1378 9.61592 24.1235C10.0127 23.1512 10.6921 22.3204 11.5663 21.7385C12.4405 21.1567 13.4692 20.8505 14.5193 20.8598H20.9883C21.1433 20.8598 21.2919 20.7982 21.4014 20.6887C21.511 20.5791 21.5725 20.4305 21.5725 20.2756C21.5725 20.1206 21.511 19.9721 21.4014 19.8625C21.2919 19.7529 21.1433 19.6914 20.9883 19.6914H9.26151C9.56647 16.9357 10.8292 14.3744 12.8294 12.4545C14.8296 10.5345 17.4403 9.37771 20.2062 9.18577C22.9721 8.99384 25.7176 9.779 27.9638 11.4043C30.21 13.0296 31.8144 15.3918 32.497 18.079C32.6631 18.9996 32.7723 19.9296 32.8242 20.8637V32.8359Z" fill="white"/></svg>';
-  var iconX = '<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08613 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42.0005 18.2424 41.4578 15.5117 40.4029 12.9639C39.348 10.4161 37.8015 8.10107 35.8518 6.15099C33.902 4.20091 31.5873 2.654 29.0397 1.59861C26.492 0.543211 23.7615 3.1388e-07 21.0039 3.61321e-07ZM32.8203 19.6875H26.2773C26.1201 19.6836 25.9667 19.7355 25.8441 19.8338C25.7215 19.9322 25.6377 20.0707 25.6074 20.225C25.5921 20.3165 25.597 20.4104 25.6216 20.4999C25.6463 20.5894 25.6902 20.6724 25.7503 20.7433C25.8103 20.8141 25.8851 20.8709 25.9694 20.9099C26.0537 20.9489 26.1455 20.969 26.2383 20.9688H32.8203V32.8203H27.6871C24.4857 32.7112 21.7634 30.873 21.0662 27.9208C21.0563 27.8834 21.0343 27.8504 21.0037 27.8268C20.973 27.8032 20.9355 27.7904 20.8968 27.7904C20.8581 27.7904 20.8205 27.8032 20.7899 27.8268C20.7593 27.8504 20.7373 27.8834 20.7274 27.9208C20.3976 29.3189 19.6057 30.5648 18.4797 31.4569C17.3537 32.3489 15.9597 32.8348 14.5232 32.8359H9.18751C9.21087 32.9293 9.18751 20.9688 9.18751 20.9688H15.2982C15.4537 20.9718 15.6052 20.92 15.7262 20.8224C15.8473 20.7248 15.9302 20.5878 15.9603 20.4353C15.9762 20.3434 15.9718 20.2492 15.9475 20.1592C15.9231 20.0692 15.8793 19.9856 15.8191 19.9143C15.759 19.843 15.684 19.7858 15.5994 19.7466C15.5148 19.7074 15.4226 19.6873 15.3294 19.6875H9.18751V9.14855H14.679C16.086 9.1865 17.441 9.68875 18.5329 10.577C19.6248 11.4653 20.3922 12.6898 20.7157 14.0597C20.7219 14.1002 20.7423 14.1372 20.7734 14.1639C20.8045 14.1906 20.8441 14.2053 20.8851 14.2053C20.9261 14.2053 20.9657 14.1906 20.9968 14.1639C21.0279 14.1372 21.0484 14.1002 21.0545 14.0597C21.3844 12.662 22.1765 11.4165 23.3025 10.5252C24.4286 9.63382 25.8226 9.14875 27.2587 9.14855H32.8203V19.6875Z" fill="white"/></svg>';
-  var iconI = '<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33586 3.53724C5.88192 5.84428 3.18969 9.12375 1.59965 12.9609C0.00961133 16.7981 -0.406803 21.0206 0.403047 25.0945C1.2129 29.1683 3.21264 32.9106 6.14939 35.8478C9.08614 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42 15.4311 39.788 10.0903 35.8506 6.15213C31.9132 2.21398 26.5728 0.00103316 21.0039 3.61321e-07ZM28.0143 33.8835H17.5182V24.957C17.5172 24.3696 17.2833 23.8065 16.868 23.3911C16.4526 22.9757 15.8895 22.7419 15.3021 22.7409H11.8242V13.8221H17.2183C19.0378 13.8222 20.8272 14.286 22.4177 15.1697L23.664 15.9486C25.0135 16.9509 26.1096 18.2554 26.8644 19.7575C27.6191 21.2596 28.0116 22.9176 28.0104 24.5986L28.0143 33.8835ZM26.3668 15.8123C25.6076 15.8138 24.865 15.5901 24.233 15.1693C23.601 14.7485 23.1081 14.1497 22.8167 13.4486C22.5253 12.7476 22.4484 11.9758 22.5959 11.231C22.7433 10.4862 23.1085 9.80197 23.645 9.26484C24.1816 8.7277 24.8655 8.36187 25.6102 8.21365C26.3548 8.06544 27.1266 8.14151 27.828 8.43223C28.5294 8.72295 29.1287 9.21525 29.5501 9.8468C29.9715 10.4783 30.1961 11.2207 30.1953 11.98C30.1901 12.9947 29.7832 13.9661 29.0634 14.6814C28.3437 15.3967 27.3699 15.7978 26.3552 15.7967L26.3668 15.8123Z" fill="white"/></svg>';
-  var iconS = '<svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08613 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42.0005 18.2424 41.4578 15.5117 40.4029 12.9639C39.348 10.4161 37.8015 8.10107 35.8518 6.15099C33.902 4.20091 31.5873 2.654 29.0397 1.59861C26.492 0.543211 23.7615 3.1388e-07 21.0039 3.61321e-07ZM32.8398 19.6408H23.3134C23.1585 19.6408 23.0099 19.7023 22.9003 19.8119C22.7908 19.9214 22.7292 20.07 22.7292 20.225C22.7292 20.3799 22.7908 20.5285 22.9003 20.6381C23.0099 20.7476 23.1585 20.8092 23.3134 20.8092H26.8498C28.3793 20.8094 29.8511 21.3936 30.9643 22.4425C32.0776 23.4914 32.7484 24.9257 32.8398 26.4525V27.1691C32.7526 28.6393 32.1279 30.026 31.0847 31.0655C30.0414 32.105 28.6523 32.7246 27.1819 32.8063C25.7114 32.8881 24.2622 32.4264 23.1101 31.509C21.958 30.5916 21.1834 29.2826 20.9338 27.8312C20.9338 27.8085 20.9248 27.7867 20.9087 27.7706C20.8926 27.7546 20.8708 27.7455 20.8481 27.7455C20.8254 27.7455 20.8036 27.7546 20.7875 27.7706C20.7715 27.7867 20.7624 27.8085 20.7624 27.8312C20.5218 29.2257 19.7962 30.4903 18.7138 31.4018C17.6313 32.3132 16.2615 32.8129 14.8464 32.8125H9.16025V22.367H18.7411C18.7811 22.3729 18.8218 22.3729 18.8618 22.367C19.0168 22.3505 19.1588 22.2731 19.2567 22.1518C19.3545 22.0306 19.4002 21.8755 19.3837 21.7205C19.3672 21.5656 19.2898 21.4235 19.1685 21.3257C19.0473 21.2278 18.8921 21.1821 18.7372 21.1986H15.2086C14.4205 21.1991 13.6401 21.0442 12.9119 20.7427C12.1837 20.4413 11.5222 19.9991 10.9651 19.4417C10.408 18.8842 9.96627 18.2224 9.66526 17.494C9.36426 16.7656 9.20985 15.9851 9.21088 15.197C9.21088 13.6063 9.84279 12.0807 10.9676 10.9559C12.0924 9.83109 13.6179 9.19918 15.2086 9.19918H32.8398V19.6408Z" fill="white"/></svg>';
+  var template$1 = "<div class=\"virtual-keyboard\">\n\n    <div class=\"indicator\">\n\n        <span>Sélectionner</span>\n        \n        <svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08614 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42 15.4311 39.788 10.0903 35.8506 6.15213C31.9132 2.21398 26.5728 0.00103316 21.0039 3.61321e-07ZM32.8242 32.8359H28.3064C26.8694 32.8349 25.4748 32.3492 24.3482 31.4572C23.2215 30.5653 22.4288 29.3192 22.0983 27.9208C22.09 27.8826 22.0689 27.8483 22.0384 27.8237C22.0079 27.7992 21.97 27.7858 21.9308 27.7858C21.8917 27.7858 21.8537 27.7992 21.8233 27.8237C21.7928 27.8483 21.7717 27.8826 21.7634 27.9208C21.5284 28.9296 21.0508 29.8659 20.3722 30.6484C19.6935 31.4309 18.8342 32.036 17.8687 32.4113C17.0861 32.7157 16.2505 32.86 15.4112 32.8359C13.7772 32.7908 12.2224 32.1221 11.0658 30.9669C9.90919 29.8118 9.23854 28.2578 9.1914 26.6239C9.16302 25.7843 9.30752 24.9478 9.61592 24.1663C9.61489 24.1521 9.61489 24.1378 9.61592 24.1235C10.0127 23.1512 10.6921 22.3204 11.5663 21.7385C12.4405 21.1567 13.4692 20.8505 14.5193 20.8598H20.9883C21.1433 20.8598 21.2919 20.7982 21.4014 20.6887C21.511 20.5791 21.5725 20.4305 21.5725 20.2756C21.5725 20.1206 21.511 19.9721 21.4014 19.8625C21.2919 19.7529 21.1433 19.6914 20.9883 19.6914H9.26151C9.56647 16.9357 10.8292 14.3744 12.8294 12.4545C14.8296 10.5345 17.4403 9.37771 20.2062 9.18577C22.9721 8.99384 25.7176 9.779 27.9638 11.4043C30.21 13.0296 31.8144 15.3918 32.497 18.079C32.6631 18.9996 32.7723 19.9296 32.8242 20.8637V32.8359Z\" fill=\"white\"/></svg>\n\n    </div>\n\n</div>";
+
+  var style$1 = ".virtual-keyboard {\n  position: fixed;\n  left: 0;\n  right: 0;\n  bottom: 70px;\n\n  margin: auto;\n\n  max-width: 1100px;\n\n  transform: translateY(calc(100% + 70px));\n  transition: transform 1s cubic-bezier(0.83, 0, 0.17, 1);\n  \n  border-top-left-radius: 30px;\n  border-top-right-radius: 30px;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 30px;\n}\n\n.virtual-keyboard.is-open {\n  transform: translateY(0);\n  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);\n}\n\n.hg-theme-default {\n  --background-color: #1F1F1F;\n  --color: #ffffff;\n  --button-background-color: #1F1F1F;\n  --button-border-color: rgba(255, 255, 255, 0.3);\n  --button-focus-background-color: #FFD600;\n  --button-focus-color: #1F1F1F;\n  --button-enter-background-color: #7E00FF;\n  --button-enter-focus-background-color: #FFFFFF;\n\n  width: 100%;\n  user-select: none;\n  box-sizing: border-box;\n  overflow: hidden;\n  touch-action: manipulation;\n  font-family: 'Darker Grotesque', sans-serif;\n  font-weight: 600;\n  background-color: var(--background-color);\n  color: var(--color);\n  padding-left: 40px;\n  padding-right: 40px;\n  padding-bottom: 40px;\n  padding-top: 80px;\n}\n\n.virtual-keyboard .indicator {\n  opacity: 0.6;\n\n  display: flex;\n  justify-content: center;\n  align-items: center;\n\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 30px;\n\n  width: 50%;\n\n  margin: auto;\n\n  text-align: center;\n}\n\n.virtual-keyboard .indicator span {\n  margin-bottom: 2px;\n}\n\n.virtual-keyboard .indicator svg {\n  width: 20px;\n  height: 20px;\n\n  margin-left: 10px;\n}\n\n/* Row */\n.hg-theme-default .hg-row {\n  display: flex;\n}\n\n.hg-theme-default .hg-row:not(:last-child) {\n  margin-bottom: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button:not(:last-child) {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  margin-right: 5px;\n}\n\n.hg-theme-default .hg-row > div:last-child {\n  margin-right: 0;\n}\n\n.hg-theme-default .hg-row .hg-button-container {\n  display: flex;\n}\n\n.hg-theme-default .hg-button span {\n  pointer-events: none;\n}\n\n/* Buttons */\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n  background-color: var(--button-background-color);\n  font-size: 20px;\n  padding-top: 2px;\n}\n\n.hg-theme-default .hg-button>span {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n.hg-theme-default .hg-button svg {\n    width: 20px;\n    height: 20px;\n\n    margin-top: 4px;\n    margin-left: 10px;\n}\n\n.hg-theme-default .hg-button {\n  display: inline-block;\n  flex-grow: 1;\n  cursor: pointer;\n}\n\n.hg-theme-default .hg-button {\n  height: 40px;\n  border-radius: 10px;\n  box-sizing: border-box;\n  padding: 5px;\n  padding-top: 2px;\n  background-color: var(--button-background-color);\n  border: 1px solid var(--button-border-color);\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn {\n  width: 20px;\n}\n\n.hg-theme-default.hg-layout-numeric .hg-button {\n  width: 33.3%;\n  height: 60px;\n  align-items: center;\n  display: flex;\n  justify-content: center;\n}\n\n/* Buttons numpad */\n.hg-theme-default .hg-button.hg-button-numpadadd {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpadenter {\n  height: 85px;\n}\n\n.hg-theme-default .hg-button.hg-button-numpad0 {\n  width: 105px;\n}\n\n/* Click */\n.hg-theme-default .hg-button:active {\n  opacity: 0.4;\n}\n\n/* Click */\n.hg-theme-default .hg-button.active {\n  opacity: 0.4;\n}\n\n/* Focus */\n.hg-theme-default .hg-button.hg-keyMarker {\n  background-color: var(--button-focus-background-color);\n  color: var(--button-focus-color);\n  box-shadow: none !important;\n  border-radius: 10px !important;\n}\n\n.hg-theme-default .hg-button.hg-keyMarker svg path {\n  fill: var(--button-focus-color);\n}\n\n/* Spacial buttons */\n.hg-theme-default .hg-button.hg-button-com {\n  max-width: 85px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn.hg-button-at {\n  max-width: 45px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\".com\"] {\n  max-width: 82px;\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"@\"] {\n  width: calc(2 / 12 * 100%);\n}\n\n.hg-theme-default .hg-button.hg-standardBtn[data-skbtn=\"{bksp}\"] {\n  max-width: 60px;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{space}\"] {\n  min-width: 70%;\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{shift}\"] {\n  /* max-width: 60px; */\n}\n\n.hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"] {\n    width: calc(2 / 12 * 100%);\n    border-bottom-left-radius: 0px !important;\n    border-top-right-radius: 5px !important;\n    border-bottom-right-radius: 5px !important;\n    font-weight: 600;\n    background-color: var(--button-enter-background-color);\n    border: solid 1px var(--button-enter-background-color);\n  }\n  \n  .hg-theme-default .hg-button.hg-functionBtn[data-skbtn=\"{enter}\"].hg-keyMarker {\n    background-color: var(--button-enter-focus-background-color);\n    border: solid 1px var(--button-enter-focus-background-color);\n}\n";
+
+  var VirtualKeyboardComponent = /*#__PURE__*/function (_HTMLElement) {
+    _inherits(VirtualKeyboardComponent, _HTMLElement);
+
+    var _super = _createSuper(VirtualKeyboardComponent);
+
+    function VirtualKeyboardComponent() {
+      var _this;
+
+      _classCallCheck(this, VirtualKeyboardComponent);
+
+      _this = _super.call(this);
+
+      _this.attachShadow({
+        mode: 'open'
+      });
+
+      _this._createTemplate();
+
+      return _this;
+    }
+    /**
+     * Private
+     */
+
+
+    _createClass(VirtualKeyboardComponent, [{
+      key: "_createTemplate",
+      value: function _createTemplate() {
+        var templateElement = document.createElement('template');
+        templateElement.innerHTML = "<style type=\"text/css\">".concat(style$1, "</style>").concat(template$1);
+        this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
+      }
+    }]);
+
+    return VirtualKeyboardComponent;
+  }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+  window.customElements.define('axis-virtual-keyboard', VirtualKeyboardComponent);
+
+  var iconX = "<svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08613 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42.0005 18.2424 41.4578 15.5117 40.4029 12.9639C39.348 10.4161 37.8015 8.10107 35.8518 6.15099C33.902 4.20091 31.5873 2.654 29.0397 1.59861C26.492 0.543211 23.7615 3.1388e-07 21.0039 3.61321e-07ZM32.8203 19.6875H26.2773C26.1201 19.6836 25.9667 19.7355 25.8441 19.8338C25.7215 19.9322 25.6377 20.0707 25.6074 20.225C25.5921 20.3165 25.597 20.4104 25.6216 20.4999C25.6463 20.5894 25.6902 20.6724 25.7503 20.7433C25.8103 20.8141 25.8851 20.8709 25.9694 20.9099C26.0537 20.9489 26.1455 20.969 26.2383 20.9688H32.8203V32.8203H27.6871C24.4857 32.7112 21.7634 30.873 21.0662 27.9208C21.0563 27.8834 21.0343 27.8504 21.0037 27.8268C20.973 27.8032 20.9355 27.7904 20.8968 27.7904C20.8581 27.7904 20.8205 27.8032 20.7899 27.8268C20.7593 27.8504 20.7373 27.8834 20.7274 27.9208C20.3976 29.3189 19.6057 30.5648 18.4797 31.4569C17.3537 32.3489 15.9597 32.8348 14.5232 32.8359H9.18751C9.21087 32.9293 9.18751 20.9688 9.18751 20.9688H15.2982C15.4537 20.9718 15.6052 20.92 15.7262 20.8224C15.8473 20.7248 15.9302 20.5878 15.9603 20.4353C15.9762 20.3434 15.9718 20.2492 15.9475 20.1592C15.9231 20.0692 15.8793 19.9856 15.8191 19.9143C15.759 19.843 15.684 19.7858 15.5994 19.7466C15.5148 19.7074 15.4226 19.6873 15.3294 19.6875H9.18751V9.14855H14.679C16.086 9.1865 17.441 9.68875 18.5329 10.577C19.6248 11.4653 20.3922 12.6898 20.7157 14.0597C20.7219 14.1002 20.7423 14.1372 20.7734 14.1639C20.8045 14.1906 20.8441 14.2053 20.8851 14.2053C20.9261 14.2053 20.9657 14.1906 20.9968 14.1639C21.0279 14.1372 21.0484 14.1002 21.0545 14.0597C21.3844 12.662 22.1765 11.4165 23.3025 10.5252C24.4286 9.63382 25.8226 9.14875 27.2587 9.14855H32.8203V19.6875Z\" fill=\"white\"/></svg>";
+
+  var iconI = "<svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33586 3.53724C5.88192 5.84428 3.18969 9.12375 1.59965 12.9609C0.00961133 16.7981 -0.406803 21.0206 0.403047 25.0945C1.2129 29.1683 3.21264 32.9106 6.14939 35.8478C9.08614 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42 15.4311 39.788 10.0903 35.8506 6.15213C31.9132 2.21398 26.5728 0.00103316 21.0039 3.61321e-07ZM28.0143 33.8835H17.5182V24.957C17.5172 24.3696 17.2833 23.8065 16.868 23.3911C16.4526 22.9757 15.8895 22.7419 15.3021 22.7409H11.8242V13.8221H17.2183C19.0378 13.8222 20.8272 14.286 22.4177 15.1697L23.664 15.9486C25.0135 16.9509 26.1096 18.2554 26.8644 19.7575C27.6191 21.2596 28.0116 22.9176 28.0104 24.5986L28.0143 33.8835ZM26.3668 15.8123C25.6076 15.8138 24.865 15.5901 24.233 15.1693C23.601 14.7485 23.1081 14.1497 22.8167 13.4486C22.5253 12.7476 22.4484 11.9758 22.5959 11.231C22.7433 10.4862 23.1085 9.80197 23.645 9.26484C24.1816 8.7277 24.8655 8.36187 25.6102 8.21365C26.3548 8.06544 27.1266 8.14151 27.828 8.43223C28.5294 8.72295 29.1287 9.21525 29.5501 9.8468C29.9715 10.4783 30.1961 11.2207 30.1953 11.98C30.1901 12.9947 29.7832 13.9661 29.0634 14.6814C28.3437 15.3967 27.3699 15.7978 26.3552 15.7967L26.3668 15.8123Z\" fill=\"white\"/></svg>";
+
+  var iconS = "<svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08613 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42.0005 18.2424 41.4578 15.5117 40.4029 12.9639C39.348 10.4161 37.8015 8.10107 35.8518 6.15099C33.902 4.20091 31.5873 2.654 29.0397 1.59861C26.492 0.543211 23.7615 3.1388e-07 21.0039 3.61321e-07ZM32.8398 19.6408H23.3134C23.1585 19.6408 23.0099 19.7023 22.9003 19.8119C22.7908 19.9214 22.7292 20.07 22.7292 20.225C22.7292 20.3799 22.7908 20.5285 22.9003 20.6381C23.0099 20.7476 23.1585 20.8092 23.3134 20.8092H26.8498C28.3793 20.8094 29.8511 21.3936 30.9643 22.4425C32.0776 23.4914 32.7484 24.9257 32.8398 26.4525V27.1691C32.7526 28.6393 32.1279 30.026 31.0847 31.0655C30.0414 32.105 28.6523 32.7246 27.1819 32.8063C25.7114 32.8881 24.2622 32.4264 23.1101 31.509C21.958 30.5916 21.1834 29.2826 20.9338 27.8312C20.9338 27.8085 20.9248 27.7867 20.9087 27.7706C20.8926 27.7546 20.8708 27.7455 20.8481 27.7455C20.8254 27.7455 20.8036 27.7546 20.7875 27.7706C20.7715 27.7867 20.7624 27.8085 20.7624 27.8312C20.5218 29.2257 19.7962 30.4903 18.7138 31.4018C17.6313 32.3132 16.2615 32.8129 14.8464 32.8125H9.16025V22.367H18.7411C18.7811 22.3729 18.8218 22.3729 18.8618 22.367C19.0168 22.3505 19.1588 22.2731 19.2567 22.1518C19.3545 22.0306 19.4002 21.8755 19.3837 21.7205C19.3672 21.5656 19.2898 21.4235 19.1685 21.3257C19.0473 21.2278 18.8921 21.1821 18.7372 21.1986H15.2086C14.4205 21.1991 13.6401 21.0442 12.9119 20.7427C12.1837 20.4413 11.5222 19.9991 10.9651 19.4417C10.408 18.8842 9.96627 18.2224 9.66526 17.494C9.36426 16.7656 9.20985 15.9851 9.21088 15.197C9.21088 13.6063 9.84279 12.0807 10.9676 10.9559C12.0924 9.83109 13.6179 9.19918 15.2086 9.19918H32.8398V19.6408Z\" fill=\"white\"/></svg>";
 
   var VirtualKeyboard = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(VirtualKeyboard, _EventDispatcher);
@@ -9401,7 +9467,7 @@
 
       _this._bindAll();
 
-      _this._container = _this._createContainer();
+      _this._component = _this._createComponent();
       _this._keyboard = _this._createKeyboard();
 
       _this._setupEventListeners();
@@ -9420,18 +9486,17 @@
 
         this._keyboard.clearInput();
 
-        if (!this._container.classList.contains('open')) this._container.classList.add('open');
+        if (!this._component.classList.contains('is-open')) this._component.classList.add('is-open');
       }
     }, {
       key: "close",
       value: function close() {
         this._isOpen = false;
-        if (this._container.classList.contains('open')) this._container.classList.remove('open');
+        if (this._component.classList.contains('is-open')) this._component.classList.remove('is-open');
       }
     }, {
       key: "clear",
-      value: function clear() {
-        this._keyboard.clearInput();
+      value: function clear() {// this._keyboard.clearInput();
       }
     }, {
       key: "getInput",
@@ -9443,22 +9508,16 @@
        */
 
     }, {
-      key: "_createContainer",
-      value: function _createContainer() {
-        var container = document.createElement('div');
-        container.classList.add('simple-keyboard');
-        var indicator = document.createElement('div');
-        indicator.classList.add('indicator');
-        var svg = iconA;
-        indicator.innerHTML = "<span>S\xE9lectionner</span> ".concat(svg);
-        container.appendChild(indicator);
-        document.body.appendChild(container);
-        return container;
+      key: "_createComponent",
+      value: function _createComponent() {
+        var component = document.createElement('axis-virtual-keyboard');
+        document.documentElement.appendChild(component);
+        return component.shadowRoot.childNodes[1];
       }
     }, {
       key: "_createKeyboard",
       value: function _createKeyboard() {
-        var keyboard = new Keyboard({
+        var keyboard = new Keyboard(this._component, {
           // Props
           enableKeyNavigation: true,
           useMouseEvents: false,
@@ -9573,7 +9632,7 @@
       value: function _keyupHandler(e) {
         if (!this._isOpen) return;
 
-        var activeButtons = this._container.querySelectorAll('.active');
+        var activeButtons = this._component.querySelectorAll('.active');
 
         for (var i = 0; i < activeButtons.length; i++) {
           var button = activeButtons[i];
@@ -9594,7 +9653,7 @@
       value: function _machineKeyupHandler() {
         if (!this._isOpen) return;
 
-        var activeButtons = this._container.querySelectorAll('.active');
+        var activeButtons = this._component.querySelectorAll('.active');
 
         for (var i = 0; i < activeButtons.length; i++) {
           var button = activeButtons[i];
@@ -9606,8 +9665,47 @@
     return VirtualKeyboard;
   }(EventDispatcher);
 
-  var css = ".exit-overlay {\n    display: none;\n\n    position: fixed;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n    backdrop-filter: blur(50px);\n}\n\n.exit-overlay.is-visible {\n    display: block;\n}\n\n.exit-overlay:before {\n    position: absolute;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n\n    content: '';\n\n    background-color: rgba(0, 0, 0, 0.5);\n}\n\n.exit-overlay .message {\n    position: absolute;\n    top: 40%;\n\n    width: 100%;\n\n    font-size: 50px;\n    text-align: center;\n    font-family: sans-serif;\n    color: white;\n}";
-  n(css,{});
+  var template = "<div class=\"exit-overlay\">\n\n    <div class=\"title\">\n\n        <span>\n            Pause\n        </span>\n\n    </div>\n\n    <div class=\"message\">\n\n        <span>\n            Êtes-vous sûr de vouloir quitter ?\n        </span>\n\n    </div>\n\n    <div class=\"buttons\">\n\n        <div class=\"button validate\">\n\n            <svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08614 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42 15.4311 39.788 10.0903 35.8506 6.15213C31.9132 2.21398 26.5728 0.00103316 21.0039 3.61321e-07ZM32.8242 32.8359H28.3064C26.8694 32.8349 25.4748 32.3492 24.3482 31.4572C23.2215 30.5653 22.4288 29.3192 22.0983 27.9208C22.09 27.8826 22.0689 27.8483 22.0384 27.8237C22.0079 27.7992 21.97 27.7858 21.9308 27.7858C21.8917 27.7858 21.8537 27.7992 21.8233 27.8237C21.7928 27.8483 21.7717 27.8826 21.7634 27.9208C21.5284 28.9296 21.0508 29.8659 20.3722 30.6484C19.6935 31.4309 18.8342 32.036 17.8687 32.4113C17.0861 32.7157 16.2505 32.86 15.4112 32.8359C13.7772 32.7908 12.2224 32.1221 11.0658 30.9669C9.90919 29.8118 9.23854 28.2578 9.1914 26.6239C9.16302 25.7843 9.30752 24.9478 9.61592 24.1663C9.61489 24.1521 9.61489 24.1378 9.61592 24.1235C10.0127 23.1512 10.6921 22.3204 11.5663 21.7385C12.4405 21.1567 13.4692 20.8505 14.5193 20.8598H20.9883C21.1433 20.8598 21.2919 20.7982 21.4014 20.6887C21.511 20.5791 21.5725 20.4305 21.5725 20.2756C21.5725 20.1206 21.511 19.9721 21.4014 19.8625C21.2919 19.7529 21.1433 19.6914 20.9883 19.6914H9.26151C9.56647 16.9357 10.8292 14.3744 12.8294 12.4545C14.8296 10.5345 17.4403 9.37771 20.2062 9.18577C22.9721 8.99384 25.7176 9.779 27.9638 11.4043C30.21 13.0296 31.8144 15.3918 32.497 18.079C32.6631 18.9996 32.7723 19.9296 32.8242 20.8637V32.8359Z\" fill=\"white\"/></svg>\n            <span>Oui</span>\n\n        </div>\n\n        <div class=\"button cancel\">\n            \n            <svg width=\"42\" height=\"42\" viewBox=\"0 0 42 42\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M21.0039 3.61321e-07C16.8503 -0.00076996 12.7898 1.2302 9.33587 3.53724C5.88192 5.84428 3.18969 9.12375 1.59966 12.9609C0.00962005 16.7981 -0.406806 21.0206 0.403044 25.0945C1.21289 29.1683 3.21264 32.9106 6.14939 35.8478C9.08613 38.7851 12.828 40.7856 16.9017 41.5962C20.9754 42.4068 25.198 41.9911 29.0355 40.4018C32.8729 38.8125 36.1529 36.1209 38.4606 32.6674C40.7683 29.2139 42 25.1536 42 21C42.0005 18.2424 41.4578 15.5117 40.4029 12.9639C39.348 10.4161 37.8015 8.10107 35.8518 6.15099C33.902 4.20091 31.5873 2.654 29.0397 1.59861C26.492 0.543211 23.7615 3.1388e-07 21.0039 3.61321e-07ZM32.8203 19.6875H26.2773C26.1201 19.6836 25.9667 19.7355 25.8441 19.8338C25.7215 19.9322 25.6377 20.0707 25.6074 20.225C25.5921 20.3165 25.597 20.4104 25.6216 20.4999C25.6463 20.5894 25.6902 20.6724 25.7503 20.7433C25.8103 20.8141 25.8851 20.8709 25.9694 20.9099C26.0537 20.9489 26.1455 20.969 26.2383 20.9688H32.8203V32.8203H27.6871C24.4857 32.7112 21.7634 30.873 21.0662 27.9208C21.0563 27.8834 21.0343 27.8504 21.0037 27.8268C20.973 27.8032 20.9355 27.7904 20.8968 27.7904C20.8581 27.7904 20.8205 27.8032 20.7899 27.8268C20.7593 27.8504 20.7373 27.8834 20.7274 27.9208C20.3976 29.3189 19.6057 30.5648 18.4797 31.4569C17.3537 32.3489 15.9597 32.8348 14.5232 32.8359H9.18751C9.21087 32.9293 9.18751 20.9688 9.18751 20.9688H15.2982C15.4537 20.9718 15.6052 20.92 15.7262 20.8224C15.8473 20.7248 15.9302 20.5878 15.9603 20.4353C15.9762 20.3434 15.9718 20.2492 15.9475 20.1592C15.9231 20.0692 15.8793 19.9856 15.8191 19.9143C15.759 19.843 15.684 19.7858 15.5994 19.7466C15.5148 19.7074 15.4226 19.6873 15.3294 19.6875H9.18751V9.14855H14.679C16.086 9.1865 17.441 9.68875 18.5329 10.577C19.6248 11.4653 20.3922 12.6898 20.7157 14.0597C20.7219 14.1002 20.7423 14.1372 20.7734 14.1639C20.8045 14.1906 20.8441 14.2053 20.8851 14.2053C20.9261 14.2053 20.9657 14.1906 20.9968 14.1639C21.0279 14.1372 21.0484 14.1002 21.0545 14.0597C21.3844 12.662 22.1765 11.4165 23.3025 10.5252C24.4286 9.63382 25.8226 9.14875 27.2587 9.14855H32.8203V19.6875Z\" fill=\"white\"/></svg>\n            <span>Retour</span>\n\n        </div>\n\n    </div>\n\n</div>";
+
+  var style = ".exit-overlay {\n    display: none;\n\n    position: fixed;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n\n    backdrop-filter: blur(80px);\n\n    color: white;\n    font-family: 'Darker Grotesque', sans-serif;\n}\n\n.exit-overlay.is-visible {\n    display: block;\n}\n\n.exit-overlay:before {\n    position: absolute;\n    left: 0;\n    top: 0;\n\n    width: 100%;\n    height: 100%;\n\n    content: '';\n\n    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(270deg, rgba(0, 0, 0, 0) 50.46%, rgba(0, 0, 0, 0.8) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0) 31.77%, rgba(0, 0, 0, 0.7) 100%);\n}\n\n.exit-overlay .title {\n    position: absolute;\n    left: 181px;\n    top: 0;\n    bottom: 0;\n\n    height: 100px;\n\n    margin: auto;\n\n    font-weight: 800;\n    font-size: 128px;\n    line-height: 128px;\n}\n\n.exit-overlay .title span {\n    position: absolute;\n    left: 0;\n    top: -25px;\n}\n\n.exit-overlay .message {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n\n    width: 100%;\n    height: 100px;\n\n    margin: auto;\n    \n    text-align: center;\n\n    font-weight: 500;\n    font-size: 48px;\n    line-height: 65px;\n}\n\n.exit-overlay .message {\n    position: absolute;\n    left: 0;\n    right: 0;\n    top: 30px;\n\n    width: 100%;\n}\n\n.exit-overlay .buttons {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n\n    position: absolute;\n    top: 0;\n    bottom: 0;\n\n    height: 60px;\n    width: 100%;\n\n    margin: auto;\n}\n\n.exit-overlay .button {\n    margin-top: 200px;\n\n    font-weight: 800;\n    font-size: 32px;\n    line-height: 43px;\n    display: flex;\n    align-items: center;\n}\n\n.exit-overlay .button svg {\n    width: 42px;\n    height: 42px;\n\n    margin-right: 20px;\n}\n\n.exit-overlay .button span {\n    margin-bottom: 7px;\n}\n\n.exit-overlay .button:nth-child(1) {\n    margin-right: 100px;\n}\n";
+
+  var ExitOverlayComponent = /*#__PURE__*/function (_HTMLElement) {
+    _inherits(ExitOverlayComponent, _HTMLElement);
+
+    var _super = _createSuper(ExitOverlayComponent);
+
+    function ExitOverlayComponent() {
+      var _this;
+
+      _classCallCheck(this, ExitOverlayComponent);
+
+      _this = _super.call(this);
+
+      _this.attachShadow({
+        mode: 'open'
+      });
+
+      _this._createTemplate();
+
+      return _this;
+    }
+    /**
+     * Private
+     */
+
+
+    _createClass(ExitOverlayComponent, [{
+      key: "_createTemplate",
+      value: function _createTemplate() {
+        var templateElement = document.createElement('template');
+        templateElement.innerHTML = "<style type=\"text/css\">".concat(style, "</style>").concat(template);
+        this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
+      }
+    }]);
+
+    return ExitOverlayComponent;
+  }( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+  window.customElements.define('axis-exit-overlay', ExitOverlayComponent);
 
   var ExitOverlay = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(ExitOverlay, _EventDispatcher);
@@ -9626,8 +9724,7 @@
       _this._buttonManager = options.buttonManager; // Setup
 
       _this._active = false;
-      _this._container = document.body;
-      _this._element = _this._createElement();
+      _this._component = _this._createComponent();
       _this._buttonValidation1 = _this._buttonManager.getButton('a', 1);
       _this._buttonValidation2 = _this._buttonManager.getButton('a', 2);
       _this._buttonCancelation1 = _this._buttonManager.getButton('b', 1);
@@ -9647,26 +9744,19 @@
     _createClass(ExitOverlay, [{
       key: "_show",
       value: function _show() {
-        if (!this._element.classList.contains('is-visible')) this._element.classList.add('is-visible');
+        if (!this._component.classList.contains('is-visible')) this._component.classList.add('is-visible');
       }
     }, {
       key: "_hide",
       value: function _hide() {
-        if (this._element.classList.contains('is-visible')) this._element.classList.remove('is-visible');
+        if (this._component.classList.contains('is-visible')) this._component.classList.remove('is-visible');
       }
     }, {
-      key: "_createElement",
-      value: function _createElement() {
-        var element = document.createElement('div');
-        element.classList.add('exit-overlay');
-        var message = document.createElement('p');
-        message.innerHTML = 'Êtes-vous sûr de vouloir quitter ?';
-        message.classList.add('message');
-        element.appendChild(message);
-
-        this._container.appendChild(element);
-
-        return element;
+      key: "_createComponent",
+      value: function _createComponent() {
+        var component = document.createElement('axis-exit-overlay');
+        document.documentElement.appendChild(component);
+        return component.shadowRoot.childNodes[1];
       }
     }, {
       key: "_bindAll",
@@ -9849,6 +9939,8 @@
     return GamepadEmulator;
   }(EventDispatcher);
 
+  var globalStyle = "@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800&display=swap');";
+
   var Axis = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Axis, _EventDispatcher);
 
@@ -9871,6 +9963,8 @@
       _this._playerManager = _this._createPlayerManager();
       _this._virtualKeyboard = _this._createVirtualKeyboard();
       _this._exitOverlay = _this._createExitOverlay();
+
+      _this._addGlobalStyle();
 
       _this._bindAll();
 
@@ -10063,6 +10157,14 @@
         return exitOverlay;
       }
     }, {
+      key: "_addGlobalStyle",
+      value: function _addGlobalStyle() {
+        var style = document.createElement('style');
+        style.setAttribute('type', 'text/css');
+        style.innerHTML = globalStyle;
+        document.body.appendChild(style);
+      }
+    }, {
       key: "_bindAll",
       value: function _bindAll() {
         // Exposed methods
@@ -10206,10 +10308,9 @@
     Axis$1.virtualKeyboard.open();
     Axis$1.virtualKeyboard.addEventListener('input', function (e) {
       input.value = e;
-    });
-    setTimeout(function () {
-      Axis$1.virtualKeyboard.close();
-    }, 2000);
+    }); // setTimeout(() => {
+    //     Axis.virtualKeyboard.close();
+    // }, 2000);
   }, 1000);
 
   function setup() {

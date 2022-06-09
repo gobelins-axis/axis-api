@@ -1,0 +1,119 @@
+.exit-overlay {
+    display: none;
+
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    backdrop-filter: blur(80px);
+
+    color: white;
+    font-family: 'Darker Grotesque', sans-serif;
+}
+
+.exit-overlay.is-visible {
+    display: block;
+}
+
+.exit-overlay:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    content: '';
+
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(270deg, rgba(0, 0, 0, 0) 50.46%, rgba(0, 0, 0, 0.8) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0) 31.77%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.exit-overlay .title {
+    position: absolute;
+    left: 181px;
+    top: 0;
+    bottom: 0;
+
+    height: 100px;
+
+    margin: auto;
+
+    font-weight: 800;
+    font-size: 128px;
+    line-height: 128px;
+}
+
+.exit-overlay .title span {
+    position: absolute;
+    left: 0;
+    top: -25px;
+}
+
+.exit-overlay .message {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 100px;
+
+    margin: auto;
+    
+    text-align: center;
+
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 65px;
+}
+
+.exit-overlay .message {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30px;
+
+    width: 100%;
+}
+
+.exit-overlay .buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    height: 60px;
+    width: 100%;
+
+    margin: auto;
+}
+
+.exit-overlay .button {
+    margin-top: 200px;
+
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 43px;
+    display: flex;
+    align-items: center;
+}
+
+.exit-overlay .button svg {
+    width: 42px;
+    height: 42px;
+
+    margin-right: 20px;
+}
+
+.exit-overlay .button span {
+    margin-bottom: 7px;
+}
+
+.exit-overlay .button:nth-child(1) {
+    margin-right: 100px;
+}

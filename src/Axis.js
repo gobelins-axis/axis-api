@@ -13,6 +13,9 @@ import VirtualKeyboard from './modules/VirtualKeyboard';
 import ExitOverlay from './modules/ExitOverlay';
 import GamepadEmulator from './modules/GamepadEmulator';
 
+// Styles
+import globalStyle from './styles/global.css';
+
 class Axis extends EventDispatcher {
     constructor() {
         super();
@@ -30,6 +33,8 @@ class Axis extends EventDispatcher {
 
         this._virtualKeyboard = this._createVirtualKeyboard();
         this._exitOverlay = this._createExitOverlay();
+
+        this._addGlobalStyle();
 
         this._bindAll();
         this._exposeMethods();
@@ -185,6 +190,13 @@ class Axis extends EventDispatcher {
             buttonManager: this._buttonManager,
         });
         return exitOverlay;
+    }
+
+    _addGlobalStyle() {
+        const style = document.createElement('style');
+        style.setAttribute('type', 'text/css');
+        style.innerHTML = globalStyle;
+        document.body.appendChild(style);
     }
 
     _bindAll() {

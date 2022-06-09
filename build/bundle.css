@@ -1,136 +1,76 @@
-:host {
-    all: initial;
+.hg-candidate-box {
+  display: inline-flex;
+  border-radius: 5px;
+  position: absolute;
+  background: #ececec;
+  border-bottom: 2px solid #b5b5b5;
+  user-select: none;
+  max-width: 272px;
+  transform: translateY(-100%);
+  margin-top: -10px;
 }
 
-.exit-overlay {
-    display: none;
-
-    position: fixed;
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    backdrop-filter: blur(80px);
-
-    color: white;
-    font-family: 'Darker Grotesque', sans-serif;
+ul.hg-candidate-box-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
 }
 
-.exit-overlay.is-visible {
-    display: block;
+li.hg-candidate-box-list-item {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.exit-overlay:before {
-    position: absolute;
-    left: 0;
-    top: 0;
-
-    width: 100%;
-    height: 100%;
-
-    content: '';
-
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(270deg, rgba(0, 0, 0, 0) 50.46%, rgba(0, 0, 0, 0.8) 100%), linear-gradient(180deg, rgba(0, 0, 0, 0) 31.77%, rgba(0, 0, 0, 0.7) 100%);
+li.hg-candidate-box-list-item:hover {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: pointer;
 }
 
-.exit-overlay .title {
-    position: absolute;
-    left: 181px;
-    top: 0;
-    bottom: 0;
-
-    height: 100px;
-
-    margin: auto;
-
-    font-weight: 800;
-    font-size: 128px;
-    line-height: 128px;
+li.hg-candidate-box-list-item:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 
-.exit-overlay .title span {
-    position: absolute;
-    left: 0;
-    top: -25px;
+.hg-candidate-box-prev::before {
+  content: "◄";
 }
 
-.exit-overlay .message {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-
-    width: 100%;
-    height: 100px;
-
-    margin: auto;
-    
-    text-align: center;
-
-    font-weight: 500;
-    font-size: 48px;
-    line-height: 65px;
+.hg-candidate-box-next::before {
+  content: "►";
 }
 
-.exit-overlay .message {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 30px;
-
-    width: 100%;
+.hg-candidate-box-next,
+.hg-candidate-box-prev {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background: #d0d0d0;
+  color: #969696;
+  cursor: pointer;
 }
 
-.exit-overlay .buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    position: absolute;
-    top: 0;
-    bottom: 0;
-
-    height: 60px;
-    width: 100%;
-
-    margin: auto;
+.hg-candidate-box-next {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
-.exit-overlay .button {
-    margin-top: 200px;
-
-    font-weight: 800;
-    font-size: 32px;
-    line-height: 43px;
-    display: flex;
-    align-items: center;
+.hg-candidate-box-prev {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
-.exit-overlay .button svg {
-    width: 42px;
-    height: 42px;
-
-    margin-right: 20px;
+.hg-candidate-box-btn-active {
+  color: #444;
 }
-
-.exit-overlay .button span {
-    margin-bottom: 7px;
-}
-
-.exit-overlay .button:nth-child(1) {
-    margin-right: 100px;
-}
-
 /**
- * virtual-keyboard
+ * simple-keyboard
  * Theme: hg-theme-default
  */
-:host {
-  all: initial;
-}
-
-.virtual-keyboard {
+.simple-keyboard {
   position: fixed;
   left: 0;
   right: 0;
@@ -149,7 +89,7 @@
   border-bottom-left-radius: 30px;
 }
 
-.virtual-keyboard.open {
+.simple-keyboard.open {
   transform: translateY(0);
   transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -179,7 +119,7 @@
   padding-top: 80px;
 }
 
-.virtual-keyboard .indicator {
+.simple-keyboard .indicator {
   opacity: 0.6;
 
   display: flex;
@@ -198,11 +138,11 @@
   text-align: center;
 }
 
-.virtual-keyboard .indicator span {
+.simple-keyboard .indicator span {
   margin-bottom: 2px;
 }
 
-.virtual-keyboard .indicator svg {
+.simple-keyboard .indicator svg {
   width: 20px;
   height: 20px;
 
@@ -373,7 +313,5 @@
     background-color: var(--button-enter-focus-background-color);
     border: solid 1px var(--button-enter-focus-background-color);
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800&display=swap');
 
 

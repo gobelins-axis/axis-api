@@ -2,7 +2,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
-import styles from 'rollup-plugin-styles';
+import { string } from 'rollup-plugin-string';
+import css from 'rollup-plugin-import-css';
 
 export default {
     input: './src/index.js',
@@ -15,7 +16,13 @@ export default {
         babel(),
         resolve(),
         commonjs(),
-        styles(),
         terser(),
+        string({
+            include: [
+                'src/**/*.html',
+                'src/**/**/*.html',
+            ],
+        }),
+        css(),
     ],
 };

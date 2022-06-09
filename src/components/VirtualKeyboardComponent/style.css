@@ -1,10 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600&display=swap');
-
-/**
- * simple-keyboard
- * Theme: hg-theme-default
- */
-.simple-keyboard {
+.virtual-keyboard {
   position: fixed;
   left: 0;
   right: 0;
@@ -23,7 +17,7 @@
   border-bottom-left-radius: 30px;
 }
 
-.simple-keyboard.open {
+.virtual-keyboard.is-open {
   transform: translateY(0);
   transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -53,7 +47,7 @@
   padding-top: 80px;
 }
 
-.simple-keyboard .indicator {
+.virtual-keyboard .indicator {
   opacity: 0.6;
 
   display: flex;
@@ -72,11 +66,11 @@
   text-align: center;
 }
 
-.simple-keyboard .indicator span {
+.virtual-keyboard .indicator span {
   margin-bottom: 2px;
 }
 
-.simple-keyboard .indicator svg {
+.virtual-keyboard .indicator svg {
   width: 20px;
   height: 20px;
 

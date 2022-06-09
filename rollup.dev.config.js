@@ -3,7 +3,8 @@ import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
-import styles from 'rollup-plugin-styles';
+import { string } from 'rollup-plugin-string';
+import css from 'rollup-plugin-import-css';
 
 export default {
     input: './demo/index.js',
@@ -17,7 +18,13 @@ export default {
         babel(),
         resolve(),
         commonjs(),
-        styles(),
+        string({
+            include: [
+                'src/**/*.html',
+                'src/**/**/*.html',
+            ],
+        }),
+        css(),
         livereload({
             exts: ['html', 'js'],
             verbose: true,
