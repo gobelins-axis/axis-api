@@ -9475,11 +9475,20 @@
       return _this;
     }
     /**
-     * Public
+     * Getters
      */
 
 
     _createClass(VirtualKeyboard, [{
+      key: "isOpen",
+      get: function get() {
+        return this._isOpen;
+      }
+      /**
+       * Public
+       */
+
+    }, {
       key: "open",
       value: function open() {
         this._isOpen = true;

@@ -34,6 +34,13 @@ export default class VirtualKeyboard extends EventDispatcher {
     }
 
     /**
+     * Getters
+     */
+    get isOpen() {
+        return this._isOpen;
+    }
+
+    /**
      * Public
      */
     open() {
