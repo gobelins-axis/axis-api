@@ -3789,12 +3789,23 @@
         var promise = new Promise(function (resolve, reject) {
           if (!_this4._ipcRenderer) {
             var scores = _this4._getLocalStorageScores(_this4._id) || [];
-            resolve(scores);
+            resolve(_this4._orderScores(scores));
           } else {
-            _this4._getScoresFromDatabase().then(resolve, reject);
+            _this4._getScoresFromDatabase().then(function (scores) {
+              resolve(_this4._orderScores(scores));
+            }, reject);
           }
         });
         return promise;
+      }
+    }, {
+      key: "_orderScores",
+      value: function _orderScores(scores) {
+        return scores.sort(function (score1, score2) {
+          if (score1.value > score2.value) return -1;
+          if (score1.value < score2.value) return 1;
+          return 0;
+        });
       }
       /**
        * Using IPC Renderer

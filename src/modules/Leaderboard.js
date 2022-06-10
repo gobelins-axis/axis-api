@@ -87,16 +87,26 @@ export default class Leaderboard {
         const promise = new Promise((resolve, reject) => {
             if (!this._ipcRenderer) {
                 const scores = this._getLocalStorageScores(this._id) || [];
-                resolve(scores);
+                resolve(this._orderScores(scores));
             } else {
                 this._getScoresFromDatabase().then(
-                    resolve,
+                    (scores) => {
+                        resolve(this._orderScores(scores));
+                    },
                     reject
                 );
             }
         });
 
         return promise;
+    }
+
+    _orderScores(scores) {
+        return scores.sort((score1, score2) => {
+            if (score1.value > score2.value) return -1;
+            if (score1.value < score2.value) return 1;
+            return 0;
+        });
     }
 
     /**
