@@ -3761,6 +3761,7 @@
 
         var isValid = this._isValidScore(score);
 
+        score.value = Math.round(score.value * 100) / 100;
         score.createdAt = new Date();
         var promise = new Promise(function (resolve, reject) {
           if (!isValid) {
@@ -3845,7 +3846,7 @@
       value: function _isValidScore(score) {
         // A valid score object should at least have a value key and username key
         var hasValue = !isNaN(score.value);
-        var hasUsername = score.username !== undefined && score.username !== null;
+        var hasUsername = score.username !== undefined && score.username !== null && score.username !== '';
         if (!hasValue) console.error('Leaderboard: make sure you have a valid value key');
         if (!hasUsername) console.error('Leaderboard: make sure you have a valid username key');
         return hasValue && hasUsername;
@@ -10309,7 +10310,7 @@
   };
   var center = document.querySelector('.js-joystick-center');
   var magnitude = document.querySelector('.js-joystick-magnitude');
-  Axis$1.createLeaderboard({
+  var leaderboard = Axis$1.createLeaderboard({
     id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8'
   });
   var input = document.querySelector('input');
@@ -10337,6 +10338,21 @@
     box1.style.transform = "translate(".concat(position1.current.x, "px, ").concat(position1.current.y, "px)");
     box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
     requestAnimationFrame(update);
+  }
+
+  setTimeout(function () {
+    postScore();
+  }, 1000);
+
+  function postScore() {
+    leaderboard.postScore({
+      username: 'Léo',
+      value: Math.random() * 100
+    }).then(function () {
+      leaderboard.getScores().then(function (response) {
+        console.log(response);
+      });
+    });
   }
 
   function setupEventListeners() {

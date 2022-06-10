@@ -62,6 +62,7 @@ export default class Leaderboard {
     _postScore(score) {
         const isValid = this._isValidScore(score);
 
+        score.value = Math.round(score.value * 100) / 100;
         score.createdAt = new Date();
 
         const promise = new Promise((resolve, reject) => {
@@ -130,7 +131,7 @@ export default class Leaderboard {
     _isValidScore(score) {
         // A valid score object should at least have a value key and username key
         const hasValue = !isNaN(score.value);
-        const hasUsername = (score.username !== undefined && score.username !== null);
+        const hasUsername = (score.username !== undefined && score.username !== null && score.username !== '');
 
         if (!hasValue) console.error('Leaderboard: make sure you have a valid value key');
         if (!hasUsername) console.error('Leaderboard: make sure you have a valid username key');

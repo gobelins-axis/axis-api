@@ -113,10 +113,14 @@ function switchControls() {
     isDefaultControls = false;
 }
 
+setTimeout(() => {
+    postScore();
+}, 1000);
+
 function postScore() {
     leaderboard.postScore({
-        username: input.value,
-        value: 100,
+        username: 'Léo',
+        value: Math.random() * 100,
     }).then(() => {
         leaderboard.getScores().then((response) => {
             console.log(response);
