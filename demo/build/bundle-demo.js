@@ -3762,7 +3762,7 @@
         var isValid = this._isValidScore(score);
 
         score.value = Math.round(score.value * 100) / 100;
-        score.createdAt = new Date();
+        score.createdAt = new Date().toString();
         var promise = new Promise(function (resolve, reject) {
           if (!isValid) {
             reject(Error('Leaderboard: Score is not valid'));

@@ -63,7 +63,7 @@ export default class Leaderboard {
         const isValid = this._isValidScore(score);
 
         score.value = Math.round(score.value * 100) / 100;
-        score.createdAt = new Date();
+        score.createdAt = new Date().toString();
 
         const promise = new Promise((resolve, reject) => {
             if (!isValid) {
