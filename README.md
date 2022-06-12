@@ -1,14 +1,14 @@
 # 📦️ Axis API
 
-An API to help creators building their game for our Axis machine.
+**An API to help creators building their game for our Axis machine.**
 
-This API will allow you to use our custom controllers with a very few lines of code, and emulate them easily with your keyboard and a gamepad.
+This API will allow you to use our **custom controllers** with a very few lines of code, and emulate them easily with your keyboard and a gamepad.
 
-You will also be able to play around with the all the LEDS that are inside the machine.
+You will also be able to play around with the all the **LEDS** that are inside the machine.
 
-If you want to create a multiplayer game, Axis API already has some features ready to go for you.
+If you want to create a **multiplayer game**, Axis API already has some features ready to go for you.
 
-To increase competitivity in your game, you can also use our leaderboard system.
+To increase competitivity in your game, you can also use our **leaderboard** system.
 
 **It's all quite simple to use and very flexible.**
 
@@ -18,17 +18,20 @@ In order to use our API better, you need to have a good overview of what the Axi
 
 ### Axis Controllers
 
-All the controllers are ordered in 2 groups, each group has 1 Joystick and 5 buttons.
-A button is identified by its key (A, X, I, S, W) and its group index (1 or 2).
-A Joystick is identified by its group index (1 or 2).
+All the controllers are ordered in **2 groups**, each group has **1 Joystick** and **5 buttons**.
 
+A button is identified by its **key** (A, X, I, S, W) and its group **index** (1 or 2).
+
+A Joystick is identified by its group **index** (1 or 2).
+
+**Figure 1 Coming soon**
 <!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
 
 **Figure 1: Controllers**
 
 ### Axis Joysticks
 
-A joystick gives an analog signal on the x and y axis between -1 and 1.
+A joystick gives an analog signal between -1 and 1 on the x and y axis.
 
 ![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-dark-transparent.png?raw=true)
 
@@ -42,25 +45,42 @@ npm i github:gobelins-axis/axis-api
 
 ## Usage
 
+### Importing Axis API
+
+The Axis object is a singleton that contains every method and properties you need to build your game. You can take a look at the API References for more details.
+
+```js
+import Axis from "axis-api";
+```
+
 ### Handling buttons
+
+When developing your game on your computer, you will of course not have access to the Axis machine buttons. 
+But you can emulate them by mapping your keyboard keys to all the buttons available on the Axis machine.
+
+Once it's done, you can use our event listeners system directly in the Axis class. It works exactly like native event listeners in javascript.
 
 ```js
 import Axis from "axis-api";
 
-// Map a Machine Button to a Keyboard Key
-Axis.registerKeys("q", "a", 1);
-Axis.registerKeys("d", "b", 1);
-Axis.registerKeys("z", "c", 1);
-Axis.registerKeys("s", "d", 1);
+// Map Keyboard Keys to Axis Machine Buttons from group 1 
+Axis.registerKeys("q", "a", 1); // keyboard key "q" to button "a" from group 1
+Axis.registerKeys("d", "x", 1); // keyboard key "d" to button "x" from group 1
+Axis.registerKeys("z", "i", 1); // keyboard key "z" to button "i" from group 1
+Axis.registerKeys("s", "s", 1); // keyboard key "s" to button "s" from group 1
+Axis.registerKeys(" ", "w", 1); // keyboard key Space to button "w" from group 1
 
-Axis.registerKeys("ArrowLeft", "a", 2);
-Axis.registerKeys("ArrowRight", "b", 2);
-Axis.registerKeys("ArrowUp", "c", 2);
-Axis.registerKeys("ArrowDown", "d", 2);
+// Map Keyboard Keys to Axis Machine Buttons from group 2
+Axis.registerKeys("ArrowLeft", "a", 2); // keyboard key "ArrowLeft" to button "a" from group 2 
+Axis.registerKeys("ArrowRight", "x", 2); // keyboard key "ArrowRight" to button "x" from group 2
+Axis.registerKeys("ArrowUp", "i", 2); // keyboard key "ArrowUp" to button "i" from group 2
+Axis.registerKeys("ArrowDown", "s", 2); // keyboard key "ArrowDown" to button "s" from group 2
+Axis.registerKeys("Enter", "w", 2); // keyboard key "Enter" to button "w" from group 2
 
-// Its also possible to map multiple keyboard keys to a key
+// It's also possible to map multiple keyboard keys for a single machine button
 // Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
 
+// Setup event listeners directly on the Axis singleton
 Axis.addEventListener("keydown", keydownHandler);
 Axis.addEventListener("keyup", keyupHandler);
 
@@ -69,6 +89,7 @@ const position = { x: 0, y: 0 };
 function keydownHandler(e) {
     const speed = 50;
 
+    // Get the current button key pressed in the event payload object
     if (e.key === "a") {
         const direction = -1;
         position.x += speed * direction;
@@ -81,7 +102,13 @@ function keydownHandler(e) {
 }
 
 function keyupHandler(e) {
-    //
+    // Do stuffs...
+}
+
+// If needed, you can of course remove the event listeners
+function destroy() {
+    Axis.removeEventListener("keydown", keydownHandler);
+    Axis.removeEventListener("keyup", keyupHandler);
 }
 ```
 
@@ -89,7 +116,7 @@ function keyupHandler(e) {
 
 Each button has a RGB LED inside of it, you can easily set its color with our API :
 
-you first need to get the button instance you want, you can do that in various ways and then just use the **setLedColor** method :
+You first need to get the button instance you want, you can do that in various ways and then just use the **setLedColor** method :
 
 ```js
 import Axis from "axis-api";
@@ -102,12 +129,14 @@ buttonA1.setLedColor("red");
 const buttonA1 = Axis.registerKeys("q", "a", 1);
 buttonA1.setLedColor("red");
 
-// You can also use RGB or Hexadecimal strings
+// You can also use RGB or hexadecimal strings
 // buttonA1.setLedColor("rgb(255, 0, 0)");
 // buttonA1.setLedColor("#FF0000");
 ```
 
 ### Handling joysticks
+
+Both joystick instances are available directly in the Axis singleton. They provide an event listener system just like the buttons.
 
 ```js
 import Axis from "axis-api";
@@ -115,8 +144,8 @@ import Axis from "axis-api";
 const joystick1 = Axis.joystick1;
 const joystick2 = Axis.joystick2;
 
-// Joystick move
-joystick1.addEventListener("joystick:move", joystickMoveHandler);
+// Joystick move event on the joystick instance
+Axis.joystick1.addEventListener("joystick:move", joystickMoveHandler);
 
 const position = { x: 0, y: 0 };
 
@@ -139,7 +168,7 @@ function joystickQuickmoveHandler(e) {
 }
 ```
 
-For debug purposes when you don't have access to the axis machine, you can use a gamepad to emulate joystick and buttons events without changing your code too much:
+For debug purposes when you don't have access to the axis machine, you can use a gamepad to emulate joystick and button events without changing your code too much:
 
 ```js
 const joystick1 = Axis.joystick1;
