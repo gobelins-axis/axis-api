@@ -16,10 +16,6 @@ Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
 Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 1, 'a', 1);
 Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 1, 'a', 2);
 
-Axis.addEventListener('keydown', () => {
-    console.log('keydown');
-});
-
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'b', 1),

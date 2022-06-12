@@ -2903,8 +2903,8 @@
       value: function _moveLeftThrottledHandler() {
         this._inputLeftIndex++;
         this.dispatchEvent('joystick:quickmove', {
-          direction: 'left',
-          position: this._position
+          id: this._id,
+          direction: 'left'
         });
       }
     }, {
@@ -2924,8 +2924,8 @@
       value: function _moveRightThrottledHandler() {
         this._inputRightIndex++;
         this.dispatchEvent('joystick:quickmove', {
-          direction: 'right',
-          position: this._position
+          id: this._id,
+          direction: 'right'
         });
       }
     }, {
@@ -2945,8 +2945,8 @@
       value: function _moveUpThrottledHandler() {
         this._inputUpIndex++;
         this.dispatchEvent('joystick:quickmove', {
-          direction: 'up',
-          position: this._position
+          id: this._id,
+          direction: 'up'
         });
       }
     }, {
@@ -2966,8 +2966,8 @@
       value: function _moveDownThrottledHandler() {
         this._inputDownIndex++;
         this.dispatchEvent('joystick:quickmove', {
-          direction: 'down',
-          position: this._position
+          id: this._id,
+          direction: 'down'
         });
       }
     }, {
@@ -3164,6 +3164,13 @@
        * Public
        */
 
+    }, {
+      key: "setLedColor",
+      value: function setLedColor(color) {
+        var _this$_led;
+
+        (_this$_led = this._led) === null || _this$_led === void 0 ? void 0 : _this$_led.setColor(color);
+      }
     }, {
       key: "keydownHandler",
       value: function keydownHandler() {
@@ -10210,9 +10217,11 @@
 
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
 
-        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler); // this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
-        // this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+        this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
 
+        this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+
+        this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
 
@@ -10282,9 +10291,6 @@
   Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 1, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 1, 'a', 2);
-  Axis$1.addEventListener('keydown', function () {
-    console.log('keydown');
-  });
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
   var player1 = Axis$1.createPlayer({

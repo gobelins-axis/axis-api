@@ -224,8 +224,8 @@ class Axis extends EventDispatcher {
         this._joystickManager.joystick1.addEventListener('joystick:move', this._joystickMoveHandler);
         this._joystickManager.joystick2.addEventListener('joystick:move', this._joystickMoveHandler);
 
-        // this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
-        // this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+        this._joystickManager.joystick1.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
+        this._joystickManager.joystick2.addEventListener('joystick:quickmove', this._joystickQuickMoveHandler);
 
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
         this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);

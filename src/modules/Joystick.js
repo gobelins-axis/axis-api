@@ -160,7 +160,7 @@ export default class Joystick extends EventDispatcher {
 
     _moveLeftThrottledHandler() {
         this._inputLeftIndex++;
-        this.dispatchEvent('joystick:quickmove', { direction: 'left', position: this._position });
+        this.dispatchEvent('joystick:quickmove', { id: this._id, direction: 'left' });
     }
 
     _moveLeftEndHandler() {
@@ -175,7 +175,7 @@ export default class Joystick extends EventDispatcher {
 
     _moveRightThrottledHandler() {
         this._inputRightIndex++;
-        this.dispatchEvent('joystick:quickmove', { direction: 'right', position: this._position });
+        this.dispatchEvent('joystick:quickmove', { id: this._id, direction: 'right' });
     }
 
     _moveRightEndHandler() {
@@ -190,7 +190,7 @@ export default class Joystick extends EventDispatcher {
 
     _moveUpThrottledHandler() {
         this._inputUpIndex++;
-        this.dispatchEvent('joystick:quickmove', { direction: 'up', position: this._position });
+        this.dispatchEvent('joystick:quickmove', { id: this._id, direction: 'up' });
     }
 
     _moveUpEndHandler() {
@@ -205,7 +205,7 @@ export default class Joystick extends EventDispatcher {
 
     _moveDownThrottledHandler() {
         this._inputDownIndex++;
-        this.dispatchEvent('joystick:quickmove', { direction: 'down', position: this._position });
+        this.dispatchEvent('joystick:quickmove', { id: this._id, direction: 'down' });
     }
 
     _moveDownEndHandler() {
