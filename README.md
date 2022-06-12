@@ -26,7 +26,7 @@ A Joystick is identified by its group index (1 or 2).
 
 A joystick gives an analog signal on the x and y axis between -1 and 1.
 
-![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-dark.jpg?raw=true)
+![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-light.jpg?raw=true)
 
 **Figure 2: Joystick**
 
