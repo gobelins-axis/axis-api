@@ -474,9 +474,9 @@ All the leds instances will be ordered by groups later on.
     id: Int
 )`: Instance of Button class
 
-`Axis.addEventListener(eventName: String('keydown' || 'keyup' || 'joystick:move' || 'joystick:quickmove'), eventHandler: function)`: null
+`Axis.addEventListener(event: String, eventHandler: function)`: null
 
-`Axis.removeEventListener(eventName: String('keydown' || 'keyup' || 'joystick:move' || 'joystick:quickmove'), eventHandler: function)`: null
+`Axis.removeEventListener(event: String, eventHandler: function)`: null
 
 #### Events
 
@@ -487,6 +487,12 @@ All the leds instances will be ordered by groups later on.
 `joystick:move`
 
 `joystick:quickmove`
+
+`exit:attempted`
+
+`exit:canceled`
+
+`exit:completed`
 
 ### JoystickManager
 
