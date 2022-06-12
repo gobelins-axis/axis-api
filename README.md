@@ -24,7 +24,7 @@ A button is identified by its **key** (A, X, I, S, W) and its group **id** (1 or
 
 A Joystick is identified by its group **id** (1 or 2).
 
-**Figure 1 Coming soon**
+** Schema coming soon**
 <!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
 
 **Figure 1: Controllers**
@@ -264,11 +264,11 @@ function joystick2MoveHandler() {
 
 The joystick instances are dispatching two different event types : 
 
-- **"joystick:move"** : 
+*"joystick:move" :*
 
 It fires every frame and gives a position x,y between -1 and 1.
 
-- **"joystick:quickmove"** :
+*"joystick:quickmove" :*
 
 It fires when the x or y value reaches the minimum or maximum value. Giving back one single direction string ("left", "right", "up", "down"). 
 This is typically useful when you want to achieve UI Navigation with the joystick.
@@ -433,7 +433,101 @@ All the leds instances will be ordered by groups later on.
 
 ## API References
 
-**Coming soon**
+### Axis (singleton)
+
+#### Properties
+
+`ipcRenderer`: Object
+
+`joystickManager`: instance of JoystickManager class
+
+`joystick1`: instance of Joystick class
+
+`joystick2`: instance of Joystick class
+
+`buttonManager`: instance of ButtonManager class
+
+`playerManager`: instance of PlayerManager class
+
+`players`: Array of instances of Player class
+
+`leaderboard`: Instance of Leaderboard class
+
+`virtualKeyboard`: Instance of VirtualKeyboard class
+
+`ledManager`: Instance of LedManager class
+
+#### Methods
+
+`Axis.registerKeys(keyboardKeys: String || Array(String), key: String, id: Int)`: Instance of Button class
+
+`Axis.createPlayer(options: Object)`: instance of Player class
+
+`Axis.createLeaderboard(options: Object)`: instance of Leaderboard class
+
+`Axis.createGamepadEmulator(index: Int)`: instance of GamepadEmulator class
+
+`Axis.registerGamepadEmulatorKeys(
+    gamepadEmulator: instance of GamepadEmulator class,
+    gamepadButtonIndexes: Int || Array(Int),
+    key: String,
+    id: Int
+)`: Instance of Button class
+
+`Axis.addEventListener(eventName: String('keydown' || 'keyup' || 'joystick:move' || 'joystick:quickmove'), eventHandler: function)`: null
+
+`Axis.removeEventListener(eventName: String('keydown' || 'keyup' || 'joystick:move' || 'joystick:quickmove'), eventHandler: function)`: null
+
+#### Events
+
+`keydown`
+
+`keyup`
+
+`joystick:move`
+
+`joystick:quickmove`
+
+### JoystickManager
+
+*Coming soon*
+
+### Joystick
+
+*Coming soon*
+
+### ButtonManager
+
+*Coming soon*
+
+### Button
+
+*Coming soon*
+
+### PlayerManager
+
+*Coming soon*
+
+### Player
+
+*Coming soon*
+
+
+### Leaderboard
+
+*Coming soon*
+
+### VirtualKeyboard
+
+*Coming soon*
+
+### GamepadEmulator
+
+*Coming soon*
+
+### LedManager
+
+*Coming soon*
 
 ## Development
 
