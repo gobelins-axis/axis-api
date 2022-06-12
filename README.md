@@ -437,46 +437,68 @@ All the leds instances will be ordered by groups later on.
 
 #### Properties
 
-`ipcRenderer`: Object
+`ipcRenderer` : Object
 
-`joystickManager`: instance of JoystickManager class
+`joystickManager` : instance of JoystickManager class
 
-`joystick1`: instance of Joystick class
+`joystick1` : instance of Joystick class
 
-`joystick2`: instance of Joystick class
+`joystick2` : instance of Joystick class
 
-`buttonManager`: instance of ButtonManager class
+`buttonManager` : instance of ButtonManager class
 
-`playerManager`: instance of PlayerManager class
+`playerManager` : instance of PlayerManager class
 
-`players`: Array of instances of Player class
+`players` : Array of instances of Player class
 
-`leaderboard`: Instance of Leaderboard class
+`leaderboard` : Instance of Leaderboard class
 
-`virtualKeyboard`: Instance of VirtualKeyboard class
+`virtualKeyboard` : Instance of VirtualKeyboard class
 
-`ledManager`: Instance of LedManager class
+`ledManager` : Instance of LedManager class
 
 #### Methods
 
-`Axis.registerKeys(keyboardKeys: String || Array(String), key: String, id: Int)`: Instance of Button class
+`Axis.registerKeys(keyboardKeys, key, id)` : Instance of Button class
 
-`Axis.createPlayer(options: Object)`: instance of Player class
+| Param | Type | Description |
+| --- | --- | --- |
+| keyboardKeys | <code>String</code> or <code>Array(String)</code> | Keyboard keys to map to the machine button |
+| key | <code>String</code> | The machine button key ("a", "x", "i", "s", "w") |
+| id | <code>Int</code> | The machine button id (1 or 2) |
 
-`Axis.createLeaderboard(options: Object)`: instance of Leaderboard class
+`Axis.createPlayer(options)` : instance of Player class
 
-`Axis.createGamepadEmulator(index: Int)`: instance of GamepadEmulator class
+`Axis.createLeaderboard(options)` : instance of Leaderboard class
 
-`Axis.registerGamepadEmulatorKeys(
-    gamepadEmulator: instance of GamepadEmulator class,
-    gamepadButtonIndexes: Int || Array(Int),
-    key: String,
-    id: Int
-)`: Instance of Button class
+`Axis.createGamepadEmulator(index)` : instance of GamepadEmulator class
 
-`Axis.addEventListener(event: String, eventHandler: function)`: null
+| Param | Type | Description |
+| --- | --- | --- |
+| index | <code>Int</code> | The gamepad index |
 
-`Axis.removeEventListener(event: String, eventHandler: function)`: null
+`Axis.registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id)` : Instance of Button class
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gamepadEmulator | <code>GamepadEmulator</code> instance | Instance of GamepadEmulator class |
+| gamepadButtonIndexes | <code>Int</code> or <code>Array(Int)</code> | The gamepad buttons indexes |
+| key | <code>String</code> | The machine button key ("a", "x", "i", "s", "w") |
+| id | <code>String</code> | The machine button id (1 or 2) |
+
+`Axis.addEventListener(event, eventHandler)` : null
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>String</code> | Event name |
+| eventHandler | <code>function</code> | The callback function |
+
+`Axis.removeEventListener(event, eventHandler)` : null
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>String</code> | Event name |
+| eventHandler | <code>function</code> | The callback function |
 
 #### Events
 
