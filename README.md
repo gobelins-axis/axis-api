@@ -20,9 +20,9 @@ In order to use our API better, you need to have a good overview of what the Axi
 
 All the controllers are ordered in **2 groups**, each group has **1 Joystick** and **5 buttons**.
 
-A button is identified by its **key** (A, X, I, S, W) and its group **index** (1 or 2).
+A button is identified by its **key** (A, X, I, S, W) and its group **id** (1 or 2).
 
-A Joystick is identified by its group **index** (1 or 2).
+A Joystick is identified by its group **id** (1 or 2).
 
 **Figure 1 Coming soon**
 <!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
@@ -58,11 +58,7 @@ import Axis from "axis-api";
 When developing your game on your computer, you will of course not have access to the Axis machine buttons. 
 But you can emulate them by mapping your keyboard keys to all the buttons available on the Axis machine.
 
-Once it's done, you can use our event listeners system directly in the Axis class. It works exactly like native event listeners in javascript.
-
 ```js
-import Axis from "axis-api";
-
 // Map Keyboard Keys to Axis Machine Buttons from group 1 
 Axis.registerKeys("q", "a", 1); // keyboard key "q" to button "a" from group 1
 Axis.registerKeys("d", "x", 1); // keyboard key "d" to button "x" from group 1
@@ -77,9 +73,13 @@ Axis.registerKeys("ArrowUp", "i", 2); // keyboard key "ArrowUp" to button "i" fr
 Axis.registerKeys("ArrowDown", "s", 2); // keyboard key "ArrowDown" to button "s" from group 2
 Axis.registerKeys("Enter", "w", 2); // keyboard key "Enter" to button "w" from group 2
 
-// It's also possible to map multiple keyboard keys for a single machine button
+// Node: It's also possible to map multiple keyboard keys for a single machine button like so :
 // Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
+```
 
+Once your properly registered the keyboard keys, you can use our event system directly in the Axis class. The event payload will give you back the button key and index.
+
+```js
 // Setup event listeners directly on the Axis singleton
 Axis.addEventListener("keydown", keydownHandler);
 Axis.addEventListener("keyup", keyupHandler);
@@ -112,21 +112,34 @@ function destroy() {
 }
 ```
 
+You can also listen to button events on the button instance itself, there are two ways of accessing a button instance : 
+
+- Using the button manager :
+
+```js
+const buttonA1 = Axis.buttonManager.getButton('a', 1);
+
+buttonA1.addEventListener('keydown', () {
+    // Do stuffs...
+});
+```
+
+- Using the registerKeys method that returns the instance :
+
+```js
+const buttonA1 = Axis.registerKeys("q", "a", 1);
+
+buttonA1.addEventListener('keydown', () {
+    // Do stuffs...
+});
+```
+
 #### Buttons Lights
 
 Each button has a RGB LED inside of it, you can easily set its color with our API :
 
-You first need to get the button instance you want, you can do that in various ways and then just use the **setLedColor** method :
-
 ```js
-import Axis from "axis-api";
-
-// Using the ButtonManager class
 const buttonA1 = Axis.buttonManager.getButton("a", 1);
-buttonA1.setLedColor("red");
-
-// Using the registerKeys method (it returns the button instance)
-const buttonA1 = Axis.registerKeys("q", "a", 1);
 buttonA1.setLedColor("red");
 
 // You can also use RGB or hexadecimal strings
@@ -134,30 +147,74 @@ buttonA1.setLedColor("red");
 // buttonA1.setLedColor("#FF0000");
 ```
 
+This is quite useful if you want to let your user know which button he needs to use. Or if you are creating a multiplayer game, you can split the buttons between players with different colors!
+
 ### Handling joysticks
 
-Both joystick instances are available directly in the Axis singleton. They provide an event listener system just like the buttons.
+#### Joystick event system
+
+Just like the buttons, you can listen to joystick events direcly on the Axis singleton. The event payload will give you back the joystick id :
 
 ```js
-import Axis from "axis-api";
+Axis.addEventListener("joystick:move", joystickMoveHandler);
 
-const joystick1 = Axis.joystick1;
-const joystick2 = Axis.joystick2;
-
-// Joystick move event on the joystick instance
-Axis.joystick1.addEventListener("joystick:move", joystickMoveHandler);
-
-const position = { x: 0, y: 0 };
+const position1 = { x: 0, y: 0 };
+const position2 = { x: 0, y: 0 };
 
 function joystickMoveHandler(e) {
+    // Get the joystick id in the event payload object
+    if (e.id === 1) {
+        const speed = 50;
+        position1.x += speed * e.position.x;
+        position1.y += speed * e.position.y;
+    }
+    
+    if (e.id === 2) {
+        const speed = 50;
+        position2.x += speed * e.position.x;
+        position2.y += speed * e.position.y;
+    }
+}
+```
+
+Again, just like the buttons, you can also listen to events on the joystick instance itself. Joystick instances are available on the Axis singleton.
+
+```js
+// Joystick move event on the joystick instance
+Axis.joystick1.addEventListener("joystick:move", joystick1MoveHandler);
+Axis.joystick2.addEventListener("joystick:move", joystick2MoveHandler);
+
+const position1 = { x: 0, y: 0 };
+const position2 = { x: 0, y: 0 };
+
+function joystick1MoveHandler() {
     const speed = 50;
-    position.x += speed * e.position.x;
-    position.y += speed * e.position.y;
+    position1.x += speed * e.position.x;
+    position1.y += speed * e.position.y;
 }
 
-// Joystick quickmove: events are throttled and only give one direction at the time
-// it can be usefull for UI navigation for example.
-joystick1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
+function joystick2MoveHandler() {
+    const speed = 50;
+    position2.x += speed * e.position.x;
+    position2.y += speed * e.position.y;
+}
+```
+
+#### Joystick event types
+
+The joystick instances are dispatching two different event types : 
+
+- "joystick:move" : 
+
+It fires every frame and gives a position x,y between -1 and 1.
+
+- "joystick:quickmove" :
+
+It fires when the x or y value reaches the minimum or maximum value. Giving back one single direction string ("left", "right", "up", "down"). 
+This is typically useful when you want to achieve UI Navigation with the joystick.
+
+```js
+Axis.joystick1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
 
 function joystickQuickmoveHandler(e) {
     const speed = 50;
