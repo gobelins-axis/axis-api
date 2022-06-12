@@ -18,7 +18,7 @@ A button is identified by its key (A, X, I, S, W) and its group index (1 or 2).
 A Joystick is identified by its group index (1 or 2).
 --> See figure 1.
 
-<!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/tree/main/src/images/controllers.png) -->
+<!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
 
 **Figure 1: Controllers**
 
@@ -27,7 +27,7 @@ A Joystick is identified by its group index (1 or 2).
 A joystick gives an analog signal on the x and y axis between -1 and 1.
 --> See figure 2.
 
-![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/tree/main/src/images/joystick-figure.png)
+![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true)
 **Figure 2: Joystick**
 
 ## Installation
