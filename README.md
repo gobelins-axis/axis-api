@@ -47,16 +47,19 @@ npm i github:gobelins-axis/axis-api
 
 ### Importing Axis API
 
-The Axis object is a singleton that contains every method and properties you need to build your game. You can take a look at the API References for more details.
+The Axis object is a singleton that contains every method and properties you need to build your game. You can take a look at the [API References](#api-references) for more details.
 
 ```js
 import Axis from "axis-api";
 ```
 
-### Handling buttons
+### Emulating inputs on your computer
 
-When developing your game on your computer, you will of course not have access to the Axis machine buttons. 
-But you can emulate them by mapping your keyboard keys to all the buttons available on the Axis machine.
+This first thing you will need to do when starting the development of your game is emulate properly the Axis machine inputs.
+
+#### Emulate button inputs
+
+You can emulate button inputs easily by mapping your keyboard keys to all the buttons available on the Axis machine, using the **registerKeys** method :
 
 ```js
 // Map Keyboard Keys to Axis Machine Buttons from group 1 
@@ -77,7 +80,57 @@ Axis.registerKeys("Enter", "w", 2); // keyboard key "Enter" to button "w" from g
 // Axis.registerKeys(['q', 'ArrowLeft'], 'd', 1);
 ```
 
-Once your properly registered the keyboard keys, you can use our event system directly in the Axis class. The event payload will give you back the button key and index.
+#### Emulate joystick inputs
+
+Of course for joystick events, it's a little bit less convenient. You will need to use a Gamepad with analog joysticks connected with USB or bluetooth.
+
+Once you've found one you will need to create a joystick emulator instance :
+
+```js
+const gamepadEmulator = Axis.createGamepadEmulator(0); // 0 is gamepad index, often represents the first gamepad connected to your computer
+
+function update() {
+    // Update gamepad emulator instance every frame fo keep track of the events
+    gamepadEmulator.update();
+
+    requestAnimationFrame(update);
+}
+
+update();
+```
+
+Then, just assign thie emulator to the joystick you want to emulate
+
+```js
+Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 0); // 0 is the joystick index of the gamepad, often the one on the left side
+Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator, 1); // 1 is the joystick index of the gamepad, often the one on the right side
+```
+
+You can also connect two gamepads to make it more convenient if you're creating a multiplayer game. 
+
+```js
+const gamepadEmulator1 = Axis.createGamepadEmulator(0);
+const gamepadEmulator2 = Axis.createGamepadEmulator(1);
+
+Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0);
+Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
+```
+
+Since we're now using gamepads, why not use gamepad buttons too... Let's do it :
+
+```js
+const gamepadEmulator = Axis.createGamepadEmulator(0);
+
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 0, "a", 1); // Gamepad button index 0 (PS4 X) to button "a" from group 1
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 1, "x", 1); // Gamepad button index 1 (PS4 Square) to button "x" from group 1
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 2, "i", 1); // Gamepad button index 2 (PS4 Circle) to button "i" from group 1
+Axis.registerGamepadEmulatorKeys(gamepadEmulator, 3, "s", 1); // Gamepad button index 3 (PS4 Triangle) to button "s" from group 1
+
+```
+
+### Button events
+
+Once your properly emulated the keyboard keys, you can use our button event system directly on the Axis singleton. The event payload will give you back the button key and id.
 
 ```js
 // Setup event listeners directly on the Axis singleton
@@ -223,43 +276,6 @@ function joystickQuickmoveHandler(e) {
     if (e.direction === "up") position.y += speed * -1;
     if (e.direction === "down") position.y += speed;
 }
-```
-
-For debug purposes when you don't have access to the axis machine, you can use a gamepad to emulate joystick and button events without changing your code too much:
-
-```js
-const joystick1 = Axis.joystick1;
-const joystick2 = Axis.joystick2;
-
-// Player 1
-const gamepadEmulator1 = Axis.createGamepadEmulator(0); // First gamepad plugged
-
-Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0); // Gamepad Joystick Left
-
-Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 1, "a", 1); // Gamepad button index 1 (PS4 X)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 0, "b", 1); // Gamepad button index 0 (PS4 Square)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 2, "c", 1); // Gamepad button index 2 (PS4 O)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 3, "d", 1); // Gamepad button index 3 (PS4 Triangle)
-
-// Player 2
-const gamepadEmulator2 = Axis.createGamepadEmulator(1); // Second gamepad plugged
-
-Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0); // Gamepad Joystick Left
-
-Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 1, "a", 2); // Gamepad button index 1 (PS4 X)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 0, "b", 2); // Gamepad button index 0 (PS4 Square)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 2, "c", 2); // Gamepad button index 2 (PS4 O)
-Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 3, "d", 2); // Gamepad button index 3 (PS4 Triangle)
-
-function update() {
-    // Update gamepads every frame fo keep track of the events
-    gamepadEmulator1.update();
-    gamepadEmulator2.update();
-
-    requestAnimationFrame(update);
-}
-
-update();
 ```
 
 ### Handling players
@@ -409,7 +425,7 @@ function exitCompletedHandler() {
 }
 ```
 
-### Handling leds
+### Handling LEDS
 
 The Axis Machine has many LEDS connected to it, you can interact with each of them very easily:
 
@@ -421,7 +437,7 @@ Axis.ledManager.leds[0].setColor("#ff0000");
 
 All the leds instances will be ordered by groups later on.
 
-## API
+## API References
 
 **Coming soon**
 
