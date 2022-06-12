@@ -21,7 +21,6 @@ In order to use our API better, you need to have a good overview of what the Axi
 All the controllers are ordered in 2 groups, each group has 1 Joystick and 5 buttons.
 A button is identified by its key (A, X, I, S, W) and its group index (1 or 2).
 A Joystick is identified by its group index (1 or 2).
---> See figure 1.
 
 <!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
 
@@ -43,9 +42,7 @@ npm i github:gobelins-axis/axis-api
 
 ## Usage
 
-### Game usage
-
-#### Handling buttons
+### Handling buttons
 
 ```js
 import Axis from "axis-api";
@@ -88,7 +85,7 @@ function keyupHandler(e) {
 }
 ```
 
-##### Buttons Lights
+#### Buttons Lights
 
 Each button has a RGB LED inside of it, you can easily set its color with our API :
 
@@ -110,7 +107,7 @@ buttonA1.setLedColor("red");
 // buttonA1.setLedColor("#FF0000");
 ```
 
-#### Handling joysticks
+### Handling joysticks
 
 ```js
 import Axis from "axis-api";
@@ -179,7 +176,7 @@ function update() {
 update();
 ```
 
-#### Handling players
+### Handling players
 
 ```js
 import Axis from "axis-api";
@@ -242,7 +239,7 @@ function joystickQuickmoveHandler(e) {
 }
 ```
 
-#### Handling leaderboard
+### Handling leaderboard
 
 To increase competitivity you can create a leaderboard where your users will be able to save their best scores.
 
@@ -280,7 +277,7 @@ leaderboard
 **NB**
 It's important to note that you will not be able to push any data to the database when running the game on your own machine, only the axis machine has the rights to push scores data. But on your machine we simmly use localStorage api to store scores. You don't have to do anything different.
 
-#### Keyboard
+### Virtual Keyboard
 
 So you can now store your users scores but how will they type their usernames?
 You can use our virtual keyboard:
@@ -303,7 +300,7 @@ Axis.virtualKeyboard.addEventListener("validate", (username) => {
 });
 ```
 
-#### Handling exit
+### Handling exit
 
 At anytime, the player can leave the game with the machine home button,
 when this button is pressed the player will be asked to confirm or cancel,
@@ -326,9 +323,9 @@ function exitCompletedHandler() {
 }
 ```
 
-#### Handling leds
+### Handling leds
 
-The Axis Machine has many leds connected to it, you can interact with each of them very easily:
+The Axis Machine has many LEDS connected to it, you can interact with each of them very easily:
 
 ```js
 Axis.ledManager.leds[0].setColor("rgb(255, 0, 0)");
@@ -338,9 +335,27 @@ Axis.ledManager.leds[0].setColor("#ff0000");
 
 All the leds instances will be ordered by groups later on.
 
-### Electron usage
+## API
 
-#### Trouble shooting
+**Coming soon**
+
+## Development
+
+### Run demo
+
+```bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:3003
+npm run dev
+```
+
+### Build
+
+No need to build manually, pushing to main triggers a build via Github Action to create the bundle file.
+
+### Electron Trouble shooting
 
 In main Make sure context isolation is set to false :
 
@@ -367,22 +382,6 @@ window.addEventListener("DOMContentLoaded", () => {
     window.__axis__.set_ipc_renderer(ipcRenderer);
 });
 ```
-
-## API
-
-## Run demo
-
-```bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:3003
-npm run dev
-```
-
-### Build
-
-Pushing to main triggers a build via Github Action to create the bundle file.
 
 ## Authors
 
