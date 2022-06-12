@@ -47,7 +47,7 @@ npm i github:gobelins-axis/axis-api
 
 ### Importing Axis API
 
-The Axis object is a singleton that contains every method and properties you need to build your game. You can take a look at the [API References](#api-references) for more details.
+The Axis object is a singleton that contains every method and properties you need to build your game. You should take a look at the [API References](#api-references) for more details.
 
 ```js
 import Axis from "axis-api";
@@ -84,13 +84,12 @@ Axis.registerKeys("Enter", "w", 2); // keyboard key "Enter" to button "w" from g
 
 Of course for joystick events, it's a little bit less convenient. You will need to use a Gamepad with analog joysticks connected with USB or bluetooth.
 
-Once you've found one you will need to create a joystick emulator instance :
+Once you've found one you will need to create a joystick emulator instance and update it every frame to keep track of the gamepad inputs :
 
 ```js
 const gamepadEmulator = Axis.createGamepadEmulator(0); // 0 is gamepad index, often represents the first gamepad connected to your computer
 
 function update() {
-    // Update gamepad emulator instance every frame fo keep track of the events
     gamepadEmulator.update();
 
     requestAnimationFrame(update);
@@ -114,6 +113,15 @@ const gamepadEmulator2 = Axis.createGamepadEmulator(1);
 
 Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0);
 Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
+
+function update() {
+    gamepadEmulator1.update();
+    gamepadEmulator2.update();
+
+    requestAnimationFrame(update);
+}
+
+update();
 ```
 
 Since we're now using gamepads, why not use gamepad buttons too... Let's do it :
@@ -125,12 +133,11 @@ Axis.registerGamepadEmulatorKeys(gamepadEmulator, 0, "a", 1); // Gamepad button 
 Axis.registerGamepadEmulatorKeys(gamepadEmulator, 1, "x", 1); // Gamepad button index 1 (PS4 Square) to button "x" from group 1
 Axis.registerGamepadEmulatorKeys(gamepadEmulator, 2, "i", 1); // Gamepad button index 2 (PS4 Circle) to button "i" from group 1
 Axis.registerGamepadEmulatorKeys(gamepadEmulator, 3, "s", 1); // Gamepad button index 3 (PS4 Triangle) to button "s" from group 1
-
 ```
 
 ### Button events
 
-Once your properly emulated the keyboard keys, you can use our button event system directly on the Axis singleton. The event payload will give you back the button key and id.
+Once your properly emulated the keyboard keys with your keyboard or gamepad, you can use our button event system directly on the Axis singleton. The event payload will give you back the button key and id.
 
 ```js
 // Setup event listeners directly on the Axis singleton
@@ -167,7 +174,7 @@ function destroy() {
 
 You can also listen to button events on the button instance itself, there are two ways of accessing a button instance : 
 
-- Using the button manager :
+- Using the **buttonManager** :
 
 ```js
 const buttonA1 = Axis.buttonManager.getButton('a', 1);
@@ -177,7 +184,7 @@ buttonA1.addEventListener('keydown', () {
 });
 ```
 
-- Using the registerKeys method that returns the instance :
+- Using the **registerKeys** method that returns the instance :
 
 ```js
 const buttonA1 = Axis.registerKeys("q", "a", 1);
@@ -206,7 +213,7 @@ This is quite useful if you want to let your user know which button he needs to 
 
 #### Joystick event system
 
-Just like the buttons, you can listen to joystick events direcly on the Axis singleton. The event payload will give you back the joystick id :
+Just like the buttons, you can listen to joystick events directly on the Axis singleton. The event payload will give you back the joystick id :
 
 ```js
 Axis.addEventListener("joystick:move", joystickMoveHandler);
@@ -257,11 +264,11 @@ function joystick2MoveHandler() {
 
 The joystick instances are dispatching two different event types : 
 
-- "joystick:move" : 
+- **"joystick:move"** : 
 
 It fires every frame and gives a position x,y between -1 and 1.
 
-- "joystick:quickmove" :
+- **"joystick:quickmove"** :
 
 It fires when the x or y value reaches the minimum or maximum value. Giving back one single direction string ("left", "right", "up", "down"). 
 This is typically useful when you want to achieve UI Navigation with the joystick.
@@ -280,64 +287,53 @@ function joystickQuickmoveHandler(e) {
 
 ### Handling players
 
-```js
-import Axis from "axis-api";
+If your building a multiplayer game, you might want to create player instances and assign them a set of joysticks and buttons, you can do that through the Axis singleton.
 
-// Create players
+```js
 const player1 = Axis.createPlayer({
     id: 1,
     joysticks: Axis.joystick1,
-    // Can also be an array of both joysticks
+    // Can also be an array of both joysticks...
     // joysticks: [Axis.joystick1, Axis.joystick2],
-    buttons: Axis.buttonManager.getButtonsById(1),
+    buttons: Axis.buttonManager.getButtonsById(1), // Give player 1 all buttons from group 1
 });
 
 const player2 = Axis.createPlayer({
     id: 2,
     joysticks: Axis.joystick2,
-    buttons: Axis.buttonManager.getButtonsById(2),
+    buttons: Axis.buttonManager.getButtonsById(2), // Give player 1 all buttons from group 2
 });
+```
 
+Now you can use the player instances to listen to the buttons and joystick inputs :
+
+```js
 // Use buttons from player 1
-player1.addEventListener("keydown", keydownHandler);
-player1.addEventListener("keyup", keyupHandler);
+player1.addEventListener("joystick:move", player1JoystickMoveHandler);
+player2.addEventListener("joystick:move", player2JoystickMoveHandler);
 
-const position = { x: 0, y: 0 };
+player1.addEventListener("keydown", player1KeydownHandler);
+player2.addEventListener("keydown", player2KeydownHandler);
 
-function keydownHandler(e) {
+const positionPlayer1 = { x: 0, y: 0 };
+const positionPlayer2 = { x: 0, y: 0 };
+
+function player1JoystickMoveHandler(e) {
     const speed = 50;
-
-    if (e.key === "a") {
-        const direction = -1;
-        position.x += speed * direction;
-    }
-
-    if (e.key === "b") {
-        const direction = 1;
-        position.x += speed * direction;
-    }
+    positionPlayer1.x += speed * e.position.x;
 }
 
-function keyupHandler(e) {
-    //
+function player2JoystickMoveHandler(e) {
+    const speed = 50;
+    positionPlayer2.x += speed * e.position.x;
 }
 
-// Use joystick from player 1
-player1.addEventListener("joystick:move", joystickMoveHandler);
-player1.addEventListener("joystick:quickmove", joystickQuickmoveHandler);
-
-function joystickMoveHandler(e) {
-    const speed = 50;
-    position.x += speed * e.position.x;
+function player1KeydownHandler(e) {
+    // Player 1 Shooting
 }
 
-// This is quite useful to handle joystick ui navigation
-function joystickQuickmoveHandler(e) {
-    const speed = 50;
-    if (e.direction === "left") position1.x += speed * -1;
-    if (e.direction === "right") position1.x += speed;
-    if (e.direction === "up") position1.y += speed * -1;
-    if (e.direction === "down") position1.y += speed;
+function player2KeydownHandler(e) {
+    // Player 2 Shooting
 }
 ```
 
@@ -345,7 +341,7 @@ function joystickQuickmoveHandler(e) {
 
 To increase competitivity you can create a leaderboard where your users will be able to save their best scores.
 
-You can create the leaderboard instance like so:
+You can create the leaderboard instance like so :
 
 ```js
 const leaderboard = Axis.createLeaderboard({
@@ -357,12 +353,11 @@ Here make sure to use exactly the same id that the one you received when uploadi
 If you haven't uploaded your game yet and want to try out the leaderboard, just use a random string, scores will be stored locally
 and you'll be able to use the leaderboard API just like it was in the machine.
 
-Then you can post scores and fetch all the existing scores like so:
+Then you can post scores and fetch all the existing scores, they will be automatically ordered using the value key in descending order.
 
 ```js
 // Post a score
-// Every score data should at least
-// have username and value keys
+// Every score data should at least have username and value keys
 leaderboard
     .postScore({
         username: "sergiuonthetrack",
@@ -377,12 +372,13 @@ leaderboard
 ```
 
 **NB**
-It's important to note that you will not be able to push any data to the database when running the game on your own machine, only the axis machine has the rights to push scores data. But on your machine we simmly use localStorage api to store scores. You don't have to do anything different.
+It's important to note that you will not be able to push any data to the database when running the game on your own machine, only the axis machine has the rights to push scores data. But on your machine we simply use localStorage api to store scores. You don't have to do anything different.
 
 ### Virtual Keyboard
 
 So you can now store your users scores but how will they type their usernames?
-You can use our virtual keyboard:
+
+You can use our virtual keyboard :
 
 ```js
 const input = document.querySelector("input");
@@ -404,9 +400,7 @@ Axis.virtualKeyboard.addEventListener("validate", (username) => {
 
 ### Handling exit
 
-At anytime, the player can leave the game with the machine home button,
-when this button is pressed the player will be asked to confirm or cancel,
-you can handle these situations with the following events:
+At anytime, the player can leave the game with the machine home button, when this button is pressed the player will be asked to confirm or cancel, you can handle these situations with the following events :
 
 ```js
 // Exit game events
