@@ -3,9 +3,14 @@
 An API to help creators building their game for our Axis machine.
 
 This API will allow you to use our custom controllers with a very few lines of code, and emulate them easily with your keyboard and a gamepad.
+
 You will also be able to play around with the all the LEDS that are inside the machine.
-If you want to create a multiplayer game, Axis API as already some features ready to go to simplify all the logic.
-To increase competitivity in your game, you can also use our leaderboard system, it's all quite simple to use and very flexible.
+
+If you want to create a multiplayer game, Axis API already has some features ready to go for you.
+
+To increase competitivity in your game, you can also use our leaderboard system.
+
+**It's all quite simple to use and very flexible.**
 
 ## Axis Machine
 
@@ -26,7 +31,7 @@ A Joystick is identified by its group index (1 or 2).
 
 A joystick gives an analog signal on the x and y axis between -1 and 1.
 
-![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-light.jpg?raw=true)
+![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-transparent.jpg?raw=true)
 
 **Figure 2: Joystick**
 
