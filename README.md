@@ -1,6 +1,34 @@
 # 📦️ Axis API
 
-An API to help creators building their game for our Axis machine (not existing yet...).
+An API to help creators building their game for our Axis machine.
+
+This API will allow you to use our custom controllers with a very few lines of code, and emulate them easily with your keyboard and a gamepad.
+You will also be able to play around with the all the LEDS that are inside the machine.
+If you want to create a multiplayer game, Axis API as already some features ready to go to simplify all the logic.
+To increase competitivity in your game, you can also use our leaderboard system, it's all quite simple to use and very flexible.
+
+## Axis Machine
+
+In order to use our API better, you need to have a good overview of what the Axis machine looks like and how it works :
+
+### Axis Controllers
+
+All the controllers are ordered in 2 groups, each group has 1 Joystick and 5 buttons.
+A button is identified by its key (A, X, I, S, W) and its group index (1 or 2).
+A Joystick is identified by its group index (1 or 2).
+--> See figure 1.
+
+<!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/tree/main/src/images/controllers.png) -->
+
+**Figure 1: Controllers**
+
+### Axis Joysticks
+
+A joystick gives an analog signal on the x and y axis between -1 and 1.
+--> See figure 2.
+
+![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/tree/main/src/images/joystick-figure.png)
+**Figure 2: Joystick**
 
 ## Installation
 
@@ -53,6 +81,28 @@ function keydownHandler(e) {
 function keyupHandler(e) {
     //
 }
+```
+
+##### Buttons Lights
+
+Each button has a RGB LED inside of it, you can easily set its color with our API :
+
+you first need to get the button instance you want, you can do that in various ways and then just use the **setLedColor** method :
+
+```js
+import Axis from "axis-api";
+
+// Using the ButtonManager class
+const buttonA1 = Axis.buttonManager.getButton("a", 1);
+buttonA1.setLedColor("red");
+
+// Using the registerKeys method (it returns the button instance)
+const buttonA1 = Axis.registerKeys("q", "a", 1);
+buttonA1.setLedColor("red");
+
+// You can also use RGB or Hexadecimal strings
+// buttonA1.setLedColor("rgb(255, 0, 0)");
+// buttonA1.setLedColor("#FF0000");
 ```
 
 #### Handling joysticks

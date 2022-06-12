@@ -64,6 +64,10 @@ export default class Button extends EventDispatcher {
     /**
      * Public
      */
+    setLedColor(color) {
+        this._led?.setColor(color);
+    }
+
     keydownHandler() {
         this.dispatchEvent('keydown', {
             key: this._key,
