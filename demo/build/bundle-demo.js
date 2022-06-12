@@ -3279,13 +3279,6 @@
        */
 
     }, {
-      key: "destroy",
-      value: function destroy() {
-        this._removeEventListeners();
-
-        this._removeIpcRendererEventListeners();
-      }
-    }, {
       key: "registerKeys",
       value: function registerKeys(keyboardKeys, key, id) {
         var button = this.getButton(key, id);
@@ -3379,12 +3372,6 @@
         window.addEventListener('keyup', this._keyupHandler);
       }
     }, {
-      key: "_removeEventListeners",
-      value: function _removeEventListeners() {
-        window.removeEventListener('keydown', this._keydownHandler);
-        window.removeEventListener('keyup', this._keyupHandler);
-      }
-    }, {
       key: "_setupIpcRendererEventListeners",
       value: function _setupIpcRendererEventListeners() {
         if (!this._ipcRenderer) return;
@@ -3392,19 +3379,6 @@
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
 
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
-
-        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
-
-        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
-      }
-    }, {
-      key: "_removeIpcRendererEventListeners",
-      value: function _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-
-        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
-
-        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
 
         this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
 
@@ -10008,11 +9982,6 @@
 
 
     _createClass(Axis, [{
-      key: "mappedKeys",
-      get: function get() {
-        return this._mappedKeys;
-      }
-    }, {
       key: "ipcRenderer",
       get: function get() {
         return this._ipcRenderer;
@@ -10038,6 +10007,11 @@
         return this._buttonManager;
       }
     }, {
+      key: "playerManager",
+      get: function get() {
+        return this._playerManager;
+      }
+    }, {
       key: "players",
       get: function get() {
         return this._playerManager.players;
@@ -10061,11 +10035,6 @@
        * Public
        */
 
-    }, {
-      key: "destroy",
-      value: function destroy() {
-        this._ipcRenderer = null;
-      }
     }, {
       key: "registerKeys",
       value: function registerKeys(keyboardKeys, key, id) {

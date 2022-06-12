@@ -44,10 +44,6 @@ class Axis extends EventDispatcher {
     /**
      * Getters
      */
-    get mappedKeys() {
-        return this._mappedKeys;
-    }
-
     get ipcRenderer() {
         return this._ipcRenderer;
     }
@@ -66,6 +62,10 @@ class Axis extends EventDispatcher {
 
     get buttonManager() {
         return this._buttonManager;
+    }
+
+    get playerManager() {
+        return this._playerManager;
     }
 
     get players() {
@@ -87,10 +87,6 @@ class Axis extends EventDispatcher {
     /**
      * Public
      */
-    destroy() {
-        this._ipcRenderer = null;
-    }
-
     registerKeys(keyboardKeys, key, id) {
         return this._buttonManager.registerKeys(keyboardKeys, key, id);
     }

@@ -47,11 +47,6 @@ export default class ButtonManager extends EventDispatcher {
     /**
      * Public
      */
-    destroy() {
-        this._removeEventListeners();
-        this._removeIpcRendererEventListeners();
-    }
-
     registerKeys(keyboardKeys, key, id) {
         const button = this.getButton(key, id);
         if (button) button.keyboardKeys = getArray(keyboardKeys);
@@ -134,23 +129,10 @@ export default class ButtonManager extends EventDispatcher {
         window.addEventListener('keyup', this._keyupHandler);
     }
 
-    _removeEventListeners() {
-        window.removeEventListener('keydown', this._keydownHandler);
-        window.removeEventListener('keyup', this._keyupHandler);
-    }
-
     _setupIpcRendererEventListeners() {
         if (!this._ipcRenderer) return;
         this._ipcRenderer.on('keydown', this._machineKeydownHandler);
         this._ipcRenderer.on('keyup', this._machineKeyupHandler);
-        this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
-        this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
-    }
-
-    _removeIpcRendererEventListeners() {
-        if (!this._ipcRenderer) return;
-        this._ipcRenderer.removeListener('keydown', this._machineKeydownHandler);
-        this._ipcRenderer.removeListener('keyup', this._machineKeyupHandler);
         this._ipcRenderer.on('home:keydown', this._machineHomeKeydownHandler);
         this._ipcRenderer.on('home:keyup', this._machineHomeKeyupHandler);
     }
