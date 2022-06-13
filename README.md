@@ -24,8 +24,8 @@ A button is identified by its **key** (A, X, I, S, W) and its group **id** (1 or
 
 A Joystick is identified by its group **id** (1 or 2).
 
-** Schema coming soon**
-<!-- ![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure.png?raw=true) -->
+![Figure 1: Controllers Left id 1](https://github.com/gobelins-axis/axis-api/blob/main/src/images/controllers-1-figure-transparent.png?raw=true)
+![Figure 2: Controllers Right id 2](https://github.com/gobelins-axis/axis-api/blob/main/src/images/controllers-2-figure-transparent.png?raw=true)
 
 **Figure 1: Controllers**
 
@@ -62,7 +62,7 @@ This first thing you will need to do when starting the development of your game 
 You can emulate button inputs easily by mapping your keyboard keys to all the buttons available on the Axis machine, using the **registerKeys** method :
 
 ```js
-// Map Keyboard Keys to Axis Machine Buttons from group 1 
+// Map Keyboard Keys to Axis Machine Buttons from group 1
 Axis.registerKeys("q", "a", 1); // keyboard key "q" to button "a" from group 1
 Axis.registerKeys("d", "x", 1); // keyboard key "d" to button "x" from group 1
 Axis.registerKeys("z", "i", 1); // keyboard key "z" to button "i" from group 1
@@ -70,7 +70,7 @@ Axis.registerKeys("s", "s", 1); // keyboard key "s" to button "s" from group 1
 Axis.registerKeys(" ", "w", 1); // keyboard key Space to button "w" from group 1
 
 // Map Keyboard Keys to Axis Machine Buttons from group 2
-Axis.registerKeys("ArrowLeft", "a", 2); // keyboard key "ArrowLeft" to button "a" from group 2 
+Axis.registerKeys("ArrowLeft", "a", 2); // keyboard key "ArrowLeft" to button "a" from group 2
 Axis.registerKeys("ArrowRight", "x", 2); // keyboard key "ArrowRight" to button "x" from group 2
 Axis.registerKeys("ArrowUp", "i", 2); // keyboard key "ArrowUp" to button "i" from group 2
 Axis.registerKeys("ArrowDown", "s", 2); // keyboard key "ArrowDown" to button "s" from group 2
@@ -105,7 +105,7 @@ Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator, 0); // 0 is the joyst
 Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator, 1); // 1 is the joystick index of the gamepad, often the one on the right side
 ```
 
-You can also connect two gamepads to make it more convenient if you're creating a multiplayer game. 
+You can also connect two gamepads to make it more convenient if you're creating a multiplayer game.
 
 ```js
 const gamepadEmulator1 = Axis.createGamepadEmulator(0);
@@ -172,9 +172,9 @@ function destroy() {
 }
 ```
 
-You can also listen to button events on the button instance itself, there are two ways of accessing a button instance : 
+You can also listen to button events on the button instance itself, there are two ways of accessing a button instance :
 
-- Using the **buttonManager** :
+-   Using the **buttonManager** :
 
 ```js
 const buttonA1 = Axis.buttonManager.getButton('a', 1);
@@ -184,7 +184,7 @@ buttonA1.addEventListener('keydown', () {
 });
 ```
 
-- Using the **registerKeys** method that returns the instance :
+-   Using the **registerKeys** method that returns the instance :
 
 ```js
 const buttonA1 = Axis.registerKeys("q", "a", 1);
@@ -228,7 +228,7 @@ function joystickMoveHandler(e) {
         position1.x += speed * e.position.x;
         position1.y += speed * e.position.y;
     }
-    
+
     if (e.id === 2) {
         const speed = 50;
         position2.x += speed * e.position.x;
@@ -262,15 +262,15 @@ function joystick2MoveHandler() {
 
 #### Joystick event types
 
-The joystick instances are dispatching two different event types : 
+The joystick instances are dispatching two different event types :
 
-*"joystick:move" :*
+_"joystick:move" :_
 
 It fires every frame and gives a position x,y between -1 and 1.
 
-*"joystick:quickmove" :*
+_"joystick:quickmove" :_
 
-It fires when the x or y value reaches the minimum or maximum value. Giving back one single direction string ("left", "right", "up", "down"). 
+It fires when the x or y value reaches the minimum or maximum value. Giving back one single direction string ("left", "right", "up", "down").
 This is typically useful when you want to achieve UI Navigation with the joystick.
 
 ```js
@@ -461,11 +461,11 @@ All the leds instances will be ordered by groups later on.
 
 `Axis.registerKeys(keyboardKeys, key, id)` : Instance of Button class
 
-| Param | Type | Description |
-| --- | --- | --- |
-| keyboardKeys | <code>String</code> or <code>Array(String)</code> | Keyboard keys to map to the machine button |
-| key | <code>String</code> | The machine button key ("a", "x", "i", "s", "w") |
-| id | <code>Int</code> | The machine button id (1 or 2) |
+| Param        | Type                                              | Description                                      |
+| ------------ | ------------------------------------------------- | ------------------------------------------------ |
+| keyboardKeys | <code>String</code> or <code>Array(String)</code> | Keyboard keys to map to the machine button       |
+| key          | <code>String</code>                               | The machine button key ("a", "x", "i", "s", "w") |
+| id           | <code>Int</code>                                  | The machine button id (1 or 2)                   |
 
 `Axis.createPlayer(options)` : instance of Player class
 
@@ -473,31 +473,31 @@ All the leds instances will be ordered by groups later on.
 
 `Axis.createGamepadEmulator(index)` : instance of GamepadEmulator class
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param | Type             | Description       |
+| ----- | ---------------- | ----------------- |
 | index | <code>Int</code> | The gamepad index |
 
 `Axis.registerGamepadEmulatorKeys(gamepadEmulator, gamepadButtonIndexes, key, id)` : Instance of Button class
 
-| Param | Type | Description |
-| --- | --- | --- |
-| gamepadEmulator | <code>GamepadEmulator</code> instance | Instance of GamepadEmulator class |
-| gamepadButtonIndexes | <code>Int</code> or <code>Array(Int)</code> | The gamepad buttons indexes |
-| key | <code>String</code> | The machine button key ("a", "x", "i", "s", "w") |
-| id | <code>String</code> | The machine button id (1 or 2) |
+| Param                | Type                                        | Description                                      |
+| -------------------- | ------------------------------------------- | ------------------------------------------------ |
+| gamepadEmulator      | <code>GamepadEmulator</code> instance       | Instance of GamepadEmulator class                |
+| gamepadButtonIndexes | <code>Int</code> or <code>Array(Int)</code> | The gamepad buttons indexes                      |
+| key                  | <code>String</code>                         | The machine button key ("a", "x", "i", "s", "w") |
+| id                   | <code>String</code>                         | The machine button id (1 or 2)                   |
 
 `Axis.addEventListener(event, eventHandler)` : null
 
-| Param | Type | Description |
-| --- | --- | --- |
-| event | <code>String</code> | Event name |
+| Param        | Type                  | Description           |
+| ------------ | --------------------- | --------------------- |
+| event        | <code>String</code>   | Event name            |
 | eventHandler | <code>function</code> | The callback function |
 
 `Axis.removeEventListener(event, eventHandler)` : null
 
-| Param | Type | Description |
-| --- | --- | --- |
-| event | <code>String</code> | Event name |
+| Param        | Type                  | Description           |
+| ------------ | --------------------- | --------------------- |
+| event        | <code>String</code>   | Event name            |
 | eventHandler | <code>function</code> | The callback function |
 
 #### Events
@@ -518,44 +518,43 @@ All the leds instances will be ordered by groups later on.
 
 ### JoystickManager
 
-*Coming soon*
+_Coming soon_
 
 ### Joystick
 
-*Coming soon*
+_Coming soon_
 
 ### ButtonManager
 
-*Coming soon*
+_Coming soon_
 
 ### Button
 
-*Coming soon*
+_Coming soon_
 
 ### PlayerManager
 
-*Coming soon*
+_Coming soon_
 
 ### Player
 
-*Coming soon*
-
+_Coming soon_
 
 ### Leaderboard
 
-*Coming soon*
+_Coming soon_
 
 ### VirtualKeyboard
 
-*Coming soon*
+_Coming soon_
 
 ### GamepadEmulator
 
-*Coming soon*
+_Coming soon_
 
 ### LedManager
 
-*Coming soon*
+_Coming soon_
 
 ## Development
 
