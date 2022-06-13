@@ -269,32 +269,32 @@
     key: 'a',
     id: 1
   }, {
-    key: 'b',
+    key: 'x',
     id: 1
   }, {
-    key: 'c',
+    key: 'i',
     id: 1
   }, {
-    key: 'd',
+    key: 's',
     id: 1
   }, {
-    key: 'e',
+    key: 'w',
     id: 1
   }, // 2
   {
     key: 'a',
     id: 2
   }, {
-    key: 'b',
+    key: 'x',
     id: 2
   }, {
-    key: 'c',
+    key: 'i',
     id: 2
   }, {
-    key: 'd',
+    key: 's',
     id: 2
   }, {
-    key: 'e',
+    key: 'w',
     id: 2
   }];
 
@@ -312,52 +312,40 @@
     strip: 1,
     index: 0
   }, {
-    name: 'button-b-1',
+    name: 'button-x-1',
     strip: 1,
     index: 1
   }, {
-    name: 'button-c-1',
+    name: 'button-i-1',
     strip: 1,
     index: 2
   }, {
-    name: 'button-d-1',
+    name: 'button-s-1',
     strip: 1,
     index: 3
   }, {
-    name: 'button-e-1',
+    name: 'button-w-1',
     strip: 1,
     index: 4
-  }, {
-    name: 'button-f-1',
-    strip: 1,
-    index: 5
-  }, {
-    name: 'button-g-1',
-    strip: 1,
-    index: 6
-  }, {
-    name: 'button-h-1',
-    strip: 1,
-    index: 7
   }, // Controllers 2
   {
     name: 'button-a-2',
     strip: 2,
     index: 0
   }, {
-    name: 'button-b-2',
+    name: 'button-x-2',
     strip: 2,
     index: 1
   }, {
-    name: 'button-c-2',
+    name: 'button-i-2',
     strip: 2,
     index: 2
   }, {
-    name: 'button-d-2',
+    name: 'button-s-2',
     strip: 2,
     index: 3
   }, {
-    name: 'button-e-2',
+    name: 'button-w-2',
     strip: 2,
     index: 4
   }, // Button Home
@@ -9646,9 +9634,9 @@
       value: function _machineKeydownHandler(e) {
         if (!this._isOpen) return;
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();
-        if (e.key === 'b' && e.id === 1) this._clickButton('{bksp}');
-        if (e.key === 'c' && e.id === 1) this._clickButton('{space}');
-        if (e.key === 'd' && e.id === 1) this._clickButton('{enter}');
+        if (e.key === 'x' && e.id === 1) this._clickButton('{bksp}');
+        if (e.key === 'i' && e.id === 1) this._clickButton('{space}');
+        if (e.key === 's' && e.id === 1) this._clickButton('{enter}');
       }
     }, {
       key: "_machineKeyupHandler",
@@ -9729,8 +9717,8 @@
       _this._component = _this._createComponent();
       _this._buttonValidation1 = _this._buttonManager.getButton('a', 1);
       _this._buttonValidation2 = _this._buttonManager.getButton('a', 2);
-      _this._buttonCancelation1 = _this._buttonManager.getButton('b', 1);
-      _this._buttonCancelation2 = _this._buttonManager.getButton('b', 2);
+      _this._buttonCancelation1 = _this._buttonManager.getButton('x', 1);
+      _this._buttonCancelation2 = _this._buttonManager.getButton('x', 2);
 
       _this._bindAll();
 
@@ -10258,10 +10246,10 @@
   var gamepadEmulator2 = Axis$1.createGamepadEmulator(1);
   Axis$1.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0);
   Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
-  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 1, 'a', 1);
-  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 1, 'a', 2);
-  var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'b', 1), Axis$1.registerKeys('z', 'c', 1), Axis$1.registerKeys('s', 'd', 1)];
-  var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'b', 2), Axis$1.registerKeys('ArrowUp', 'c', 2), Axis$1.registerKeys('ArrowDown', 'd', 2)];
+  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
+  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
+  var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'x', 1), Axis$1.registerKeys('z', 'i', 1), Axis$1.registerKeys('s', 's', 1)];
+  var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'x', 2), Axis$1.registerKeys('ArrowUp', 'i', 2), Axis$1.registerKeys('ArrowDown', 's', 2)];
   var player1 = Axis$1.createPlayer({
     id: 1,
     joysticks: Axis$1.joystick1,
@@ -10363,15 +10351,15 @@
       directionX = -1;
     }
 
-    if (e.key === 'b') {
+    if (e.key === 'x') {
       directionX = 1;
     }
 
-    if (e.key === 'c') {
+    if (e.key === 'i') {
       directionY = -1;
     }
 
-    if (e.key === 'd') {
+    if (e.key === 's') {
       directionY = 1;
     }
 
@@ -10392,9 +10380,9 @@
     var directionX = 0;
     var directionY = 0;
     if (e.key === 'a') directionX = -1;
-    if (e.key === 'b') directionX = 1;
-    if (e.key === 'c') directionY = -1;
-    if (e.key === 'd') directionY = 1;
+    if (e.key === 'x') directionX = 1;
+    if (e.key === 'i') directionY = -1;
+    if (e.key === 's') directionY = 1;
     position2.target.x += speed * directionX;
     position2.target.y += speed * directionY;
   }

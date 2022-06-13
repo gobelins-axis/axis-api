@@ -190,9 +190,9 @@ export default class VirtualKeyboard extends EventDispatcher {
         if (!this._isOpen) return;
 
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();
-        if (e.key === 'b' && e.id === 1) this._clickButton('{bksp}');
-        if (e.key === 'c' && e.id === 1) this._clickButton('{space}');
-        if (e.key === 'd' && e.id === 1) this._clickButton('{enter}');
+        if (e.key === 'x' && e.id === 1) this._clickButton('{bksp}');
+        if (e.key === 'i' && e.id === 1) this._clickButton('{space}');
+        if (e.key === 's' && e.id === 1) this._clickButton('{enter}');
     }
 
     _machineKeyupHandler() {

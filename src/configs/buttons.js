@@ -5,19 +5,19 @@ export default [
         id: 1,
     },
     {
-        key: 'b',
+        key: 'x',
         id: 1,
     },
     {
-        key: 'c',
+        key: 'i',
         id: 1,
     },
     {
-        key: 'd',
+        key: 's',
         id: 1,
     },
     {
-        key: 'e',
+        key: 'w',
         id: 1,
     },
     // 2
@@ -26,19 +26,19 @@ export default [
         id: 2,
     },
     {
-        key: 'b',
+        key: 'x',
         id: 2,
     },
     {
-        key: 'c',
+        key: 'i',
         id: 2,
     },
     {
-        key: 'd',
+        key: 's',
         id: 2,
     },
     {
-        key: 'e',
+        key: 'w',
         id: 2,
     },
 ];

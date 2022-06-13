@@ -6,39 +6,24 @@ export default [
         index: 0,
     },
     {
-        name: 'button-b-1',
+        name: 'button-x-1',
         strip: 1,
         index: 1,
     },
     {
-        name: 'button-c-1',
+        name: 'button-i-1',
         strip: 1,
         index: 2,
     },
     {
-        name: 'button-d-1',
+        name: 'button-s-1',
         strip: 1,
         index: 3,
     },
     {
-        name: 'button-e-1',
+        name: 'button-w-1',
         strip: 1,
         index: 4,
-    },
-    {
-        name: 'button-f-1',
-        strip: 1,
-        index: 5,
-    },
-    {
-        name: 'button-g-1',
-        strip: 1,
-        index: 6,
-    },
-    {
-        name: 'button-h-1',
-        strip: 1,
-        index: 7,
     },
     // Controllers 2
     {
@@ -47,22 +32,22 @@ export default [
         index: 0,
     },
     {
-        name: 'button-b-2',
+        name: 'button-x-2',
         strip: 2,
         index: 1,
     },
     {
-        name: 'button-c-2',
+        name: 'button-i-2',
         strip: 2,
         index: 2,
     },
     {
-        name: 'button-d-2',
+        name: 'button-s-2',
         strip: 2,
         index: 3,
     },
     {
-        name: 'button-e-2',
+        name: 'button-w-2',
         strip: 2,
         index: 4,
     },

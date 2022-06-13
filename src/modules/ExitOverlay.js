@@ -17,8 +17,8 @@ export default class ExitOverlay extends EventDispatcher {
 
         this._buttonValidation1 = this._buttonManager.getButton('a', 1);
         this._buttonValidation2 = this._buttonManager.getButton('a', 2);
-        this._buttonCancelation1 = this._buttonManager.getButton('b', 1);
-        this._buttonCancelation2 = this._buttonManager.getButton('b', 2);
+        this._buttonCancelation1 = this._buttonManager.getButton('x', 1);
+        this._buttonCancelation2 = this._buttonManager.getButton('x', 2);
 
         this._bindAll();
         this._setupEventListeners();

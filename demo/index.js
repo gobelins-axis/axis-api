@@ -13,21 +13,21 @@ const gamepadEmulator2 = Axis.createGamepadEmulator(1);
 Axis.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0);
 Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
 
-Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 1, 'a', 1);
-Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 1, 'a', 2);
+Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
+Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
 
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
-    Axis.registerKeys('d', 'b', 1),
-    Axis.registerKeys('z', 'c', 1),
-    Axis.registerKeys('s', 'd', 1),
+    Axis.registerKeys('d', 'x', 1),
+    Axis.registerKeys('z', 'i', 1),
+    Axis.registerKeys('s', 's', 1),
 ];
 
 const buttonsPlayer2 = [
     Axis.registerKeys('ArrowLeft', 'a', 2),
-    Axis.registerKeys('ArrowRight', 'b', 2),
-    Axis.registerKeys('ArrowUp', 'c', 2),
-    Axis.registerKeys('ArrowDown', 'd', 2),
+    Axis.registerKeys('ArrowRight', 'x', 2),
+    Axis.registerKeys('ArrowUp', 'i', 2),
+    Axis.registerKeys('ArrowDown', 's', 2),
 ];
 
 const player1 = Axis.createPlayer({
@@ -148,15 +148,15 @@ function player1keydownHandler(e) {
         directionX = -1;
     }
 
-    if (e.key === 'b') {
+    if (e.key === 'x') {
         directionX = 1;
     }
 
-    if (e.key === 'c') {
+    if (e.key === 'i') {
         directionY = -1;
     }
 
-    if (e.key === 'd') {
+    if (e.key === 's') {
         directionY = 1;
     }
 
@@ -179,11 +179,11 @@ function player2keydownHandler(e) {
 
     if (e.key === 'a') directionX = -1;
 
-    if (e.key === 'b') directionX = 1;
+    if (e.key === 'x') directionX = 1;
 
-    if (e.key === 'c') directionY = -1;
+    if (e.key === 'i') directionY = -1;
 
-    if (e.key === 'd') directionY = 1;
+    if (e.key === 's') directionY = 1;
 
     position2.target.x += speed * directionX;
     position2.target.y += speed * directionY;
