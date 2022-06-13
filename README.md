@@ -32,7 +32,7 @@ A Joystick is identified by its group **id** (1 or 2).
 
 A joystick gives an analog signal between -1 and 1 on the x and y axis.
 
-![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-dark-transparent.png?raw=true)
+![Figure 2: Joystick](https://github.com/gobelins-axis/axis-api/blob/main/src/images/joystick-figure-transparent.png?raw=true)
 
 **Figure 2: Joystick**
 
