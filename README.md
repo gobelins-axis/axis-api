@@ -24,8 +24,7 @@ A button is identified by its **key** (A, X, I, S, W) and its group **id** (1 or
 
 A Joystick is identified by its group **id** (1 or 2).
 
-![Figure 1: Controllers Left id 1](https://github.com/gobelins-axis/axis-api/blob/main/src/images/controllers-1-figure-transparent.png?raw=true)
-![Figure 2: Controllers Right id 2](https://github.com/gobelins-axis/axis-api/blob/main/src/images/controllers-2-figure-transparent.png?raw=true)
+![Figure 1: Controllers](https://github.com/gobelins-axis/axis-api/blob/main/src/images/controllers-figure-transparent.png?raw=true)
 
 **Figure 1: Controllers**
 
