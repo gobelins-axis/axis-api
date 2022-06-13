@@ -128,10 +128,12 @@ export default class VirtualKeyboard extends EventDispatcher {
 
     _setupEventListeners() {
         this._joystick1.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
-        this._buttonManager.addEventListener('keydown', this._machineKeydownHandler);
-        this._buttonManager.addEventListener('keyup', this._machineKeyupHandler);
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
+        for (let i = 0; i < this._buttonManager.buttons.length; i++) {
+            this._buttonManager.buttons[i].addEventListener('keydown', this._machineKeydownHandler);
+            this._buttonManager.buttons[i].addEventListener('keyup', this._machineKeyupHandler);
+        }
     }
 
     inputHandler(e) {
@@ -187,6 +189,7 @@ export default class VirtualKeyboard extends EventDispatcher {
     }
 
     _machineKeydownHandler(e) {
+        console.log(e);
         if (!this._isOpen) return;
 
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();

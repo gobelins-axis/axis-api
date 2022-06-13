@@ -9569,12 +9569,14 @@
       value: function _setupEventListeners() {
         this._joystick1.addEventListener('joystick:quickmove', this._joystickQuickmoveHandler);
 
-        this._buttonManager.addEventListener('keydown', this._machineKeydownHandler);
-
-        this._buttonManager.addEventListener('keyup', this._machineKeyupHandler);
-
         window.addEventListener('keydown', this._keydownHandler);
         window.addEventListener('keyup', this._keyupHandler);
+
+        for (var i = 0; i < this._buttonManager.buttons.length; i++) {
+          this._buttonManager.buttons[i].addEventListener('keydown', this._machineKeydownHandler);
+
+          this._buttonManager.buttons[i].addEventListener('keyup', this._machineKeyupHandler);
+        }
       }
     }, {
       key: "inputHandler",
@@ -9632,6 +9634,7 @@
     }, {
       key: "_machineKeydownHandler",
       value: function _machineKeydownHandler(e) {
+        console.log(e);
         if (!this._isOpen) return;
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();
         if (e.key === 'x' && e.id === 1) this._clickButton('{bksp}');
@@ -10248,6 +10251,9 @@
   Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
+  Axis$1.addEventListener('keydown', function (e) {
+    console.log(e);
+  });
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'x', 1), Axis$1.registerKeys('z', 'i', 1), Axis$1.registerKeys('s', 's', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'x', 2), Axis$1.registerKeys('ArrowUp', 'i', 2), Axis$1.registerKeys('ArrowDown', 's', 2)];
   var player1 = Axis$1.createPlayer({
