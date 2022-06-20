@@ -78,6 +78,6 @@ export default class GamepadEmulator extends EventDispatcher {
         // Left
         this.dispatchEvent('gamepad:joystick:move', { index: 0, position: { x: axes[0], y: axes[1] } });
         // Right
-        this.dispatchEvent('gamepad:joystick:move', { index: 1, position: { x: axes[2], y: axes[5] } });
+        this.dispatchEvent('gamepad:joystick:move', { index: 1, position: { x: axes[2], y: axes[3] } });
     }
 }

@@ -9923,7 +9923,7 @@
           index: 1,
           position: {
             x: axes[2],
-            y: axes[5]
+            y: axes[3]
           }
         });
       }
@@ -10248,7 +10248,8 @@
   var gamepadEmulator1 = Axis$1.createGamepadEmulator(0);
   var gamepadEmulator2 = Axis$1.createGamepadEmulator(1);
   Axis$1.joystick1.setGamepadEmulatorJoystick(gamepadEmulator1, 0);
-  Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
+  Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator1, 1); // Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
+
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
   Axis$1.addEventListener('keydown', function (e) {
