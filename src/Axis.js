@@ -137,6 +137,8 @@ class Axis extends EventDispatcher {
         this._joystickManager.ipcRenderer = this._ipcRenderer;
         this._ledManager.ipcRenderer = this._ipcRenderer;
         if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
     }
 
     _createLedManager() {
@@ -209,6 +211,9 @@ class Axis extends EventDispatcher {
         this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
         this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
         this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
+
+        this._machineSleepHandler = this._machineSleepHandler.bind(this);
+        this._machineAwakeHandler = this._machineAwakeHandler.bind(this);
     }
 
     _setupEventListeners() {
@@ -226,6 +231,11 @@ class Axis extends EventDispatcher {
         this._exitOverlay.addEventListener('exit:attempted', this._exitAttemptHandler);
         this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);
         this._exitOverlay.addEventListener('exit:completed', this._exitCompletedHandler);
+    }
+
+    _setupIpcRendererEventListeners() {
+        this._ipcRenderer.on('sleep', this._machineSleepHandler);
+        this._ipcRenderer.on('awake', this._machineAwakeHandler);
     }
 
     _keydownHandler(e) {
@@ -256,6 +266,14 @@ class Axis extends EventDispatcher {
         this.dispatchEvent('exit:completed');
 
         this._ipcRenderer?.send('exit');
+    }
+
+    _machineSleepHandler() {
+        this.dispatchEvent('sleep');
+    }
+
+    _machineAwakeHandler() {
+        this.dispatchEvent('awake');
     }
 }
 

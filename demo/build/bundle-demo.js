@@ -10088,6 +10088,8 @@
         this._joystickManager.ipcRenderer = this._ipcRenderer;
         this._ledManager.ipcRenderer = this._ipcRenderer;
         if (this._leaderboard) this._leaderboard.ipcRenderer = this._ipcRenderer;
+
+        this._setupIpcRendererEventListeners();
       }
     }, {
       key: "_createLedManager",
@@ -10165,6 +10167,8 @@
         this._exitAttemptHandler = this._exitAttemptHandler.bind(this);
         this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
         this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
+        this._machineSleepHandler = this._machineSleepHandler.bind(this);
+        this._machineAwakeHandler = this._machineAwakeHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
@@ -10188,6 +10192,13 @@
         this._exitOverlay.addEventListener('exit:canceled', this._exitCanceledHandler);
 
         this._exitOverlay.addEventListener('exit:completed', this._exitCompletedHandler);
+      }
+    }, {
+      key: "_setupIpcRendererEventListeners",
+      value: function _setupIpcRendererEventListeners() {
+        this._ipcRenderer.on('sleep', this._machineSleepHandler);
+
+        this._ipcRenderer.on('awake', this._machineAwakeHandler);
       }
     }, {
       key: "_keydownHandler",
@@ -10227,6 +10238,16 @@
         this.dispatchEvent('exit:completed');
         (_this$_ipcRenderer = this._ipcRenderer) === null || _this$_ipcRenderer === void 0 ? void 0 : _this$_ipcRenderer.send('exit');
       }
+    }, {
+      key: "_machineSleepHandler",
+      value: function _machineSleepHandler() {
+        this.dispatchEvent('sleep');
+      }
+    }, {
+      key: "_machineAwakeHandler",
+      value: function _machineAwakeHandler() {
+        this.dispatchEvent('awake');
+      }
     }]);
 
     return Axis;
@@ -10250,7 +10271,13 @@
   Axis$1.joystick2.setGamepadEmulatorJoystick(gamepadEmulator1, 1); // Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator2, 0);
 
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
-  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
+  Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2); // Axis.addEventListener('sleep', () => {
+  //     console.log('Electron is sleeping');
+  // });
+  // Axis.addEventListener('awake', () => {
+  //     console.log('Electron is awake');
+  // });
+
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'x', 1), Axis$1.registerKeys('z', 'i', 1), Axis$1.registerKeys('s', 's', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'x', 2), Axis$1.registerKeys('ArrowUp', 'i', 2), Axis$1.registerKeys('ArrowDown', 's', 2)];
   var player1 = Axis$1.createPlayer({

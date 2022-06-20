@@ -17,6 +17,14 @@ Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator1, 1);
 Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
 Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
 
+// Axis.addEventListener('sleep', () => {
+//     console.log('Electron is sleeping');
+// });
+
+// Axis.addEventListener('awake', () => {
+//     console.log('Electron is awake');
+// });
+
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'x', 1),
