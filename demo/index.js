@@ -4,7 +4,7 @@ let isDefaultControls = true;
 let time = 0;
 
 getGamepadList().then((list) => {
-    console.log(list);
+    // console.log(list);
 });
 
 const gamepadEmulator1 = Axis.createGamepadEmulator(0);
@@ -16,10 +16,6 @@ Axis.joystick2.setGamepadEmulatorJoystick(gamepadEmulator1, 1);
 
 Axis.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
 Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
-
-Axis.addEventListener('keydown', (e) => {
-    console.log(e);
-});
 
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),

@@ -10242,8 +10242,7 @@
     });
   }
 
-  getGamepadList().then(function (list) {
-    console.log(list);
+  getGamepadList().then(function (list) {// console.log(list);
   });
   var gamepadEmulator1 = Axis$1.createGamepadEmulator(0);
   var gamepadEmulator2 = Axis$1.createGamepadEmulator(1);
@@ -10252,9 +10251,6 @@
 
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator1, 0, 'a', 1);
   Axis$1.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
-  Axis$1.addEventListener('keydown', function (e) {
-    console.log(e);
-  });
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'x', 1), Axis$1.registerKeys('z', 'i', 1), Axis$1.registerKeys('s', 's', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'x', 2), Axis$1.registerKeys('ArrowUp', 'i', 2), Axis$1.registerKeys('ArrowDown', 's', 2)];
   var player1 = Axis$1.createPlayer({
