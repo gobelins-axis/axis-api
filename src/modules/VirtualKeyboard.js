@@ -189,7 +189,6 @@ export default class VirtualKeyboard extends EventDispatcher {
     }
 
     _machineKeydownHandler(e) {
-        console.log(e);
         if (!this._isOpen) return;
 
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();

@@ -3,6 +3,7 @@ import config from '../configs';
 
 // Modules
 import Led from '../modules/Led';
+import LedGroup from '../modules/LedGroup';
 
 export default class LedManager {
     constructor(options = {}) {
@@ -11,6 +12,7 @@ export default class LedManager {
         // Setup
         this._ipcRenderer = null;
         this._leds = this._createLeds();
+        this._ledGroups = this._createLedGroups();
     }
 
     /**
@@ -32,6 +34,10 @@ export default class LedManager {
         return this._leds;
     }
 
+    get ledGroups() {
+        return this._ledGroups;
+    }
+
     /**
      * Public
      */
@@ -43,6 +49,14 @@ export default class LedManager {
         return led;
     }
 
+    getLedGroupByName(name) {
+        const ledGroup = this._ledGroups.filter((ledGroup) => {
+            return ledGroup.name === name;
+        })[0];
+
+        return ledGroup;
+    }
+
     /**
      * Private
      */
@@ -50,14 +64,36 @@ export default class LedManager {
         const leds = [];
 
         for (let i = 0; i < config.leds.length; i++) {
+            if (config.leds[i].type === 'group') continue;
+
             const led = new Led({
                 name: config.leds[i].name,
                 strip: config.leds[i].strip,
                 index: config.leds[i].index,
             });
+
             leds.push(led);
         }
 
         return leds;
+    }
+
+    _createLedGroups() {
+        const groups = [];
+
+        for (let i = 0; i < config.leds.length; i++) {
+            if (config.leds[i].type !== 'group') continue;
+
+            const group = new LedGroup({
+                name: config.leds[i].name,
+                strip: config.leds[i].strip,
+                indexStart: config.leds[i].indexStart,
+                indexEnd: config.leds[i].indexEnd,
+            });
+
+            groups.push(group);
+        }
+
+        return groups;
     }
 }

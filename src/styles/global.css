@@ -1,1 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800&display=swap');
+
+html.is-axis-machine {
+    cursor: none !important;
+}
+
+html.is-axis-machine body {
+    cursor: none !important;
+}
+
+html.is-axis-machine body * {
+    cursor: none !important;
+}

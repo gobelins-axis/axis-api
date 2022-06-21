@@ -25,6 +25,14 @@ Axis.registerGamepadEmulatorKeys(gamepadEmulator2, 0, 'a', 2);
 //     console.log('Electron is awake');
 // });
 
+// Axis.addEventListener('keydown', (e) => {
+//     console.log(`Button ${e.key} ${e.id}`);
+// });
+
+// console.log(Axis.ledManager.ledGroups[0].setColor('#ff0000'));
+// console.log(Axis.ledManager.ledGroups[1].setColor('#ff0000'));
+// Axis.ledManager.leds[0].setColor('#ff0000');
+
 const buttonsPlayer1 = [
     Axis.registerKeys('q', 'a', 1),
     Axis.registerKeys('d', 'x', 1),
@@ -66,19 +74,32 @@ const position2 = {
 const center = document.querySelector('.js-joystick-center');
 const magnitude = document.querySelector('.js-joystick-magnitude');
 
-const leaderboard = Axis.createLeaderboard({ id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8' });
+// const leaderboard = Axis.createLeaderboard({ id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8' });
 
-const input = document.querySelector('input');
+// const input = document.querySelector('input');
 
-setTimeout(() => {
-    Axis.virtualKeyboard.open();
-    Axis.virtualKeyboard.addEventListener('input', (e) => {
-        input.value = e;
-    });
+// setTimeout(() => {
+// Axis.virtualKeyboard.open();
+// Axis.virtualKeyboard.addEventListener('input', (e) => {
+//     input.value = e;
+// });
 
-    // setTimeout(() => {
-    //     Axis.virtualKeyboard.close();
-    // }, 2000);
+// setTimeout(() => {
+//     Axis.virtualKeyboard.close();
+// }, 2000);
+// }, 1000);
+
+const leds = Axis.ledManager.leds;
+
+setInterval(() => {
+    for (let i = 0; i < leds.length; i++) {
+        leds[i].setColor('#ff0000');
+    }
+}, 500);
+setInterval(() => {
+    for (let i = 0; i < leds.length; i++) {
+        leds[i].setColor('#0000ff');
+    }
 }, 1000);
 
 function setup() {
@@ -118,20 +139,20 @@ function switchControls() {
     isDefaultControls = false;
 }
 
-setTimeout(() => {
-    postScore();
-}, 1000);
+// setTimeout(() => {
+//     postScore();
+// }, 1000);
 
-function postScore() {
-    leaderboard.postScore({
-        username: 'Léo',
-        value: Math.random() * 100,
-    }).then(() => {
-        leaderboard.getScores().then((response) => {
-            console.log(response);
-        });
-    });
-}
+// function postScore() {
+//     leaderboard.postScore({
+//         username: 'Léo',
+//         value: Math.random() * 100,
+//     }).then(() => {
+//         leaderboard.getScores().then((response) => {
+//             console.log(response);
+//         });
+//     });
+// }
 
 function setupEventListeners() {
     player1.addEventListener('keydown', player1keydownHandler);
@@ -148,10 +169,10 @@ function player1keydownHandler(e) {
     let directionX = 0;
     let directionY = 0;
 
-    Axis.ledManager.leds[0].setColor('rgb(255, 255, 255)');
-    Axis.ledManager.leds[1].setColor('rgb(255, 255, 255)');
-    Axis.ledManager.leds[2].setColor('rgb(255, 255, 255)');
-    Axis.ledManager.leds[3].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[0].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 255, 255)');
 
     if (e.key === 'a') {
         directionX = -1;
@@ -175,10 +196,10 @@ function player1keydownHandler(e) {
 
 function player1keyupHandler(e) {
     //
-    Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
-    Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
-    Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
-    Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
 }
 
 function player2keydownHandler(e) {
@@ -219,6 +240,9 @@ function player2joystickMoveHandler(e) {
     position2.target.y += -e.position.y * speed;
     position2.current.x += e.position.x * speed;
     position2.current.y += -e.position.y * speed;
+
+    // center.style.transform = `translate(${e.position.x * 250}px, ${-e.position.y * 250}px)`;
+    // magnitude.style.transform = `scale(${e.position.magnitude})`;
 }
 
 function lerp(v0, v1, t) {

@@ -306,59 +306,72 @@
     inputIntervalMin: 0.1
   };
 
-  var leds = [// Controllers 1
+  var leds$1 = [// Controllers 1
   {
     name: 'button-a-1',
-    strip: 1,
-    index: 0
-  }, {
-    name: 'button-x-1',
-    strip: 1,
+    strip: 3,
     index: 1
   }, {
-    name: 'button-i-1',
-    strip: 1,
+    name: 'button-x-1',
+    strip: 3,
     index: 2
   }, {
-    name: 'button-s-1',
-    strip: 1,
+    name: 'button-i-1',
+    strip: 3,
     index: 3
   }, {
-    name: 'button-w-1',
-    strip: 1,
+    name: 'button-s-1',
+    strip: 3,
     index: 4
+  }, {
+    name: 'button-w-1',
+    strip: 3,
+    index: 0
   }, // Controllers 2
   {
     name: 'button-a-2',
-    strip: 2,
-    index: 0
-  }, {
-    name: 'button-x-2',
-    strip: 2,
+    strip: 4,
     index: 1
   }, {
-    name: 'button-i-2',
-    strip: 2,
+    name: 'button-x-2',
+    strip: 4,
     index: 2
   }, {
-    name: 'button-s-2',
-    strip: 2,
+    name: 'button-i-2',
+    strip: 4,
     index: 3
   }, {
-    name: 'button-w-2',
-    strip: 2,
+    name: 'button-s-2',
+    strip: 4,
     index: 4
+  }, {
+    name: 'button-w-2',
+    strip: 4,
+    index: 0
   }, // Button Home
   {
     name: 'button-home-0',
+    strip: 3,
+    index: 0
+  }, // Strips
+  {
+    name: 'left-strip',
+    type: 'group',
     strip: 1,
-    index: 5
+    indexStart: 0,
+    indexEnd: 50
+  }, {
+    name: 'right-strip',
+    type: 'group',
+    strip: 2,
+    indexStart: 0,
+    indexEnd: 50
   }];
 
   var config = {
     buttons: buttons,
     joystick: config$1,
-    leds: leds
+    leds: leds$1
   };
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -2545,6 +2558,99 @@
     return Led;
   }();
 
+  var LedGroup = /*#__PURE__*/function () {
+    function LedGroup() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, LedGroup);
+
+      // Options
+      this._name = options.name;
+      this._strip = options.strip;
+      this._indexStart = options.indexStart;
+      this._indexEnd = options.indexEnd; // Setup
+
+      this._ipcRenderer = null;
+      this._leds = this._createLeds();
+    }
+    /**
+     * Getters & Setters
+     */
+
+
+    _createClass(LedGroup, [{
+      key: "ipcRenderer",
+      get: function get() {
+        return this._ipcRenderer;
+      },
+      set: function set(ipcRenderer) {
+        this._ipcRenderer = ipcRenderer;
+      }
+    }, {
+      key: "name",
+      get: function get() {
+        return this._name;
+      }
+    }, {
+      key: "strip",
+      get: function get() {
+        return this._strip;
+      }
+    }, {
+      key: "indexStart",
+      get: function get() {
+        return this._indexStart;
+      }
+    }, {
+      key: "indexEnd",
+      get: function get() {
+        return this._indexEnd;
+      }
+    }, {
+      key: "leds",
+      get: function get() {
+        return this._leds;
+      }
+      /**
+       * Public
+       */
+
+    }, {
+      key: "setColor",
+      value: function setColor(colorData) {
+        for (var i = 0; i < this._leds.length; i++) {
+          this._leds[i].setColor(colorData);
+        }
+      }
+      /**
+       * Private
+       */
+
+    }, {
+      key: "_createLeds",
+      value: function _createLeds() {
+        var leds = [];
+
+        for (var i = this._indexStart; i <= this._indexEnd; i++) {
+          var led = new Led({
+            name: this._name,
+            strip: this._strip,
+            index: i
+          });
+          leds.push(led);
+        }
+
+        return leds;
+      }
+      /**
+       * Utils
+       */
+
+    }]);
+
+    return LedGroup;
+  }();
+
   var LedManager = /*#__PURE__*/function () {
     function LedManager() {
 
@@ -2554,6 +2660,7 @@
       // Setup
       this._ipcRenderer = null;
       this._leds = this._createLeds();
+      this._ledGroups = this._createLedGroups();
     }
     /**
      * Getters & Setters
@@ -2577,6 +2684,11 @@
       get: function get() {
         return this._leds;
       }
+    }, {
+      key: "ledGroups",
+      get: function get() {
+        return this._ledGroups;
+      }
       /**
        * Public
        */
@@ -2590,6 +2702,15 @@
 
         return led;
       }
+    }, {
+      key: "getLedGroupByName",
+      value: function getLedGroupByName(name) {
+        var ledGroup = this._ledGroups.filter(function (ledGroup) {
+          return ledGroup.name === name;
+        })[0];
+
+        return ledGroup;
+      }
       /**
        * Private
        */
@@ -2600,6 +2721,7 @@
         var leds = [];
 
         for (var i = 0; i < config.leds.length; i++) {
+          if (config.leds[i].type === 'group') continue;
           var led = new Led({
             name: config.leds[i].name,
             strip: config.leds[i].strip,
@@ -2609,6 +2731,24 @@
         }
 
         return leds;
+      }
+    }, {
+      key: "_createLedGroups",
+      value: function _createLedGroups() {
+        var groups = [];
+
+        for (var i = 0; i < config.leds.length; i++) {
+          if (config.leds[i].type !== 'group') continue;
+          var group = new LedGroup({
+            name: config.leds[i].name,
+            strip: config.leds[i].strip,
+            indexStart: config.leds[i].indexStart,
+            indexEnd: config.leds[i].indexEnd
+          });
+          groups.push(group);
+        }
+
+        return groups;
       }
     }]);
 
@@ -9634,7 +9774,6 @@
     }, {
       key: "_machineKeydownHandler",
       value: function _machineKeydownHandler(e) {
-        console.log(e);
         if (!this._isOpen) return;
         if (e.key === 'a' && e.id === 1) this._clickActiveButton();
         if (e.key === 'x' && e.id === 1) this._clickButton('{bksp}');
@@ -9932,7 +10071,7 @@
     return GamepadEmulator;
   }(EventDispatcher);
 
-  var globalStyle = "@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800&display=swap');";
+  var globalStyle = "@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800&display=swap');\n\nhtml.is-axis-machine {\n    cursor: none !important;\n}\n\nhtml.is-axis-machine body {\n    cursor: none !important;\n}\n\nhtml.is-axis-machine body * {\n    cursor: none !important;\n}";
 
   var Axis = /*#__PURE__*/function (_EventDispatcher) {
     _inherits(Axis, _EventDispatcher);
@@ -10296,6 +10435,12 @@
   // Axis.addEventListener('awake', () => {
   //     console.log('Electron is awake');
   // });
+  // Axis.addEventListener('keydown', (e) => {
+  //     console.log(`Button ${e.key} ${e.id}`);
+  // });
+  // console.log(Axis.ledManager.ledGroups[0].setColor('#ff0000'));
+  // console.log(Axis.ledManager.ledGroups[1].setColor('#ff0000'));
+  // Axis.ledManager.leds[0].setColor('#ff0000');
 
   var buttonsPlayer1 = [Axis$1.registerKeys('q', 'a', 1), Axis$1.registerKeys('d', 'x', 1), Axis$1.registerKeys('z', 'i', 1), Axis$1.registerKeys('s', 's', 1)];
   var buttonsPlayer2 = [Axis$1.registerKeys('ArrowLeft', 'a', 2), Axis$1.registerKeys('ArrowRight', 'x', 2), Axis$1.registerKeys('ArrowUp', 'i', 2), Axis$1.registerKeys('ArrowDown', 's', 2)];
@@ -10332,18 +10477,28 @@
     }
   };
   var center = document.querySelector('.js-joystick-center');
-  var magnitude = document.querySelector('.js-joystick-magnitude');
-  var leaderboard = Axis$1.createLeaderboard({
-    id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8'
-  });
-  var input = document.querySelector('input');
-  setTimeout(function () {
-    Axis$1.virtualKeyboard.open();
-    Axis$1.virtualKeyboard.addEventListener('input', function (e) {
-      input.value = e;
-    }); // setTimeout(() => {
-    //     Axis.virtualKeyboard.close();
-    // }, 2000);
+  var magnitude = document.querySelector('.js-joystick-magnitude'); // const leaderboard = Axis.createLeaderboard({ id: 'Beyond-Memories-76b9304f-a7f8-48c7-867b-20f1dda3f2c8' });
+  // const input = document.querySelector('input');
+  // setTimeout(() => {
+  // Axis.virtualKeyboard.open();
+  // Axis.virtualKeyboard.addEventListener('input', (e) => {
+  //     input.value = e;
+  // });
+  // setTimeout(() => {
+  //     Axis.virtualKeyboard.close();
+  // }, 2000);
+  // }, 1000);
+
+  var leds = Axis$1.ledManager.leds;
+  setInterval(function () {
+    for (var i = 0; i < leds.length; i++) {
+      leds[i].setColor('#ff0000');
+    }
+  }, 500);
+  setInterval(function () {
+    for (var i = 0; i < leds.length; i++) {
+      leds[i].setColor('#0000ff');
+    }
   }, 1000);
 
   function setup() {
@@ -10362,21 +10517,19 @@
     box2.style.transform = "translate(".concat(position2.current.x, "px, ").concat(position2.current.y, "px)");
     requestAnimationFrame(update);
   }
+  //     postScore();
+  // }, 1000);
+  // function postScore() {
+  //     leaderboard.postScore({
+  //         username: 'Léo',
+  //         value: Math.random() * 100,
+  //     }).then(() => {
+  //         leaderboard.getScores().then((response) => {
+  //             console.log(response);
+  //         });
+  //     });
+  // }
 
-  setTimeout(function () {
-    postScore();
-  }, 1000);
-
-  function postScore() {
-    leaderboard.postScore({
-      username: 'Léo',
-      value: Math.random() * 100
-    }).then(function () {
-      leaderboard.getScores().then(function (response) {
-        console.log(response);
-      });
-    });
-  }
 
   function setupEventListeners() {
     player1.addEventListener('keydown', player1keydownHandler);
@@ -10390,11 +10543,10 @@
   function player1keydownHandler(e) {
     var speed = 50;
     var directionX = 0;
-    var directionY = 0;
-    Axis$1.ledManager.leds[0].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[1].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[2].setColor('rgb(255, 255, 255)');
-    Axis$1.ledManager.leds[3].setColor('rgb(255, 255, 255)');
+    var directionY = 0; // Axis.ledManager.leds[0].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 255, 255)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 255, 255)');
 
     if (e.key === 'a') {
       directionX = -1;
@@ -10416,12 +10568,11 @@
     position1.target.y += speed * directionY;
   }
 
-  function player1keyupHandler(e) {
-    //
-    Axis$1.ledManager.leds[0].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[1].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[2].setColor('rgb(255, 0, 0)');
-    Axis$1.ledManager.leds[3].setColor('rgb(255, 0, 0)');
+  function player1keyupHandler(e) {//
+    // Axis.ledManager.leds[0].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[1].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[2].setColor('rgb(255, 0, 0)');
+    // Axis.ledManager.leds[3].setColor('rgb(255, 0, 0)');
   }
 
   function player2keydownHandler(e) {
@@ -10454,7 +10605,8 @@
     position2.target.x += e.position.x * speed;
     position2.target.y += -e.position.y * speed;
     position2.current.x += e.position.x * speed;
-    position2.current.y += -e.position.y * speed;
+    position2.current.y += -e.position.y * speed; // center.style.transform = `translate(${e.position.x * 250}px, ${-e.position.y * 250}px)`;
+    // magnitude.style.transform = `scale(${e.position.magnitude})`;
   }
 
   function lerp(v0, v1, t) {
