@@ -214,6 +214,10 @@ class Axis extends EventDispatcher {
 
         this._machineSleepHandler = this._machineSleepHandler.bind(this);
         this._machineAwakeHandler = this._machineAwakeHandler.bind(this);
+
+        // TPM
+        this._machineBuildupHandler = this._machineBuildupHandler.bind(this);
+        this._machineRevealHandler = this._machineRevealHandler.bind(this);
     }
 
     _setupEventListeners() {
@@ -236,6 +240,10 @@ class Axis extends EventDispatcher {
     _setupIpcRendererEventListeners() {
         this._ipcRenderer.on('sleep', this._machineSleepHandler);
         this._ipcRenderer.on('awake', this._machineAwakeHandler);
+
+        // TPM
+        this._ipcRenderer.on('buildup', this._machineBuildupHandler);
+        this._ipcRenderer.on('reveal', this._machineRevealHandler);
     }
 
     _keydownHandler(e) {
@@ -274,6 +282,15 @@ class Axis extends EventDispatcher {
 
     _machineAwakeHandler() {
         this.dispatchEvent('awake');
+    }
+
+    // TMP
+    _machineBuildupHandler() {
+        this.dispatchEvent('buildup');
+    }
+
+    _machineRevealHandler() {
+        this.dispatchEvent('reveal');
     }
 }
 

@@ -10168,7 +10168,10 @@
         this._exitCanceledHandler = this._exitCanceledHandler.bind(this);
         this._exitCompletedHandler = this._exitCompletedHandler.bind(this);
         this._machineSleepHandler = this._machineSleepHandler.bind(this);
-        this._machineAwakeHandler = this._machineAwakeHandler.bind(this);
+        this._machineAwakeHandler = this._machineAwakeHandler.bind(this); // TPM
+
+        this._machineBuildupHandler = this._machineBuildupHandler.bind(this);
+        this._machineRevealHandler = this._machineRevealHandler.bind(this);
       }
     }, {
       key: "_setupEventListeners",
@@ -10198,7 +10201,12 @@
       value: function _setupIpcRendererEventListeners() {
         this._ipcRenderer.on('sleep', this._machineSleepHandler);
 
-        this._ipcRenderer.on('awake', this._machineAwakeHandler);
+        this._ipcRenderer.on('awake', this._machineAwakeHandler); // TPM
+
+
+        this._ipcRenderer.on('buildup', this._machineBuildupHandler);
+
+        this._ipcRenderer.on('reveal', this._machineRevealHandler);
       }
     }, {
       key: "_keydownHandler",
@@ -10247,6 +10255,17 @@
       key: "_machineAwakeHandler",
       value: function _machineAwakeHandler() {
         this.dispatchEvent('awake');
+      } // TMP
+
+    }, {
+      key: "_machineBuildupHandler",
+      value: function _machineBuildupHandler() {
+        this.dispatchEvent('buildup');
+      }
+    }, {
+      key: "_machineRevealHandler",
+      value: function _machineRevealHandler() {
+        this.dispatchEvent('reveal');
       }
     }]);
 
