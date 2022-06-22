@@ -55,7 +55,7 @@ export default [
     {
         name: 'button-home-0',
         strip: 3,
-        index: 0,
+        index: 5,
     },
     // Strips
     {
