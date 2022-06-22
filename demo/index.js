@@ -91,16 +91,23 @@ const magnitude = document.querySelector('.js-joystick-magnitude');
 
 const leds = Axis.ledManager.leds;
 
-setInterval(() => {
-    for (let i = 0; i < leds.length; i++) {
-        leds[i].setColor('#ff0000');
-    }
-}, 500);
-setInterval(() => {
-    for (let i = 0; i < leds.length; i++) {
-        leds[i].setColor('#0000ff');
-    }
-}, 1000);
+// setInterval(() => {
+//     for (let i = 0; i < leds.length; i++) {
+//         leds[i].setColor('#ff0000');
+//     }
+// }, 500);
+// setInterval(() => {
+//     for (let i = 0; i < leds.length; i++) {
+//         leds[i].setColor('#0000ff');
+//     }
+// }, 1000);
+
+// setTimeout(() => {
+//     for (let i = 0; i < Axis.ledManager.ledGroups[0].leds.length; i++) {
+//         const led = Axis.ledManager.ledGroups[0].leds[i];
+//         led.setColor('#0000ff');
+//     }
+// }, 1000);
 
 function setup() {
     setupEventListeners();

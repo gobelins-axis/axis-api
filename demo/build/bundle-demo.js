@@ -306,7 +306,7 @@
     inputIntervalMin: 0.1
   };
 
-  var leds$1 = [// Controllers 1
+  var leds = [// Controllers 1
   {
     name: 'button-a-1',
     strip: 3,
@@ -371,7 +371,7 @@
   var config = {
     buttons: buttons,
     joystick: config$1,
-    leds: leds$1
+    leds: leds
   };
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -2584,6 +2584,10 @@
         return this._ipcRenderer;
       },
       set: function set(ipcRenderer) {
+        for (var i = 0; i < this._leds.length; i++) {
+          this._leds[i].ipcRenderer = ipcRenderer;
+        }
+
         this._ipcRenderer = ipcRenderer;
       }
     }, {
@@ -2677,6 +2681,10 @@
 
         for (var i = 0; i < this._leds.length; i++) {
           this._leds[i].ipcRenderer = ipcRenderer;
+        }
+
+        for (var _i = 0; _i < this._ledGroups.length; _i++) {
+          this._ledGroups[_i].ipcRenderer = ipcRenderer;
         }
       }
     }, {
@@ -10489,17 +10497,22 @@
   // }, 2000);
   // }, 1000);
 
-  var leds = Axis$1.ledManager.leds;
-  setInterval(function () {
-    for (var i = 0; i < leds.length; i++) {
-      leds[i].setColor('#ff0000');
-    }
-  }, 500);
-  setInterval(function () {
-    for (var i = 0; i < leds.length; i++) {
-      leds[i].setColor('#0000ff');
-    }
-  }, 1000);
+  Axis$1.ledManager.leds; // setInterval(() => {
+  //     for (let i = 0; i < leds.length; i++) {
+  //         leds[i].setColor('#ff0000');
+  //     }
+  // }, 500);
+  // setInterval(() => {
+  //     for (let i = 0; i < leds.length; i++) {
+  //         leds[i].setColor('#0000ff');
+  //     }
+  // }, 1000);
+  // setTimeout(() => {
+  //     for (let i = 0; i < Axis.ledManager.ledGroups[0].leds.length; i++) {
+  //         const led = Axis.ledManager.ledGroups[0].leds[i];
+  //         led.setColor('#0000ff');
+  //     }
+  // }, 1000);
 
   function setup() {
     setupEventListeners();

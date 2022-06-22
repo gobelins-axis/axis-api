@@ -28,6 +28,10 @@ export default class LedManager {
         for (let i = 0; i < this._leds.length; i++) {
             this._leds[i].ipcRenderer = ipcRenderer;
         }
+
+        for (let i = 0; i < this._ledGroups.length; i++) {
+            this._ledGroups[i].ipcRenderer = ipcRenderer;
+        }
     }
 
     get leds() {
