@@ -449,6 +449,12 @@ Axis.ledManager.leds[0].setColor("#ff0000");
 
 All the leds instances will be ordered by groups later on.
 
+⚠️⚠️ Proper LED Managment is currently not working due to performances issues on the Arduino board. In the meantime, you can still start predefined led animations like this : 
+
+```js
+ipcRenderer.send('led:animation', 1); // Animation index from 0 to 3
+```
+
 ## API References
 
 ### Axis (singleton)
