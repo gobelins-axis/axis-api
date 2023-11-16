@@ -370,6 +370,25 @@ leaderboard
     });
 ```
 
+If you need to show a string instead of a numerical value in the leaderboard, you can use a the key `valueString`. 
+
+```js
+// Post a score
+// Every score data should at least have username and value keys, valueString is an optional key
+leaderboard
+    .postScore({
+        username: "sergiuonthetrack",
+        value: 100,
+        valueString: '100s', // specify that the score is in seconds
+    })
+    .then(() => {
+        // Get all scores
+        leaderboard.getScores().then((response) => {
+            console.log(response);
+        });
+    });
+```
+
 **NB**
 It's important to note that you will not be able to push any data to the database when running the game on your own machine, only the axis machine has the rights to push scores data. But on your machine we simply use localStorage api to store scores. You don't have to do anything different.
 
